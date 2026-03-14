@@ -1,0 +1,44 @@
+// Prisma schema для математического калькулятора
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Модель пользователя
+model User {
+  id                String    @id @default(uuid())
+  email             String    @unique
+  password          String
+  name              String?
+  emailVerified     Boolean   @default(false)
+  verificationToken String?   @unique
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  
+  // Связь с вычислениями
+  calculations Calculation[]
+  
+  @@map("users")
+}
+
+// Модель для хранения истории вычислений
+model Calculation {
+  id          String   @id @default(uuid())
+  userId      String
+  type        String   // 'clustering', 'anova', 'matrix', 'derivative', 'integral', etc.
+  input       Json     // Входные данные
+  result      Json     // Результаты вычислений
+  createdAt   DateTime @default(now())
+  
+  // Связь с пользователем
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("calculations")
+  @@index([userId])
+  @@index([createdAt])
+}

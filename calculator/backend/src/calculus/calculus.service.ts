@@ -1,0 +1,804 @@
+import { Injectable } from '@nestjs/common';
+import { CalculusDto } from './dto/calculus.dto';
+import { DerivativeDto, DerivativeAtPointDto } from './dto/derivative.dto';
+import { CalculusResult } from './interfaces/calculus-result.interface';
+import { DerivativeResult, DerivativeGraphResult, DerivativeAtPointResult, DerivativeStep } from './interfaces/derivative-result.interface';
+import * as math from 'mathjs';
+
+@Injectable()
+export class CalculusService {
+  // Новый метод для вычисления производной с пошаговым решением
+  calculateDerivativeDetailed(data: DerivativeDto): DerivativeResult {
+    const { expression, variable, order = 1, simplify = true } = data;
+    
+    try {
+      // Преобразуем выражение для совместимости с mathjs
+      let processedExpression = expression
+        .replace(/ln\(/g, 'log(')  // ln -> log для mathjs
+        .replace(/tg\(/g, 'tan(')  // tg -> tan для mathjs
+        .replace(/ctg\(/g, 'cot(') // ctg -> cot для mathjs
+        .replace(/arctg\(/g, 'atan(') // arctg -> atan
+        .replace(/arcsin\(/g, 'asin(')
+        .replace(/arccos\(/g, 'acos(');
+      
+      // Парсим выражение
+      const node = math.parse(processedExpression);
+      
+      // Вычисляем производную указанного порядка
+      let derivativeNode = node;
+      const allSteps: DerivativeStep[] = [];
+      
+      for (let i = 0; i < order; i++) {
+        const steps = this.getDetailedDerivativeSteps(derivativeNode, variable, i + 1);
+        allSteps.push(...steps);
+        derivativeNode = math.derivative(derivativeNode, variable);
+      }
+      
+      // Упрощаем результат если нужно
+      const derivativeStr = derivativeNode.toString();
+      let simplifiedStr = derivativeStr;
+      
+      if (simplify) {
+        try {
+          simplifiedStr = math.simplify(derivativeNode).toString();
+        } catch {
+          simplifiedStr = derivativeStr;
+        }
+      }
+
+      // Добавляем финальный шаг с результатом
+      allSteps.push({
+        step: allSteps.length + 1,
+        rule: 'Итоговый результат',
+        expression: simplifiedStr,
+        explanation: simplify && simplifiedStr !== derivativeStr
+          ? `После упрощения получаем окончательный результат производной: ${simplifiedStr}`
+          : `Окончательный результат производной ${order === 1 ? '' : `${order}-го порядка `}по переменной ${variable}: ${simplifiedStr}`,});
+
+      return {
+        original: expression,
+        derivative: derivativeStr,
+        simplified: simplify ? simplifiedStr : undefined,
+        steps: allSteps,
+        variable,
+        order,
+      };
+    } catch (error) {
+      throw new Error(`Ошибка вычисления производной: ${error.message}`);
+    }
+  }
+
+  // Метод для вычисления производной с графиками
+  calculateDerivativeWithGraph(data: DerivativeDto): DerivativeGraphResult {
+    const derivativeResult = this.calculateDerivativeDetailed(data);
+    const { xMin = -10, xMax = 10 } = data;
+    const numPoints = 200;
+    const step = (xMax - xMin) / numPoints;
+
+    // Преобразуем выражение для вычисления
+    const processedExpression = data.expression
+      .replace(/ln\(/g, 'log(')
+      .replace(/tg\(/g, 'tan(')
+      .replace(/ctg\(/g, 'cot(')
+      .replace(/arctg\(/g, 'atan(')
+      .replace(/arcsin\(/g, 'asin(')
+      .replace(/arccos\(/g, 'acos(');
+
+    const originalData: Array<{ x: number; y: number }> = [];
+    const derivativeData: Array<{ x: number; y: number }> = [];
+
+    for (let i = 0; i <= numPoints; i++) {
+      const x = xMin + i * step;
+      
+      try {
+        // Вычисляем значение функции
+        const yOriginal = math.evaluate(processedExpression, { [data.variable]: x });
+        if (typeof yOriginal === 'number' && isFinite(yOriginal)) {
+          originalData.push({ x, y: yOriginal });
+        }
+
+        // Вычисляем значение производной
+        const yDerivative = math.evaluate(derivativeResult.simplified || derivativeResult.derivative, { [data.variable]: x });
+        if (typeof yDerivative === 'number' && isFinite(yDerivative)) {
+          derivativeData.push({ x, y: yDerivative });
+        }
+      } catch {
+        // Пропускаем точки с ошибками вычисления
+      }
+    }
+
+    return {
+      ...derivativeResult,
+      graphData: {
+        original: originalData,
+        derivative: derivativeData,
+        xMin,
+        xMax,
+      },
+    };
+  }
+
+  // Метод для вычисления значения производной в точке
+  calculateDerivativeAtPoint(data: DerivativeAtPointDto): DerivativeAtPointResult {
+    const { expression, variable, point, order = 1 } = data;
+    
+    try {
+      // Преобразуем выражение
+      const processedExpression = expression
+        .replace(/ln\(/g, 'log(')
+        .replace(/tg\(/g, 'tan(')
+        .replace(/ctg\(/g, 'cot(')
+        .replace(/arctg\(/g, 'atan(')
+        .replace(/arcsin\(/g, 'asin(')
+        .replace(/arccos\(/g, 'acos(');
+      
+      const node = math.parse(processedExpression);
+      let derivativeNode = node;
+      
+      // Вычисляем производную нужного порядка
+      for (let i = 0; i < order; i++) {
+        derivativeNode = math.derivative(derivativeNode, variable);
+      }
+      
+      const derivativeStr = derivativeNode.toString();
+      const simplifiedStr = math.simplify(derivativeNode).toString();
+      
+      // Вычисляем значения в точке
+      const functionValue = math.evaluate(processedExpression, { [variable]: point });
+      const derivativeValue = math.evaluate(simplifiedStr, { [variable]: point });
+      
+      // Уравнение касательной: y = f'(a)(x - a) + f(a)
+      const tangentLine = `${derivativeValue} * (x - ${point}) + ${functionValue}`;
+      
+      return {
+        original: expression,
+        derivative: simplifiedStr,
+        point,
+        value: derivativeValue,
+        functionValue,
+        tangentLine: math.simplify(tangentLine).toString(),
+      };
+    } catch (error) {
+      throw new Error(`Ошибка вычисления производной в точке: ${error.message}`);
+    }
+  }
+
+  // Получить детальные шаги решения
+  private getDetailedDerivativeSteps(node: math.MathNode, variable: string, orderNum: number): DerivativeStep[] {
+    const steps: DerivativeStep[] = [];
+    let stepNumber = 1;
+
+    // Начальное выражение
+    steps.push({
+      step: stepNumber++,
+      rule: orderNum > 1 ? `Производная ${orderNum}-го порядка` : 'Шаг 1: Исходная функция',
+      expression: node.toString(),
+      explanation: orderNum > 1 
+        ? `Мы уже вычислили производную ${orderNum - 1}-го порядка. Теперь дифференцируем ещё раз по переменной ${variable}.`
+        : `Дана функция f(${variable}) = ${node.toString()}. Найдём её производную по переменной ${variable}.`,
+    });
+
+    // Анализируем структуру выражения для детальных шагов
+    const detailedSteps = this.analyzeExpressionStructure(node, variable);
+    detailedSteps.forEach(s => {
+      steps.push({
+        step: stepNumber++,
+        ...s,
+      });
+    });
+
+    return steps;
+  }
+
+  // Анализ структуры выражения для генерации детальных шагов
+  private analyzeExpressionStructure(node: math.MathNode, variable: string): Array<{rule: string; expression: string; explanation: string}> {
+    const steps: Array<{rule: string; expression: string; explanation: string}> = [];
+    const type = node.type;
+
+    if (type === 'OperatorNode') {
+      const opNode = node as any;
+      const op = opNode.op;
+      const fn = opNode.fn;
+      const args = opNode.args;
+
+      // Обработка унарного минуса
+      if (fn === 'unaryMinus') {
+        steps.push({
+          rule: 'Производная функции с константным множителем',
+          expression: node.toString(),
+          explanation: `Производная выражения -f(${variable}) равна -f'(${variable}). Константный множитель (-1) выносится за знак производной: (-f)' = -f'. Дифференцируем ${args[0]?.toString()} и добавляем знак минус.`,
+        });
+        
+        if (this.containsVariable(args[0], variable)) {
+          steps.push({
+            rule: 'Дифференцирование внутренней функции',
+            expression: args[0]?.toString(),
+            explanation: `Находим производную функции ${args[0]?.toString()}, затем умножаем на -1.`,
+          });
+        }
+      } else if (fn === 'unaryPlus') {
+        // Унарный плюс не меняет выражение, просто дифференцируем аргумент
+        steps.push({
+          rule: 'Унарный плюс',
+          expression: node.toString(),
+          explanation: `Унарный плюс не влияет на значение функции, поэтому (+f)' = f'. Дифференцируем ${args[0]?.toString()} без изменений.`,
+        });
+      } else if (op === '+' || op === '-') {
+        steps.push({
+          rule: 'Правило суммы и разности',
+          expression: node.toString(),
+          explanation: `Производная суммы (или разности) функций равна сумме (или разности) их производных: (f ${op} g)' = f' ${op} g'. Вычислим производную каждого слагаемого отдельно.`,
+        });
+        
+        args.forEach((arg: math.MathNode, idx: number) => {
+          if (this.containsVariable(arg, variable)) {
+            steps.push({
+              rule: `Слагаемое ${idx + 1}`,
+              expression: arg.toString(),
+              explanation: `Дифференцируем слагаемое: ${arg.toString()}`,
+            });
+          }
+        });
+      } else if (op === '*') {
+        const hasConstant = args.some((arg: math.MathNode) => !this.containsVariable(arg, variable));
+        
+        if (hasConstant && args.length === 2) {
+          const constantArg = args.find((arg: math.MathNode) => !this.containsVariable(arg, variable));
+          const variableArg = args.find((arg: math.MathNode) => this.containsVariable(arg, variable));
+          
+          steps.push({
+            rule: 'Вынесение константы',
+            expression: node.toString(),
+            explanation: `Константный множитель ${constantArg?.toString()} можно вынести за знак производной: (C·f)' = C·f'. Дифференцируем только ${variableArg?.toString()}.`,
+          });
+        } else {
+          steps.push({
+            rule: 'Правило произведения (формула Лейбница)',
+            expression: node.toString(),
+            explanation: `Производная произведения двух функций: (u·v)' = u'·v + u·v'. Здесь u = ${args[0]?.toString()}, v = ${args[1]?.toString()}. Найдём u' и v', затем применим формулу.`,
+          });
+          
+          steps.push({
+            rule: 'Производная u',
+            expression: args[0]?.toString(),
+            explanation: `Находим производную первого сомножителя u = ${args[0]?.toString()}`,
+          });
+          
+          steps.push({
+            rule: 'Производная v',
+            expression: args[1]?.toString(),
+            explanation: `Находим производную второго сомножителя v = ${args[1]?.toString()}`,
+          });
+        }
+      } else if (op === '/') {
+        steps.push({
+          rule: 'Правило частного (дробь)',
+          expression: node.toString(),
+          explanation: `Производная частного: (u/v)' = (u'·v - u·v') / v². Числитель: u = ${args[0]?.toString()}, знаменатель: v = ${args[1]?.toString()}. Дифференцируем числитель и знаменатель отдельно.`,
+        });
+        
+        steps.push({
+          rule: 'Производная числителя',
+          expression: args[0]?.toString(),
+          explanation: `Находим производную числителя: (${args[0]?.toString()})'`,
+        });
+        
+        steps.push({
+          rule: 'Производная знаменателя',
+          expression: args[1]?.toString(),
+          explanation: `Находим производную знаменателя: (${args[1]?.toString()})'`,
+        });
+        
+        steps.push({
+          rule: 'Применение формулы',
+          expression: node.toString(),
+          explanation: `Подставляем найденные производные в формулу (u'·v - u·v') / v² и упрощаем.`,
+        });
+      } else if (op === '^') {
+        const base = args[0];
+        const exponent = args[1];
+        
+        if (!this.containsVariable(exponent, variable)) {
+          steps.push({
+            rule: 'Степенная функция',
+            expression: node.toString(),
+            explanation: `Производная степенной функции с постоянным показателем: (x^n)' = n·x^(n-1). В данном случае n = ${exponent?.toString()}.`,
+          });
+          
+          steps.push({
+            rule: 'Применение формулы',
+            expression: node.toString(),
+            explanation: `(${base?.toString()})^${exponent?.toString()}' = ${exponent?.toString()}·(${base?.toString()})^(${exponent?.toString()}-1)`,
+          });
+        } else {
+          steps.push({
+            rule: 'Показательная функция с переменным показателем',
+            expression: node.toString(),
+            explanation: `Когда и основание, и показатель зависят от ${variable}, используем логарифмическое дифференцирование: d/dx(u^v) = u^v·(v'·ln(u) + v·u'/u)`,
+          });
+        }
+      }
+    } else if (type === 'FunctionNode') {
+      const funcNode = node as any;
+      const funcName = funcNode.fn.name;
+      const arg = funcNode.args[0];
+      const argStr = arg?.toString();
+      
+      if (funcName === 'sin') {
+        steps.push({
+          rule: 'Производная синуса',
+          expression: node.toString(),
+          explanation: `Производная синуса: (sin(u))' = cos(u)·u'. В данном случае u = ${argStr}.`,
+        });
+        
+        if (argStr !== variable) {
+          steps.push({
+            rule: 'Правило цепочки (композиция)',
+            expression: argStr,
+            explanation: `Так как аргумент синуса не просто ${variable}, а ${argStr}, применяем правило цепочки: дифференцируем внешнюю функцию (sin), затем умножаем на производную внутренней функции (${argStr})'.`,
+          });
+        }
+      } else if (funcName === 'cos') {
+        steps.push({
+          rule: 'Производная косинуса',
+          expression: node.toString(),
+          explanation: `Производная косинуса: (cos(u))' = -sin(u)·u'. Важно не забыть знак минус! u = ${argStr}.`,
+        });
+        
+        if (argStr !== variable) {
+          steps.push({
+            rule: 'Правило цепочки',
+            expression: argStr,
+            explanation: `Применяем цепное правило: умножаем -sin(${argStr}) на производную аргумента (${argStr})'.`,
+          });
+        }
+      } else if (funcName === 'tan' || funcName === 'tg') {
+        steps.push({
+          rule: 'Производная тангенса',
+          expression: node.toString(),
+          explanation: `Производная тангенса: (tg(u))' = u'/cos²(u) = u'·(1 + tg²(u)). u = ${argStr}.`,
+        });
+      } else if (funcName === 'exp') {
+        steps.push({
+          rule: 'Производная экспоненты',
+          expression: node.toString(),
+          explanation: `Замечательное свойство экспоненты: (e^u)' = e^u·u'. Функция остаётся той же! u = ${argStr}.`,
+        });
+        
+        if (argStr !== variable) {
+          steps.push({
+            rule: 'Правило цепочки',
+            expression: argStr,
+            explanation: `Дифференцируем показатель степени: (${argStr})' и умножаем на e^(${argStr}).`,
+          });
+        }
+      } else if (funcName === 'log' || funcName === 'ln') {
+        steps.push({
+          rule: 'Производная натурального логарифма',
+          expression: node.toString(),
+          explanation: `Производная ln(u): (ln(u))' = u'/u. Производная аргумента делится на сам аргумент. u = ${argStr}.`,
+        });
+        
+        if (argStr !== variable) {
+          steps.push({
+            rule: 'Правило цепочки',
+            expression: argStr,
+            explanation: `Вычисляем (${argStr})' и делим на ${argStr}.`,
+          });
+        }
+      } else if (funcName === 'sqrt') {
+        steps.push({
+          rule: 'Производная квадратного корня',
+          expression: node.toString(),
+          explanation: `Производная корня: (√u)' = u'/(2√u). Можно также записать как (u^(1/2))' = (1/2)·u^(-1/2)·u'. u = ${argStr}.`,
+        });
+        
+        if (argStr !== variable) {
+          steps.push({
+            rule: 'Правило цепочки',
+            expression: argStr,
+            explanation: `Дифференцируем подкоренное выражение: (${argStr})' и делим на 2√(${argStr}).`,
+          });
+        }
+      } else if (funcName === 'abs') {
+        steps.push({
+          rule: 'Производная модуля',
+          expression: node.toString(),
+          explanation: `Производная модуля: (|u|)' = u'·u/|u| = u'·sign(u). Внимание: в точке u=0 производная не существует! u = ${argStr}.`,
+        });
+      }
+    } else if (type === 'SymbolNode') {
+      const symbolNode = node as any;
+      if (symbolNode.name === variable) {
+        steps.push({
+          rule: 'Производная независимой переменной',
+          expression: variable,
+          explanation: `Производная переменной по самой себе всегда равна 1: d${variable}/d${variable} = 1. Это базовое правило дифференцирования.`,
+        });
+      } else {
+        steps.push({
+          rule: 'Производная константы',
+          expression: symbolNode.name,
+          explanation: `${symbolNode.name} — это константа (не зависит от ${variable}), поэтому её производная равна 0. Константы "исчезают" при дифференцировании.`,
+        });
+      }
+    } else if (type === 'ConstantNode') {
+      steps.push({
+        rule: 'Производная числовой константы',
+        expression: node.toString(),
+        explanation: `Производная любого числа равна 0, так как константа не изменяется: d(C)/d${variable} = 0.`,
+      });
+    }
+
+    return steps;
+  }
+
+  // Проверка, содержит ли узел переменную
+  private containsVariable(node: math.MathNode, variable: string): boolean {
+    const nodeStr = node.toString();
+    return nodeStr.includes(variable);
+  }
+
+  // Анализ узла для генерации шагов
+  private analyzeNodeForSteps(node: math.MathNode, variable: string, steps: DerivativeStep[], stepNumber: number): void {
+    const type = node.type;
+    const nodeStr = node.toString();
+
+    if (type === 'OperatorNode') {
+      const opNode = node as any;
+      const op = opNode.op;
+      
+      if (op === '+' || op === '-') {
+        steps.push({
+          step: stepNumber++,
+          rule: 'Правило суммы/разности',
+          expression: nodeStr,
+          explanation: `Производная суммы/разности равна сумме/разности производных: (f ± g)' = f' ± g'`,
+        });
+      } else if (op === '*') {
+        steps.push({
+          step: stepNumber++,
+          rule: 'Правило произведения',
+          expression: nodeStr,
+          explanation: `Применяем правило произведения: (f·g)' = f'·g + f·g'`,
+        });
+      } else if (op === '/') {
+        steps.push({
+          step: stepNumber++,
+          rule: 'Правило частного',
+          expression: nodeStr,
+          explanation: `Применяем правило частного: (f/g)' = (f'·g - f·g') / g²`,
+        });
+      } else if (op === '^') {
+        steps.push({
+          step: stepNumber++,
+          rule: 'Правило степенной функции',
+          expression: nodeStr,
+          explanation: `Применяем правило: (xⁿ)' = n·xⁿ⁻¹`,
+        });
+      }
+    } else if (type === 'FunctionNode') {
+      const funcNode = node as any;
+      const funcName = funcNode.fn.name;
+      
+      if (funcName === 'sin') {
+        steps.push({
+          step: stepNumber++,
+          rule: 'Производная синуса',
+          expression: nodeStr,
+          explanation: `(sin(u))' = cos(u)·u'`,
+        });
+      } else if (funcName === 'cos') {
+        steps.push({
+          step: stepNumber++,
+          rule: 'Производная косинуса',
+          expression: nodeStr,
+          explanation: `(cos(u))' = -sin(u)·u'`,
+        });
+      } else if (funcName === 'tan' || funcName === 'tg') {
+        steps.push({
+          step: stepNumber++,
+          rule: 'Производная тангенса',
+          expression: nodeStr,
+          explanation: `(tg(u))' = u' / cos²(u)`,
+        });
+      } else if (funcName === 'exp') {
+        steps.push({
+          step: stepNumber++,
+          rule: 'Производная экспоненты',
+          expression: nodeStr,
+          explanation: `(eᵘ)' = eᵘ·u'`,
+        });
+      } else if (funcName === 'log' || funcName === 'ln') {
+        steps.push({
+          step: stepNumber++,
+          rule: 'Производная логарифма',
+          expression: nodeStr,
+          explanation: `(ln(u))' = u' / u`,
+        });
+      } else if (funcName === 'sqrt') {
+        steps.push({
+          step: stepNumber++,
+          rule: 'Производная корня',
+          expression: nodeStr,
+          explanation: `(√u)' = u' / (2√u)`,
+        });
+      }
+    } else if (type === 'SymbolNode') {
+      const symbolNode = node as any;
+      if (symbolNode.name === variable) {
+        steps.push({
+          step: stepNumber++,
+          rule: 'Производная переменной',
+          expression: variable,
+          explanation: `(${variable})' = 1`,
+        });
+      } else {
+        steps.push({
+          step: stepNumber++,
+          rule: 'Производная константы',
+          expression: nodeStr,
+          explanation: `(C)' = 0`,
+        });
+      }
+    } else if (type === 'ConstantNode') {
+      steps.push({
+        step: stepNumber++,
+        rule: 'Производная константы',
+        expression: nodeStr,
+        explanation: `(C)' = 0`,
+      });
+    }
+  }
+
+  // Старый метод для обратной совместимости
+  calculateDerivative(data: CalculusDto): CalculusResult {
+    const { expression, variable } = data;
+    
+    try {
+      const derivativeResult = this.calculateDerivativeDetailed({
+        expression,
+        variable,
+        order: 1,
+        simplify: true,
+      });
+
+      return {
+        result: derivativeResult.simplified || derivativeResult.derivative,
+        steps: derivativeResult.steps.map(s => `${s.rule}: ${s.explanation}`),
+        latex: this.toLatex(derivativeResult.simplified || derivativeResult.derivative),
+      };
+    } catch (error) {
+      throw new Error(`Ошибка вычисления производной: ${error.message}`);
+    }
+  }
+
+  calculateIntegral(data: CalculusDto): CalculusResult {
+    const { expression, variable, bounds } = data;
+    
+    try {
+      let integral: string;
+      let steps: string[];
+      
+      if (bounds) {
+        // Определенный интеграл
+        integral = this.simplifyDefiniteIntegral(expression, variable, bounds);
+        steps = this.getDefiniteIntegralSteps(expression, variable, bounds);
+      } else {
+        // Неопределенный интеграл
+        integral = this.simplifyIntegral(expression, variable);
+        steps = this.getIntegralSteps(expression, variable);
+      }
+      
+      const latex = this.toLatex(integral);
+
+      return {
+        result: integral,
+        steps,
+        latex,
+      };
+    } catch (error) {
+      throw new Error(`Ошибка вычисления интеграла: ${error.message}`);
+    }
+  }
+
+  private simplifyDerivative(expression: string, variable: string): string {
+    // Упрощенная реализация для базовых функций
+    const cleanExpr = expression.replace(/\s/g, '');
+    
+    // Производная от x^n
+    const powerMatch = cleanExpr.match(new RegExp(`${variable}\\^(\\d+)`, 'g'));
+    if (powerMatch) {
+      for (const match of powerMatch) {
+        const power = parseInt(match.split('^')[1]);
+        const newPower = power - 1;
+        const coefficient = power;
+        
+        if (newPower === 0) {
+          cleanExpr.replace(match, coefficient.toString());
+        } else if (newPower === 1) {
+          cleanExpr.replace(match, `${coefficient}*${variable}`);
+        } else {
+          cleanExpr.replace(match, `${coefficient}*${variable}^${newPower}`);
+        }
+      }
+    }
+    
+    // Производная от константы * x
+    const linearMatch = cleanExpr.match(new RegExp(`(\\d+)\\*?${variable}`, 'g'));
+    if (linearMatch) {
+      for (const match of linearMatch) {
+        const coefficient = match.replace(`*${variable}`, '').replace(variable, '1');
+        cleanExpr.replace(match, coefficient);
+      }
+    }
+    
+    // Производная от константы = 0
+    const constantMatch = cleanExpr.match(/\d+/g);
+    if (constantMatch && !cleanExpr.includes(variable)) {
+      return '0';
+    }
+    
+    return cleanExpr || '0';
+  }
+
+  private simplifyIntegral(expression: string, variable: string): string {
+    const cleanExpr = expression.replace(/\s/g, '');
+    
+    try {
+      // Таблица известных интегралов
+      const integralTable: { [key: string]: string } = {
+        // Основные
+        [`${variable}`]: `${variable}^2/2`,
+        [`${variable}^2`]: `${variable}^3/3`,
+        [`${variable}^3`]: `${variable}^4/4`,
+        [`${variable}^4`]: `${variable}^5/5`,
+        
+        // Тригонометрические
+        [`sin(${variable})`]: `-cos(${variable})`,
+        [`cos(${variable})`]: `sin(${variable})`,
+        [`tan(${variable})`]: `-log(abs(cos(${variable})))`,
+        
+        // Показательные
+        [`exp(${variable})`]: `exp(${variable})`,
+        [`e^${variable}`]: `exp(${variable})`,
+        
+        // Логарифмические
+        [`1/${variable}`]: `log(abs(${variable}))`,
+        [`log(${variable})`]: `${variable}*log(${variable})-${variable}`,
+      };
+
+      // Проверка точного совпадения
+      if (integralTable[cleanExpr]) {
+        return integralTable[cleanExpr] + ' + C';
+      }
+
+      // Интеграл произведения x * exp(x) - интегрирование по частям
+      if (cleanExpr === `${variable}*exp(${variable})` || cleanExpr === `exp(${variable})*${variable}`) {
+        return `(${variable}-1)*exp(${variable}) + C`;
+      }
+
+      // Интеграл x * sin(x) - интегрирование по частям
+      if (cleanExpr === `${variable}*sin(${variable})` || cleanExpr === `sin(${variable})*${variable}`) {
+        return `sin(${variable})-${variable}*cos(${variable}) + C`;
+      }
+
+      // Интеграл x * cos(x) - интегрирование по частям
+      if (cleanExpr === `${variable}*cos(${variable})` || cleanExpr === `cos(${variable})*${variable}`) {
+        return `cos(${variable})+${variable}*sin(${variable}) + C`;
+      }
+
+      // Интеграл sin(x) * cos(x)
+      if (cleanExpr === `sin(${variable})*cos(${variable})` || cleanExpr === `cos(${variable})*sin(${variable})`) {
+        return `sin(${variable})^2/2 + C`;
+      }
+
+      // Попытка обработать x^n
+      const powerMatch = cleanExpr.match(new RegExp(`${variable}\\^(\\d+)`));
+      if (powerMatch) {
+        const power = parseInt(powerMatch[1]);
+        const newPower = power + 1;
+        return `1/${newPower}*${variable}^${newPower} + C`;
+      }
+
+      // Попытка обработать коэффициент * x^n
+      const coeffPowerMatch = cleanExpr.match(new RegExp(`(\\d+)\\*${variable}\\^(\\d+)`));
+      if (coeffPowerMatch) {
+        const coeff = parseInt(coeffPowerMatch[1]);
+        const power = parseInt(coeffPowerMatch[2]);
+        const newPower = power + 1;
+        return `${coeff}/${newPower}*${variable}^${newPower} + C`;
+      }
+
+      // Если не удалось распознать, возвращаем общую форму
+      return `∫(${expression})d${variable} + C`;
+    } catch (error) {
+      return 'C';
+    }
+  }
+
+  private simplifyDefiniteIntegral(expression: string, variable: string, bounds: { lower: number; upper: number }): string {
+    const indefinite = this.simplifyIntegral(expression, variable);
+    const upper = this.evaluateExpression(indefinite.replace(' + C', ''), variable, bounds.upper);
+    const lower = this.evaluateExpression(indefinite.replace(' + C', ''), variable, bounds.lower);
+    return (upper - lower).toString();
+  }
+
+  private evaluateExpression(expression: string, variable: string, value: number): number {
+    // Упрощенная оценка выражения
+    const expr = expression.replace(new RegExp(variable, 'g'), value.toString());
+    try {
+      return math.evaluate(expr);
+    } catch {
+      return 0;
+    }
+  }
+
+  private getDerivativeSteps(expression: string, variable: string): string[] {
+    return [
+      `Исходная функция: ${expression}`,
+      'Применяем правила дифференцирования:',
+      '• d/dx(x^n) = n*x^(n-1)',
+      '• d/dx(c*x) = c',
+      '• d/dx(c) = 0',
+      `Результат: ${this.simplifyDerivative(expression, variable)}`
+    ];
+  }
+
+  private getIntegralSteps(expression: string, variable: string): string[] {
+    const cleanExpr = expression.replace(/\s/g, '');
+    const result = this.simplifyIntegral(expression, variable);
+    const steps = [
+      `Исходная функция: ${expression}`,
+      'Применяем правила интегрирования:'
+    ];
+
+    // Определяем, какое правило применяется
+    if (cleanExpr.includes('*exp(') || cleanExpr.includes('exp(') && cleanExpr.includes('*')) {
+      steps.push('• Интегрирование по частям: ∫u·dv = u·v - ∫v·du');
+      steps.push(`• Для ${variable}·exp(${variable}): u = ${variable}, dv = exp(${variable})d${variable}`);
+    } else if (cleanExpr.includes('*sin(') || cleanExpr.includes('*cos(')) {
+      steps.push('• Интегрирование по частям: ∫u·dv = u·v - ∫v·du');
+    } else if (cleanExpr.includes('sin(') && cleanExpr.includes('cos(')) {
+      steps.push('• Используем формулу: sin(x)·cos(x) = sin(2x)/2');
+    } else if (cleanExpr.match(/\^\d+/)) {
+      steps.push('• ∫(x^n)dx = x^(n+1)/(n+1) + C');
+    } else if (cleanExpr.includes('sin(')) {
+      steps.push('• ∫sin(x)dx = -cos(x) + C');
+    } else if (cleanExpr.includes('cos(')) {
+      steps.push('• ∫cos(x)dx = sin(x) + C');
+    } else if (cleanExpr.includes('exp(')) {
+      steps.push('• ∫exp(x)dx = exp(x) + C');
+    } else if (cleanExpr === '1/' + variable) {
+      steps.push('• ∫(1/x)dx = ln|x| + C');
+    } else {
+      steps.push('• ∫(x^n)dx = x^(n+1)/(n+1) + C');
+      steps.push('• ∫(c)dx = c·x + C');
+    }
+
+    steps.push(`Результат: ${result}`);
+    return steps;
+  }
+
+  private getDefiniteIntegralSteps(expression: string, variable: string, bounds: { lower: number; upper: number }): string[] {
+    const indefinite = this.simplifyIntegral(expression, variable);
+    return [
+      `Исходная функция: ${expression}`,
+      'Находим первообразную:',
+      `F(x) = ${indefinite}`,
+      `Вычисляем F(${bounds.upper}) - F(${bounds.lower}):`,
+      `F(${bounds.upper}) = ${this.evaluateExpression(indefinite.replace(' + C', ''), variable, bounds.upper)}`,
+      `F(${bounds.lower}) = ${this.evaluateExpression(indefinite.replace(' + C', ''), variable, bounds.lower)}`,
+      `Результат: ${this.simplifyDefiniteIntegral(expression, variable, bounds)}`
+    ];
+  }
+
+  private toLatex(expression: string): string {
+    // Простое преобразование в LaTeX
+    return expression
+      .replace(/\^/g, '^')
+      .replace(/\*/g, ' \\cdot ')
+      .replace(/\//g, ' \\div ');
+  }
+}
+
