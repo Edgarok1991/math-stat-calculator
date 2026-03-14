@@ -4,15 +4,13 @@
   "description": "Современное приложение для математических и статистических расчетов",
   "private": true,
   "workspaces": [
-    "frontend",
     "backend"
   ],
   "scripts": {
     "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
-    "dev:frontend": "cd frontend && npm run dev",
+    "dev:frontend": "cd .. && npm run dev",
     "dev:backend": "cd backend && npm run start:dev",
-    "build": "npm run build:frontend && npm run build:backend",
-    "build:frontend": "cd frontend && npm run build",
+    "build": "npm run build:backend",
     "build:backend": "cd backend && npm run build",
     "install:all": "npm install && cd frontend && npm install && cd ../backend && npm install"
   },
