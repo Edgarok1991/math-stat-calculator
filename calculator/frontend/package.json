@@ -18,7 +18,7 @@
     "mathjs": "^14.8.2",
     "mobx": "^6.15.0",
     "mobx-react-lite": "^4.1.1",
-    "next": "15.5.4",
+    "next": "15.5.10",
     "plotly.js": "^3.1.1",
     "react": "19.1.0",
     "react-dom": "19.1.0",
@@ -36,7 +36,7 @@
     "@types/react-dom": "^19",
     "@types/react-plotly.js": "^2.6.3",
     "eslint": "^9",
-    "eslint-config-next": "15.5.4",
+    "eslint-config-next": "15.5.10",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
