@@ -100,13 +100,6 @@ export class AuthService {
       throw new UnauthorizedException('Неверный email или пароль');
     }
 
-    // Проверка подтверждения email
-    if (!user.emailVerified) {
-      throw new UnauthorizedException(
-        'Email не подтверждён. Проверьте почту и перейдите по ссылке активации.',
-      );
-    }
-
     // Генерация токена
     const token = this.generateToken(user.id, user.email);
 
