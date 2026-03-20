@@ -10,25 +10,25 @@ export const ThemeToggle = () => {
   return (
     <motion.button
       onClick={toggleTheme}
-      className="relative w-14 h-8 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:ring-offset-2 focus:ring-offset-[#050b14]"
+      className="relative w-14 h-8 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:ring-offset-2 focus:ring-offset-[#1c1917]"
       style={{
-        background: theme === 'midnight' ? 'rgba(212, 175, 55, 0.2)' : 'var(--border)',
+        background: theme === 'luxury' ? 'rgba(212, 175, 55, 0.2)' : 'var(--border)',
         border: '1px solid rgba(212, 175, 55, 0.4)',
         boxShadow: 'var(--shadow)'
       }}
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
-      aria-label={`Переключить на ${theme === 'midnight' ? 'светлую' : 'тёмную'} тему`}
+      aria-label={`Переключить на ${theme === 'luxury' ? 'светлую' : 'тёмную люкс'} тему`}
     >
       <motion.div
         className="absolute top-1 left-1 w-6 h-6 rounded-full flex items-center justify-center"
         style={{
-          background: theme === 'midnight' ? 'var(--gradient-primary)' : 'white',
-          color: theme === 'midnight' ? '#0a1628' : '#D4AF37',
+          background: theme === 'luxury' ? 'var(--gradient-primary)' : 'white',
+          color: theme === 'luxury' ? '#1c1917' : '#b8962e',
           boxShadow: 'var(--shadow)'
         }}
         animate={{
-          x: theme === 'midnight' ? 0 : 24,
+          x: theme === 'luxury' ? 0 : 24,
         }}
         transition={{
           type: 'spring',
@@ -36,7 +36,7 @@ export const ThemeToggle = () => {
           damping: 30
         }}
       >
-        {theme === 'midnight' ? (
+        {theme === 'luxury' ? (
           <Moon className="w-4 h-4" />
         ) : (
           <Sun className="w-4 h-4" />

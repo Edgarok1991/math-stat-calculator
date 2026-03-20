@@ -63,7 +63,7 @@ export default function AdminPage() {
             <code className="text-sm px-3 py-1 rounded" style={{ color: 'var(--foreground)', background: 'var(--background-tertiary)' }}>
               backend/prisma/dev.db
             </code>
-            <p className="text-sm text-blue-700 mt-3">
+            <p className="text-sm text-[#9a8b75] mt-3">
               💡 Вы можете открыть этот файл в любом SQLite клиенте:
             </p>
             <ul className="text-sm mt-2 ml-4 list-disc" style={{ color: 'var(--foreground-secondary)' }}>
@@ -121,15 +121,15 @@ export default function AdminPage() {
           </div>
 
           {/* Download Links */}
-          <div className="p-6 border-2 border-green-500/50 rounded-xl bg-green-900/20">
-            <h3 className="font-semibold text-green-300 mb-4">💡 Рекомендуемые инструменты для просмотра:</h3>
+          <div className="p-6 border-2 border-[#D4AF37]/45 rounded-xl bg-[rgba(212,175,55,0.08)]">
+            <h3 className="font-semibold text-[#d4c4a0] mb-4">💡 Рекомендуемые инструменты для просмотра:</h3>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <a
                 href="https://sqlitebrowser.org/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block p-4 border border-green-500/50 rounded-lg hover:shadow-md transition-shadow"
+                className="block p-4 border border-[#D4AF37]/45 rounded-lg hover:shadow-md transition-shadow"
               >
                 <h4 className="font-semibold mb-1" style={{ color: 'var(--foreground)' }}>DB Browser for SQLite</h4>
                 <p className="text-sm" style={{ color: 'var(--foreground-secondary)' }}>Бесплатно, простой интерфейс</p>
@@ -140,7 +140,7 @@ export default function AdminPage() {
                 href="https://tableplus.com/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block p-4 border border-green-500/50 rounded-lg hover:shadow-md transition-shadow"
+                className="block p-4 border border-[#D4AF37]/45 rounded-lg hover:shadow-md transition-shadow"
               >
                 <h4 className="font-semibold mb-1" style={{ color: 'var(--foreground)' }}>TablePlus</h4>
                 <p className="text-sm" style={{ color: 'var(--foreground-secondary)' }}>Красивый, платный</p>
@@ -151,7 +151,7 @@ export default function AdminPage() {
                 href="https://dbeaver.io/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block p-4 border border-green-500/50 rounded-lg hover:shadow-md transition-shadow"
+                className="block p-4 border border-[#D4AF37]/45 rounded-lg hover:shadow-md transition-shadow"
               >
                 <h4 className="font-semibold mb-1" style={{ color: 'var(--foreground)' }}>DBeaver</h4>
                 <p className="text-sm" style={{ color: 'var(--foreground-secondary)' }}>Мощный, бесплатный</p>

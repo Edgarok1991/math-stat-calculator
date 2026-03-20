@@ -283,7 +283,7 @@ function ClusteringPage() {
                     {result.finalDistance !== undefined && (
                       <div className="rounded-lg p-4 shadow-sm" style={{ background: 'var(--background-tertiary)' }}>
                         <span className="font-medium" style={{ color: 'var(--foreground-secondary)' }}>Расстояние между кластерами:</span>
-                        <p className="text-2xl font-bold text-green-400">
+                        <p className="text-2xl font-bold text-[#c9b896]">
                           P = {result.finalDistance.toFixed(2)}
                         </p>
                       </div>
@@ -338,7 +338,7 @@ function ClusteringPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.7 }}
-              className="mt-8 rounded-lg p-6 border-2 border-green-500/50 bg-green-900/20"
+              className="mt-8 rounded-lg p-6 border-2 border-[#D4AF37]/45 bg-[rgba(212,175,55,0.08)]"
             >
               <h3 className="text-xl font-bold mb-3" style={{ color: 'var(--foreground)' }}>Заключение</h3>
               <p className="leading-relaxed" style={{ color: 'var(--foreground-secondary)' }}>
@@ -347,9 +347,9 @@ function ClusteringPage() {
                   "{result.method === 'single' ? 'ближнего соседа' : 
                     result.method === 'complete' ? 'дальнего соседа' : 'среднего'}"
                 </span>
-                {' '}получили <span className="font-bold text-green-400">{result.clusters.length} кластера</span>, 
+                {' '}получили <span className="font-bold text-[#c9b896]">{result.clusters.length} кластера</span>, 
                 расстояние между которыми равно{' '}
-                <span className="font-bold text-green-400">P = {result.finalDistance.toFixed(2)}</span>.
+                <span className="font-bold text-[#c9b896]">P = {result.finalDistance.toFixed(2)}</span>.
               </p>
               <p className="mt-3" style={{ color: 'var(--foreground-secondary)' }}>
                 Результаты иерархической классификации объектов представлены выше в виде дендрограммы.

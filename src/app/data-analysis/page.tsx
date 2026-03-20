@@ -19,8 +19,8 @@ const analysisTools = [
     ],
     href: '/clustering',
     gradient: 'gradient-success',
-    color: 'text-emerald-600',
-    bgColor: 'bg-emerald-50',
+    color: 'text-[#D4AF37]',
+    bgColor: 'bg-[rgba(212,175,55,0.08)]',
   },
   {
     icon: BarChart2,
@@ -35,8 +35,8 @@ const analysisTools = [
     ],
     href: '/anova',
     gradient: 'gradient-warning',
-    color: 'text-amber-600',
-    bgColor: 'bg-amber-50',
+    color: 'text-[#E8C547]',
+    bgColor: 'bg-[rgba(232,197,71,0.1)]',
   },
 ];
 
@@ -62,7 +62,7 @@ export default function DataAnalysisPage() {
   return (
     <div className="min-h-screen" style={{ background: 'var(--background)' }}>
       {/* Hero Section */}
-      <div className="relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #0a1628 0%, #0f1f38 50%, #050b14 100%)', borderBottom: '1px solid rgba(212,175,55,0.3)' }}>
+      <div className="relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #1c1917 0%, #292524 50%, #141210 100%)', borderBottom: '1px solid rgba(212,175,55,0.3)' }}>
         <div className="absolute inset-0 opacity-20">
           <div className="absolute inset-0" style={{
             backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.3'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
@@ -92,7 +92,7 @@ export default function DataAnalysisPage() {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="bg-white text-indigo-600 hover:bg-white/90 shadow-xl">
+              <Button size="lg" className="bg-[#faf6ef] text-[#1c1917] hover:bg-white shadow-xl border border-[#D4AF37]/40">
                 <Link href="#tools" className="flex items-center gap-2">
                   <Brain className="w-5 h-5" />
                   Выбрать инструмент
@@ -132,7 +132,7 @@ export default function DataAnalysisPage() {
                 {/* Icon and Title */}
                 <div className="flex items-start gap-4 mb-6">
                   <div className={`w-16 h-16 rounded-2xl ${tool.gradient} flex items-center justify-center group-hover:scale-110 transition-all duration-300 shadow-lg`}>
-                    <tool.icon className="w-8 h-8 text-white" />
+                    <tool.icon className="w-8 h-8 text-[#1c1917]" />
                   </div>
                   <div className="flex-1">
                     <h3 className="text-2xl font-bold mb-2" style={{ color: 'var(--foreground)' }}>
@@ -197,7 +197,7 @@ export default function DataAnalysisPage() {
                 className="text-center"
               >
                 <div className="w-16 h-16 gradient-primary rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-                  <benefit.icon className="w-8 h-8 text-white" />
+                  <benefit.icon className="w-8 h-8 text-[#1c1917]" />
                 </div>
                 <h3 className="text-xl font-bold mb-3" style={{ color: 'var(--foreground)' }}>
                   {benefit.title}
@@ -212,7 +212,7 @@ export default function DataAnalysisPage() {
       </div>
 
       {/* CTA Section */}
-      <div className="py-20" style={{ background: 'linear-gradient(135deg, #0a1628 0%, #0f1f38 100%)', borderTop: '1px solid rgba(212,175,55,0.3)' }}>
+      <div className="py-20" style={{ background: 'linear-gradient(135deg, #1c1917 0%, #292524 100%)', borderTop: '1px solid rgba(212,175,55,0.3)' }}>
         <div className="container mx-auto px-4 text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -226,7 +226,7 @@ export default function DataAnalysisPage() {
               Выберите инструмент анализа и получите подробные результаты с визуализацией
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="bg-white text-indigo-600 hover:bg-white/90 shadow-xl">
+              <Button size="lg" className="bg-[#faf6ef] text-[#1c1917] hover:bg-white shadow-xl border border-[#D4AF37]/40">
                 <Link href="/clustering" className="flex items-center gap-2">
                   <Brain className="w-5 h-5" />
                   Кластерный анализ

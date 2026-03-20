@@ -24,7 +24,7 @@ export default function Footer() {
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center space-x-3 mb-6">
               <div className="w-10 h-10 gradient-primary rounded-xl flex items-center justify-center shadow-lg">
-                <Calculator className="w-6 h-6 text-[#0a1628]" />
+                <Calculator className="w-6 h-6 text-[#1c1917]" />
               </div>
               <span className="text-2xl font-bold" style={{ color: 'var(--foreground)' }}>
                 MathCalc

@@ -206,7 +206,7 @@ function StatisticsPage() {
                   type="submit" 
                   loading={isLoading} 
                   disabled={isLoading}
-                  className="w-full h-11 text-base font-bold rounded-xl shadow-lg hover:shadow-xl transition-all hover:scale-105 gradient-primary text-white"
+                  className="w-full h-11 text-base font-bold rounded-xl shadow-lg hover:shadow-xl transition-all hover:scale-105 gradient-primary text-[#1c1917]"
                 >
                   {isLoading ? '⏳ Рассчитываем...' : '🧮 Рассчитать статистику'}
                 </Button>
@@ -255,24 +255,24 @@ function StatisticsPage() {
                 </div>
 
                 {/* Меры разброса */}
-                <div className="p-4 rounded-xl border-2 border-green-500/50 bg-green-900/20 shadow-lg hover:shadow-xl transition-shadow">
-                  <h4 className="font-bold text-green-300 mb-2 text-base flex items-center gap-2">
+                <div className="p-4 rounded-xl border-2 border-[#D4AF37]/45 bg-[rgba(212,175,55,0.08)] shadow-lg hover:shadow-xl transition-shadow">
+                  <h4 className="font-bold text-[#d4c4a0] mb-2 text-base flex items-center gap-2">
                     📏 Меры разброса (вариации)
                   </h4>
                   <div className="space-y-2 text-sm">
                   <div>
-                    <strong className="text-green-300">Размах (Range):</strong>
-                    <p className="ml-4 mt-1 text-green-200/90">Разница между максимальным и минимальным значением. 
+                    <strong className="text-[#d4c4a0]">Размах (Range):</strong>
+                    <p className="ml-4 mt-1 text-[#e8dcc8]/90">Разница между максимальным и минимальным значением. 
                     Простейшая мера разброса, но очень чувствительна к выбросам.</p>
                   </div>
                   <div>
-                    <strong className="text-green-300">Дисперсия (Variance):</strong>
-                    <p className="ml-4 mt-1 text-green-200/90">Среднее квадратов отклонений от среднего значения. 
+                    <strong className="text-[#d4c4a0]">Дисперсия (Variance):</strong>
+                    <p className="ml-4 mt-1 text-[#e8dcc8]/90">Среднее квадратов отклонений от среднего значения. 
                     Показывает, насколько данные "разбросаны" относительно среднего. Измеряется в квадратах единиц.</p>
                   </div>
                   <div>
-                    <strong className="text-green-300">Стандартное отклонение (Std Dev):</strong>
-                    <p className="ml-4 mt-1 text-green-200/90">Квадратный корень из дисперсии. 
+                    <strong className="text-[#d4c4a0]">Стандартное отклонение (Std Dev):</strong>
+                    <p className="ml-4 mt-1 text-[#e8dcc8]/90">Квадратный корень из дисперсии. 
                     Показывает типичное отклонение от среднего в исходных единицах измерения. 
                     ~68% данных находится в пределах ±1σ от среднего (для нормального распределения).</p>
                   </div>
@@ -308,26 +308,26 @@ function StatisticsPage() {
                 </div>
 
                 {/* Границы и выбросы */}
-                <div className="p-4 rounded-xl border-2 border-amber-500/50 bg-amber-900/20 shadow-lg hover:shadow-xl transition-shadow">
-                  <h4 className="font-bold text-amber-300 mb-2 text-base flex items-center gap-2">
+                <div className="p-4 rounded-xl border-2 border-[#D4AF37]/40 bg-[rgba(212,175,55,0.08)] shadow-lg hover:shadow-xl transition-shadow">
+                  <h4 className="font-bold text-[#E8C547] mb-2 text-base flex items-center gap-2">
                     🚨 Границы и выбросы
                   </h4>
                   <div className="space-y-2 text-sm">
                   <div>
-                    <strong className="text-amber-300">Минимум и Максимум:</strong>
-                    <p className="ml-4 mt-1 text-amber-200/90">Наименьшее и наибольшее значения в наборе данных.</p>
+                    <strong className="text-[#E8C547]">Минимум и Максимум:</strong>
+                    <p className="ml-4 mt-1 text-[#e8dcc8]/90">Наименьшее и наибольшее значения в наборе данных.</p>
                   </div>
                   <div>
-                    <strong className="text-amber-300">Нижняя граница (Lower Fence):</strong>
-                    <p className="ml-4 mt-1 text-amber-200/90">Q1 - 1.5·IQR. Значения ниже этой границы считаются выбросами.</p>
+                    <strong className="text-[#E8C547]">Нижняя граница (Lower Fence):</strong>
+                    <p className="ml-4 mt-1 text-[#e8dcc8]/90">Q1 - 1.5·IQR. Значения ниже этой границы считаются выбросами.</p>
                   </div>
                   <div>
-                    <strong className="text-amber-300">Верхняя граница (Upper Fence):</strong>
-                    <p className="ml-4 mt-1 text-amber-200/90">Q3 + 1.5·IQR. Значения выше этой границы считаются выбросами.</p>
+                    <strong className="text-[#E8C547]">Верхняя граница (Upper Fence):</strong>
+                    <p className="ml-4 mt-1 text-[#e8dcc8]/90">Q3 + 1.5·IQR. Значения выше этой границы считаются выбросами.</p>
                   </div>
                   <div>
-                    <strong className="text-amber-300">Выбросы (Outliers):</strong>
-                    <p className="ml-4 mt-1 text-amber-200/90">Значения, выходящие за пределы границ (метод Тьюки). 
+                    <strong className="text-[#E8C547]">Выбросы (Outliers):</strong>
+                    <p className="ml-4 mt-1 text-[#e8dcc8]/90">Значения, выходящие за пределы границ (метод Тьюки). 
                     Это нетипичные наблюдения, которые могут быть ошибками измерения или редкими событиями.</p>
                   </div>
                   </div>
@@ -379,7 +379,7 @@ function StatisticsPage() {
                 {/* Центральные тенденции */}
                 <AnimatedResult type="calculation" title="Центральные тенденции" delay={0.1}>
                   <div className="p-6 rounded-xl border-2" style={{ borderColor: 'var(--border)', background: 'var(--background-secondary)' }}>
-                    <h3 className="text-lg font-semibold mb-4 text-indigo-600">Центральные тенденции</h3>
+                    <h3 className="text-lg font-semibold mb-4 text-[#D4AF37]">Центральные тенденции</h3>
                     <div className="space-y-3">
                       <div>
                         <p className="text-sm" style={{ color: 'var(--foreground-secondary)' }}>Среднее</p>
@@ -478,7 +478,7 @@ function StatisticsPage() {
                 {/* Выбросы */}
                 {/* <AnimatedResult type="calculation" title="Выбросы" delay={0.6}>
                   <div className="p-6 rounded-xl border-2" style={{ borderColor: 'var(--border)', background: 'var(--background-secondary)' }}>
-                    <h3 className="text-lg font-semibold mb-4 text-red-600">Выбросы</h3>
+                    <h3 className="text-lg font-semibold mb-4 text-[#b87c7c]">Выбросы</h3>
                     {result.outliers.length > 0 ? (
                       <div>
                         <p className="text-sm mb-3" style={{ color: 'var(--foreground-secondary)' }}>
@@ -498,7 +498,7 @@ function StatisticsPage() {
                       </div>
                     ) : (
                       <div className="p-4 bg-green-50 rounded-lg border border-green-200">
-                        <p className="text-sm text-green-700">✓ Выбросов не обнаружено</p>
+                        <p className="text-sm text-[#78716c]">✓ Выбросов не обнаружено</p>
                       </div>
                     )}
                   </div>

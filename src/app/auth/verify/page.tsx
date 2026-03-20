@@ -81,7 +81,7 @@ function VerifyEmailContent() {
           {status === 'success' && (
             <>
               <div className="w-16 h-16 mx-auto mb-4">
-                <CheckCircle className="w-16 h-16 text-green-400" />
+                <CheckCircle className="w-16 h-16 text-[#c9b896]" />
               </div>
               <h2 className="text-2xl font-bold mb-2" style={{ color: 'var(--foreground)' }}>
                 Email подтверждён!
@@ -91,12 +91,12 @@ function VerifyEmailContent() {
               </p>
               
               {userData && (
-                <div className="p-4 rounded-lg mb-6 border border-green-500/50 bg-green-900/20">
-                  <p className="text-sm text-green-300">
+                <div className="p-4 rounded-lg mb-6 border border-[#D4AF37]/45 bg-[rgba(212,175,55,0.08)]">
+                  <p className="text-sm text-[#d4c4a0]">
                     <strong>Email:</strong> {userData.email}
                   </p>
                   {userData.name && (
-                    <p className="text-sm text-green-300 mt-1">
+                    <p className="text-sm text-[#d4c4a0] mt-1">
                       <strong>Имя:</strong> {userData.name}
                     </p>
                   )}
@@ -109,7 +109,7 @@ function VerifyEmailContent() {
                 </p>
                 <Button
                   onClick={() => router.push('/')}
-                  className="w-full gradient-primary text-[#0a1628] font-bold"
+                  className="w-full gradient-primary text-[#1c1917] font-bold"
                 >
                   Перейти сейчас
                 </Button>
@@ -132,7 +132,7 @@ function VerifyEmailContent() {
               <div className="space-y-3">
                 <Button
                   onClick={() => router.push('/auth')}
-                  className="w-full gradient-primary text-[#0a1628] font-bold"
+                  className="w-full gradient-primary text-[#1c1917] font-bold"
                 >
                   Вернуться к входу
                 </Button>

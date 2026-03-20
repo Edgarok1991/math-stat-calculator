@@ -197,7 +197,7 @@ function CalculusPage() {
                   setShowTangent(false);
                 }}
                 className={`px-8 py-3 rounded-md transition-all font-semibold flex items-center gap-2 ${
-                  activeTab === 'derivatives' ? 'gradient-primary text-white shadow-lg' : ''
+                  activeTab === 'derivatives' ? 'gradient-primary text-[#1c1917] shadow-lg' : ''
                 }`}
                 style={activeTab === 'derivatives' ? {} : { color: 'var(--foreground-secondary)' }}
               >
@@ -211,7 +211,7 @@ function CalculusPage() {
                   setIntegralResult(null);
                 }}
                 className={`px-8 py-3 rounded-md transition-all font-semibold flex items-center gap-2 ${
-                  activeTab === 'integrals' ? 'gradient-primary text-white shadow-lg' : ''
+                  activeTab === 'integrals' ? 'gradient-primary text-[#1c1917] shadow-lg' : ''
                 }`}
                 style={activeTab === 'integrals' ? {} : { color: 'var(--foreground-secondary)' }}
               >
@@ -279,8 +279,8 @@ function CalculusPage() {
                           <MathExpression expression={watchedDerivativeExpr} className="text-xl" />
                         </div>
                       )}
-                      {/* <div className="mt-3 p-3 bg-blue-50 rounded-lg">
-                        <p className="text-xs font-semibold text-blue-900 mb-2">⚡ Быстрый выбор примеров:</p>
+                      {/* <div className="mt-3 p-3 bg-[rgba(212,175,55,0.06)] rounded-lg">
+                        <p className="text-xs font-semibold text-[#57534e] mb-2">⚡ Быстрый выбор примеров:</p>
                         <div className="flex flex-wrap gap-2">
                           {[
                             { expr: 'x^2', label: 'x²' },
@@ -298,7 +298,7 @@ function CalculusPage() {
                               key={idx}
                               type="button"
                               onClick={() => derivativeForm.setValue('expression', example.expr)}
-                              className="px-3 py-1.5 bg-white border-2 border-blue-300 rounded-lg text-sm font-medium text-blue-700 hover:bg-blue-100 hover:border-blue-400 transition-all hover:scale-105"
+                              className="px-3 py-1.5 bg-white border-2 border-[#D4AF37]/35 rounded-lg text-sm font-medium text-[#9a8b75] hover:bg-[rgba(212,175,55,0.1)] hover:border-[#D4AF37]/55 transition-all hover:scale-105"
                             >
                               {example.label}
                             </button>
@@ -391,7 +391,7 @@ function CalculusPage() {
                   type="submit"
                   loading={isLoading}
                       disabled={isLoading}
-                      className="w-full h-14 text-lg font-bold rounded-xl shadow-lg hover:shadow-xl transition-all hover:scale-105 gradient-primary text-white"
+                      className="w-full h-14 text-lg font-bold rounded-xl shadow-lg hover:shadow-xl transition-all hover:scale-105 gradient-primary text-[#1c1917]"
                 >
                       {isLoading ? '⏳ Вычисляю...' : '🧮 Вычислить производную'}
                 </Button>
@@ -434,11 +434,11 @@ function CalculusPage() {
 
                       {/* Упрощённая форма */}
                       {derivativeResult.simplified && derivativeResult.simplified !== derivativeResult.derivative && (
-                        <div className="p-4 rounded-lg border-2 border-green-500/50 bg-green-900/20">
-                          <p className="text-sm text-green-400 mb-1 flex items-center gap-2">
+                        <div className="p-4 rounded-lg border-2 border-[#D4AF37]/45 bg-[rgba(212,175,55,0.08)]">
+                          <p className="text-sm text-[#c9b896] mb-1 flex items-center gap-2">
                             ✨ Упрощённая форма:
                           </p>
-                          <div className="text-2xl font-bold text-green-300">
+                          <div className="text-2xl font-bold text-[#d4c4a0]">
                             <MathExpression expression={derivativeResult.simplified} className="text-2xl" />
                           </div>
                         </div>
@@ -461,7 +461,7 @@ function CalculusPage() {
                           style={{ borderColor: 'var(--gold)', background: 'rgba(212,175,55,0.1)' }}
                         >
                           <div className="flex items-start gap-3">
-                            <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[#D4AF37] text-[#0a1628] flex items-center justify-center font-bold">
+                            <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[#D4AF37] text-[#1c1917] flex items-center justify-center font-bold">
                               {step.step}
                             </div>
                             <div className="flex-1 min-w-0">
@@ -626,15 +626,15 @@ function CalculusPage() {
                     {/* Информация о графиках */}
                     <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="p-4 rounded-lg border-l-4 border-[#3b82f6]" style={{ background: 'rgba(59,130,246,0.15)' }}>
-                        <h4 className="font-bold mb-2 text-blue-300">📘 Исходная функция f({derivativeResult.variable})</h4>
-                        <p className="text-sm text-blue-200/90">
+                        <h4 className="font-bold mb-2 text-[#e8d5a3]">📘 Исходная функция f({derivativeResult.variable})</h4>
+                        <p className="text-sm text-[#e8dcc8]/90">
                           Синяя сплошная линия показывает график исходной функции. Точки, где f'(x) = 0, являются 
                           <strong> экстремумами</strong> (максимумами или минимумами).
                         </p>
                           </div>
-                      <div className="p-4 rounded-lg border-l-4 border-red-500 bg-red-900/20">
-                        <h4 className="font-bold text-red-300 mb-2">📕 Производная f'({derivativeResult.variable})</h4>
-                        <p className="text-sm text-red-200/90">
+                      <div className="p-4 rounded-lg border-l-4 border-[#a67c7c] bg-[rgba(166,124,124,0.12)]">
+                        <h4 className="font-bold text-[#d4a89a] mb-2">📕 Производная f'({derivativeResult.variable})</h4>
+                        <p className="text-sm text-[#e8cfc8]/90">
                           Красная пунктирная линия показывает производную. Где она <strong>положительна</strong> — функция растёт, 
                           где <strong>отрицательна</strong> — функция убывает, где <strong>= 0</strong> — экстремум.
                         </p>
@@ -646,40 +646,40 @@ function CalculusPage() {
                       <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="mt-6 p-5 rounded-xl border-2 border-green-500/50 bg-green-900/20"
+                        className="mt-6 p-5 rounded-xl border-2 border-[#D4AF37]/45 bg-[rgba(212,175,55,0.08)]"
                       >
-                        <h4 className="text-lg font-bold text-green-300 mb-4">
+                        <h4 className="text-lg font-bold text-[#d4c4a0] mb-4">
                           🎯 Значения в точке {derivativeResult.variable} = {pointResult.point}
                         </h4>
                         
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                          <div className="p-4 rounded-lg border-2 border-green-500/50 shadow-sm" style={{ background: 'var(--background-tertiary)' }}>
-                            <p className="text-xs text-green-400 font-semibold mb-2">Значение функции:</p>
-                            <div className="text-xl font-bold text-green-300 flex items-baseline gap-2">
+                          <div className="p-4 rounded-lg border-2 border-[#D4AF37]/45 shadow-sm" style={{ background: 'var(--background-tertiary)' }}>
+                            <p className="text-xs text-[#c9b896] font-semibold mb-2">Значение функции:</p>
+                            <div className="text-xl font-bold text-[#d4c4a0] flex items-baseline gap-2">
                               <span>f({pointResult.point}) =</span>
                               <span className="text-2xl">{pointResult.functionValue.toFixed(4)}</span>
                             </div>
                           </div>
                           
-                          <div className="p-4 rounded-lg border-2 border-green-500/50 shadow-sm" style={{ background: 'var(--background-tertiary)' }}>
-                            <p className="text-xs text-green-400 font-semibold mb-2">Значение производной:</p>
-                            <div className="text-xl font-bold text-green-300 flex items-baseline gap-2">
+                          <div className="p-4 rounded-lg border-2 border-[#D4AF37]/45 shadow-sm" style={{ background: 'var(--background-tertiary)' }}>
+                            <p className="text-xs text-[#c9b896] font-semibold mb-2">Значение производной:</p>
+                            <div className="text-xl font-bold text-[#d4c4a0] flex items-baseline gap-2">
                               <span>f'({pointResult.point}) =</span>
                               <span className="text-2xl">{pointResult.value.toFixed(4)}</span>
                             </div>
                           </div>
                           
-                          <div className="p-4 rounded-lg border-2 border-green-500/50 shadow-sm" style={{ background: 'var(--background-tertiary)' }}>
-                            <p className="text-xs text-green-400 font-semibold mb-2">Уравнение касательной:</p>
-                            <div className="text-base font-bold text-green-300">
+                          <div className="p-4 rounded-lg border-2 border-[#D4AF37]/45 shadow-sm" style={{ background: 'var(--background-tertiary)' }}>
+                            <p className="text-xs text-[#c9b896] font-semibold mb-2">Уравнение касательной:</p>
+                            <div className="text-base font-bold text-[#d4c4a0]">
                               <span>y = </span>
                               <MathExpression expression={pointResult.tangentLine} />
                             </div>
                           </div>
                         </div>
 
-                        <div className="mt-4 p-3 rounded-lg bg-green-900/30">
-                          <p className="text-sm text-green-200">
+                        <div className="mt-4 p-3 rounded-lg bg-[rgba(212,175,55,0.12)]">
+                          <p className="text-sm text-[#e8dcc8]">
                             <strong>Геометрический смысл:</strong> Производная f'({pointResult.point}) = {pointResult.value.toFixed(4)} 
                             показывает <strong>угловой коэффициент</strong> касательной к графику функции в точке 
                             ({pointResult.point}, {pointResult.functionValue.toFixed(4)}). Это скорость изменения функции в данной точке.
@@ -713,11 +713,11 @@ function CalculusPage() {
                             { rule: '(C)\' = 0', desc: 'Константа' },
                             { rule: '(x)\' = 1', desc: 'Переменная' },
                           ].map((item, idx) => (
-                            <div key={idx} className="p-3 rounded-lg bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 transition-colors">
-                              <div className="font-semibold text-emerald-900 mb-0.5">
+                            <div key={idx} className="p-3 rounded-lg bg-[rgba(212,175,55,0.06)] border border-[#D4AF37]/25 hover:bg-[rgba(212,175,55,0.1)] transition-colors">
+                              <div className="font-semibold text-[#44403c] mb-0.5">
                                 <MathExpression expression={item.rule} className="text-sm" />
                               </div>
-                              <p className="text-xs text-emerald-700">{item.desc}</p>
+                              <p className="text-xs text-[#78716c]">{item.desc}</p>
                             </div>
                           ))}
                         </div>
@@ -729,21 +729,21 @@ function CalculusPage() {
                           Степени и корни
                         </h4>
                         <div className="space-y-2">
-                          <div className="p-3 rounded-lg bg-blue-50 border border-blue-200 hover:bg-blue-100 transition-colors">
-                            <div className="font-semibold text-blue-900 mb-0.5 text-sm">
+                          <div className="p-3 rounded-lg bg-[rgba(212,175,55,0.06)] border border-[#D4AF37]/25 hover:bg-[rgba(212,175,55,0.1)] transition-colors">
+                            <div className="font-semibold text-[#57534e] mb-0.5 text-sm">
                               <MathFormula>
                                 (<Pow base="x" exp="n" />)' = n·<Pow base="x" exp="n-1" />
                               </MathFormula>
                             </div>
-                            <p className="text-xs text-blue-700">Степенная функция</p>
+                            <p className="text-xs text-[#9a8b75]">Степенная функция</p>
                           </div>
-                          <div className="p-3 rounded-lg bg-blue-50 border border-blue-200 hover:bg-blue-100 transition-colors">
-                            <div className="font-semibold text-blue-900 mb-0.5 text-sm">
+                          <div className="p-3 rounded-lg bg-[rgba(212,175,55,0.06)] border border-[#D4AF37]/25 hover:bg-[rgba(212,175,55,0.1)] transition-colors">
+                            <div className="font-semibold text-[#57534e] mb-0.5 text-sm">
                               <MathFormula>
                                 (<Sqrt>x</Sqrt>)' = <Frac num="1" den={<>2<Sqrt>x</Sqrt></>} />
                               </MathFormula>
                             </div>
-                            <p className="text-xs text-blue-700">Квадратный корень</p>
+                            <p className="text-xs text-[#9a8b75]">Квадратный корень</p>
                           </div>
                         </div>
                       </div>
@@ -754,33 +754,33 @@ function CalculusPage() {
                           Тригонометрия
                         </h4>
                         <div className="space-y-2">
-                          <div className="p-3 rounded-lg bg-cyan-50 border border-cyan-200 hover:bg-cyan-100 transition-colors">
-                            <div className="font-semibold text-cyan-900 mb-0.5 text-sm">
+                          <div className="p-3 rounded-lg bg-[rgba(212,175,55,0.06)] border border-[#D4AF37]/25 hover:bg-[rgba(212,175,55,0.1)] transition-colors">
+                            <div className="font-semibold text-[#44403c] mb-0.5 text-sm">
                               <MathFormula>(sin x)' = cos x</MathFormula>
                             </div>
-                            <p className="text-xs text-cyan-700">Синус</p>
+                            <p className="text-xs text-[#78716c]">Синус</p>
                           </div>
-                          <div className="p-3 rounded-lg bg-cyan-50 border border-cyan-200 hover:bg-cyan-100 transition-colors">
-                            <div className="font-semibold text-cyan-900 mb-0.5 text-sm">
+                          <div className="p-3 rounded-lg bg-[rgba(212,175,55,0.06)] border border-[#D4AF37]/25 hover:bg-[rgba(212,175,55,0.1)] transition-colors">
+                            <div className="font-semibold text-[#44403c] mb-0.5 text-sm">
                               <MathFormula>(cos x)' = -sin x</MathFormula>
                             </div>
-                            <p className="text-xs text-cyan-700">Косинус</p>
+                            <p className="text-xs text-[#78716c]">Косинус</p>
                           </div>
-                          <div className="p-3 rounded-lg bg-cyan-50 border border-cyan-200 hover:bg-cyan-100 transition-colors">
-                            <div className="font-semibold text-cyan-900 mb-0.5 text-sm">
+                          <div className="p-3 rounded-lg bg-[rgba(212,175,55,0.06)] border border-[#D4AF37]/25 hover:bg-[rgba(212,175,55,0.1)] transition-colors">
+                            <div className="font-semibold text-[#44403c] mb-0.5 text-sm">
                               <MathFormula>
                                 (tg x)' = <Frac num="1" den={<Pow base="cos" exp="2" />} />(x)
                               </MathFormula>
                             </div>
-                            <p className="text-xs text-cyan-700">Тангенс</p>
+                            <p className="text-xs text-[#78716c]">Тангенс</p>
                           </div>
-                          <div className="p-3 rounded-lg bg-cyan-50 border border-cyan-200 hover:bg-cyan-100 transition-colors">
-                            <div className="font-semibold text-cyan-900 mb-0.5 text-sm">
+                          <div className="p-3 rounded-lg bg-[rgba(212,175,55,0.06)] border border-[#D4AF37]/25 hover:bg-[rgba(212,175,55,0.1)] transition-colors">
+                            <div className="font-semibold text-[#44403c] mb-0.5 text-sm">
                               <MathFormula>
                                 (ctg x)' = <Frac num="-1" den={<Pow base="sin" exp="2" />} />(x)
                               </MathFormula>
                             </div>
-                            <p className="text-xs text-cyan-700">Котангенс</p>
+                            <p className="text-xs text-[#78716c]">Котангенс</p>
                           </div>
                         </div>
                       </div>
@@ -791,37 +791,37 @@ function CalculusPage() {
                           Показательные и логарифмы
                         </h4>
                         <div className="space-y-2">
-                          <div className="p-3 rounded-lg bg-orange-50 border border-orange-200 hover:bg-orange-100 transition-colors">
-                            <div className="font-semibold text-orange-900 mb-0.5 text-sm">
+                          <div className="p-3 rounded-lg bg-[rgba(232,197,71,0.08)] border border-[#D4AF37]/30 hover:bg-[rgba(232,197,71,0.12)] transition-colors">
+                            <div className="font-semibold text-[#44403c] mb-0.5 text-sm">
                               <MathFormula>
                                 (<Pow base="e" exp="x" />)' = <Pow base="e" exp="x" />
                               </MathFormula>
                             </div>
-                            <p className="text-xs text-orange-700">Экспонента</p>
+                            <p className="text-xs text-[#78716c]">Экспонента</p>
                           </div>
-                          <div className="p-3 rounded-lg bg-orange-50 border border-orange-200 hover:bg-orange-100 transition-colors">
-                            <div className="font-semibold text-orange-900 mb-0.5 text-sm">
+                          <div className="p-3 rounded-lg bg-[rgba(232,197,71,0.08)] border border-[#D4AF37]/30 hover:bg-[rgba(232,197,71,0.12)] transition-colors">
+                            <div className="font-semibold text-[#44403c] mb-0.5 text-sm">
                               <MathFormula>
                                 (<Pow base="a" exp="x" />)' = <Pow base="a" exp="x" />·ln(a)
                               </MathFormula>
                             </div>
-                            <p className="text-xs text-orange-700">Показательная</p>
+                            <p className="text-xs text-[#78716c]">Показательная</p>
                           </div>
-                          <div className="p-3 rounded-lg bg-orange-50 border border-orange-200 hover:bg-orange-100 transition-colors">
-                            <div className="font-semibold text-orange-900 mb-0.5 text-sm">
+                          <div className="p-3 rounded-lg bg-[rgba(232,197,71,0.08)] border border-[#D4AF37]/30 hover:bg-[rgba(232,197,71,0.12)] transition-colors">
+                            <div className="font-semibold text-[#44403c] mb-0.5 text-sm">
                               <MathFormula>
                                 (ln x)' = <Frac num="1" den="x" />
                               </MathFormula>
                             </div>
-                            <p className="text-xs text-orange-700">Натуральный логарифм</p>
+                            <p className="text-xs text-[#78716c]">Натуральный логарифм</p>
                           </div>
-                          <div className="p-3 rounded-lg bg-orange-50 border border-orange-200 hover:bg-orange-100 transition-colors">
-                            <div className="font-semibold text-orange-900 mb-0.5 text-sm">
+                          <div className="p-3 rounded-lg bg-[rgba(232,197,71,0.08)] border border-[#D4AF37]/30 hover:bg-[rgba(232,197,71,0.12)] transition-colors">
+                            <div className="font-semibold text-[#44403c] mb-0.5 text-sm">
                               <MathFormula>
                                 (<Sub base="log" subscript="a" /> x)' = <Frac num="1" den="x·ln(a)" />
                               </MathFormula>
                             </div>
-                            <p className="text-xs text-orange-700">Логарифм по основанию a</p>
+                            <p className="text-xs text-[#78716c]">Логарифм по основанию a</p>
                           </div>
                         </div>
                       </div>
@@ -832,37 +832,37 @@ function CalculusPage() {
                           Обратные тригонометрические
                         </h4>
                         <div className="space-y-2">
-                          <div className="p-3 rounded-lg bg-pink-50 border border-pink-200 hover:bg-pink-100 transition-colors">
-                            <div className="font-semibold text-pink-900 mb-0.5 text-sm">
+                          <div className="p-3 rounded-lg bg-[rgba(212,175,55,0.06)] border border-[#D4AF37]/25 hover:bg-[rgba(212,175,55,0.1)] transition-colors">
+                            <div className="font-semibold text-[#44403c] mb-0.5 text-sm">
                               <MathFormula>
                                 (arcsin x)' = <Frac num="1" den={<Sqrt>1-<Pow base="x" exp="2" /></Sqrt>} />
                               </MathFormula>
                             </div>
-                            <p className="text-xs text-pink-700">Арксинус</p>
+                            <p className="text-xs text-[#78716c]">Арксинус</p>
                           </div>
-                          <div className="p-3 rounded-lg bg-pink-50 border border-pink-200 hover:bg-pink-100 transition-colors">
-                            <div className="font-semibold text-pink-900 mb-0.5 text-sm">
+                          <div className="p-3 rounded-lg bg-[rgba(212,175,55,0.06)] border border-[#D4AF37]/25 hover:bg-[rgba(212,175,55,0.1)] transition-colors">
+                            <div className="font-semibold text-[#44403c] mb-0.5 text-sm">
                               <MathFormula>
                                 (arccos x)' = <Frac num="-1" den={<Sqrt>1-<Pow base="x" exp="2" /></Sqrt>} />
                               </MathFormula>
                             </div>
-                            <p className="text-xs text-pink-700">Арккосинус</p>
+                            <p className="text-xs text-[#78716c]">Арккосинус</p>
                           </div>
-                          <div className="p-3 rounded-lg bg-pink-50 border border-pink-200 hover:bg-pink-100 transition-colors">
-                            <div className="font-semibold text-pink-900 mb-0.5 text-sm">
+                          <div className="p-3 rounded-lg bg-[rgba(212,175,55,0.06)] border border-[#D4AF37]/25 hover:bg-[rgba(212,175,55,0.1)] transition-colors">
+                            <div className="font-semibold text-[#44403c] mb-0.5 text-sm">
                               <MathFormula>
                                 (arctg x)' = <Frac num="1" den={<>(1+<Pow base="x" exp="2" />)</>} />
                               </MathFormula>
                             </div>
-                            <p className="text-xs text-pink-700">Арктангенс</p>
+                            <p className="text-xs text-[#78716c]">Арктангенс</p>
                           </div>
-                          <div className="p-3 rounded-lg bg-pink-50 border border-pink-200 hover:bg-pink-100 transition-colors">
-                            <div className="font-semibold text-pink-900 mb-0.5 text-sm">
+                          <div className="p-3 rounded-lg bg-[rgba(212,175,55,0.06)] border border-[#D4AF37]/25 hover:bg-[rgba(212,175,55,0.1)] transition-colors">
+                            <div className="font-semibold text-[#44403c] mb-0.5 text-sm">
                               <MathFormula>
                                 (arcctg x)' = <Frac num="-1" den={<>(1+<Pow base="x" exp="2" />)</>} />
                               </MathFormula>
                             </div>
-                            <p className="text-xs text-pink-700">Арккотангенс</p>
+                            <p className="text-xs text-[#78716c]">Арккотангенс</p>
                           </div>
                         </div>
                       </div>
@@ -886,25 +886,25 @@ function CalculusPage() {
                           Правила операций
                         </h4>
                         <div className="space-y-2">
-                          <div className="p-3 rounded-lg bg-purple-50 border border-purple-200 hover:bg-purple-100 transition-colors">
-                            <div className="font-semibold text-purple-900 mb-0.5 text-sm">
+                          <div className="p-3 rounded-lg bg-[rgba(212,175,55,0.06)] border border-[#D4AF37]/25 hover:bg-[rgba(212,175,55,0.1)] transition-colors">
+                            <div className="font-semibold text-[#44403c] mb-0.5 text-sm">
                               <MathFormula>(f ± g)' = f' ± g'</MathFormula>
                             </div>
-                            <p className="text-xs text-purple-700">Сумма/разность</p>
+                            <p className="text-xs text-[#78716c]">Сумма/разность</p>
                           </div>
-                          <div className="p-3 rounded-lg bg-purple-50 border border-purple-200 hover:bg-purple-100 transition-colors">
-                            <div className="font-semibold text-purple-900 mb-0.5 text-sm">
+                          <div className="p-3 rounded-lg bg-[rgba(212,175,55,0.06)] border border-[#D4AF37]/25 hover:bg-[rgba(212,175,55,0.1)] transition-colors">
+                            <div className="font-semibold text-[#44403c] mb-0.5 text-sm">
                               <MathFormula>(f·g)' = f'·g + f·g'</MathFormula>
                             </div>
-                            <p className="text-xs text-purple-700">Произведение</p>
+                            <p className="text-xs text-[#78716c]">Произведение</p>
                           </div>
-                          <div className="p-3 rounded-lg bg-purple-50 border border-purple-200 hover:bg-purple-100 transition-colors">
-                            <div className="font-semibold text-purple-900 mb-0.5 text-sm">
+                          <div className="p-3 rounded-lg bg-[rgba(212,175,55,0.06)] border border-[#D4AF37]/25 hover:bg-[rgba(212,175,55,0.1)] transition-colors">
+                            <div className="font-semibold text-[#44403c] mb-0.5 text-sm">
                               <MathFormula>
                                 (<Frac num="f" den="g"/>)' = <Frac num="f'·g - f·g'" den={<Pow base="g" exp="2" />} />
                               </MathFormula>
                             </div>
-                            <p className="text-xs text-purple-700">Частное</p>
+                            <p className="text-xs text-[#78716c]">Частное</p>
                           </div>
                         </div>
                       </div>
@@ -915,11 +915,11 @@ function CalculusPage() {
                           Сложная функция
                         </h4>
                         <div className="space-y-2">
-                          <div className="p-3 rounded-lg bg-indigo-50 border border-indigo-200 hover:bg-indigo-100 transition-colors">
-                            <div className="font-semibold text-indigo-900 mb-0.5 text-sm">
+                          <div className="p-3 rounded-lg bg-[rgba(212,175,55,0.06)] border border-[#D4AF37]/25 hover:bg-[rgba(212,175,55,0.1)] transition-colors">
+                            <div className="font-semibold text-[#44403c] mb-0.5 text-sm">
                               <MathFormula>(f(g(x)))' = f'(g(x))·g'(x)</MathFormula>
                             </div>
-                            <p className="text-xs text-indigo-700">Цепное правило</p>
+                            <p className="text-xs text-[#78716c]">Цепное правило</p>
                           </div>
                         </div>
                       </div>
@@ -945,29 +945,29 @@ function CalculusPage() {
                           Дополнительные правила
                         </h4>
                         <div className="space-y-2">
-                          <div className="p-3 rounded-lg bg-teal-50 border border-teal-200 hover:bg-teal-100 transition-colors">
-                            <div className="font-semibold text-teal-900 mb-0.5 text-sm">
+                          <div className="p-3 rounded-lg bg-[rgba(212,175,55,0.06)] border border-[#D4AF37]/25 hover:bg-[rgba(212,175,55,0.1)] transition-colors">
+                            <div className="font-semibold text-[#44403c] mb-0.5 text-sm">
                               <MathFormula>
                                 (<Pow base="f" exp="n" />)' = n·<Pow base="f" exp="n-1" />·f'
                               </MathFormula>
                             </div>
-                            <p className="text-xs text-teal-700">Степень функции</p>
+                            <p className="text-xs text-[#78716c]">Степень функции</p>
                           </div>
-                          <div className="p-3 rounded-lg bg-teal-50 border border-teal-200 hover:bg-teal-100 transition-colors">
-                            <div className="font-semibold text-teal-900 mb-0.5 text-sm">
+                          <div className="p-3 rounded-lg bg-[rgba(212,175,55,0.06)] border border-[#D4AF37]/25 hover:bg-[rgba(212,175,55,0.1)] transition-colors">
+                            <div className="font-semibold text-[#44403c] mb-0.5 text-sm">
                               <MathFormula>
                                 (<Pow base="a" exp="f(x)" />)' = <Pow base="a" exp="f(x)" />·ln(a)·f'(x)
                               </MathFormula>
                             </div>
-                            <p className="text-xs text-teal-700">Показательная от функции</p>
+                            <p className="text-xs text-[#78716c]">Показательная от функции</p>
                           </div>
-                          <div className="p-3 rounded-lg bg-teal-50 border border-teal-200 hover:bg-teal-100 transition-colors">
-                            <div className="font-semibold text-teal-900 mb-0.5 text-sm">
+                          <div className="p-3 rounded-lg bg-[rgba(212,175,55,0.06)] border border-[#D4AF37]/25 hover:bg-[rgba(212,175,55,0.1)] transition-colors">
+                            <div className="font-semibold text-[#44403c] mb-0.5 text-sm">
                               <MathFormula>
                                 (ln f(x))' = <Frac num="f'(x)" den="f(x)" />
                               </MathFormula>
                             </div>
-                            <p className="text-xs text-teal-700">Логарифм функции</p>
+                            <p className="text-xs text-[#78716c]">Логарифм функции</p>
                           </div>
                         </div>
                       </div>
@@ -1109,7 +1109,7 @@ function CalculusPage() {
                         </div>
                       </div>
                       {integralForm.formState.errors.expression && (
-                        <p className="mt-1 text-sm text-red-600">{integralForm.formState.errors.expression.message}</p>
+                        <p className="mt-1 text-sm text-[#b87c7c]">{integralForm.formState.errors.expression.message}</p>
                       )}
                     </div>
 
@@ -1144,7 +1144,7 @@ function CalculusPage() {
                               placeholder="0"
                             />
                             {integralForm.formState.errors.lowerBound && (
-                              <p className="mt-1 text-xs text-red-600">{integralForm.formState.errors.lowerBound.message}</p>
+                              <p className="mt-1 text-xs text-[#b87c7c]">{integralForm.formState.errors.lowerBound.message}</p>
                             )}
                           </div>
 
@@ -1162,7 +1162,7 @@ function CalculusPage() {
                               placeholder="1"
                             />
                             {integralForm.formState.errors.upperBound && (
-                              <p className="mt-1 text-xs text-red-600">{integralForm.formState.errors.upperBound.message}</p>
+                              <p className="mt-1 text-xs text-[#b87c7c]">{integralForm.formState.errors.upperBound.message}</p>
                             )}
                           </div>
                         </>
@@ -1180,8 +1180,8 @@ function CalculusPage() {
 
                     {/* Подсказка для определённого интеграла */}
                     {integralType === 'definite' && (
-                      <div className="p-4 rounded-lg border border-green-500/50 bg-green-900/20">
-                        <p className="text-sm text-green-300 flex items-center gap-2">
+                      <div className="p-4 rounded-lg border border-[#D4AF37]/45 bg-[rgba(212,175,55,0.08)]">
+                        <p className="text-sm text-[#d4c4a0] flex items-center gap-2">
                           <span className="font-semibold">📊 Определённый интеграл:</span> 
                           <span>Результат будет числом - площадь под графиком от a до b</span>
                         </p>
@@ -1192,7 +1192,7 @@ function CalculusPage() {
                       type="submit" 
                       loading={isLoading} 
                       disabled={isLoading}
-                      className="w-full h-14 text-lg font-bold rounded-xl shadow-lg hover:shadow-xl transition-all hover:scale-105 gradient-primary text-white"
+                      className="w-full h-14 text-lg font-bold rounded-xl shadow-lg hover:shadow-xl transition-all hover:scale-105 gradient-primary text-[#1c1917]"
                     >
                       {isLoading 
                         ? '⏳ Вычисляю...' 

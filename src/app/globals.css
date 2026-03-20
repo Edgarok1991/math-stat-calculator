@@ -1,49 +1,62 @@
 @import "tailwindcss";
 
-/* MathCalc: Midnight Blue Edition — премиальная тёмная тема */
+/* MathCalc — Luxury Gold Edition (#1c1917 + золото + шампань) */
 :root {
-  /* Золотые акценты */
-  --gold: #D4AF37;
-  --gold-light: #E8C547;
-  --gold-dark: #B8962E;
-  --gold-glow: rgba(212, 175, 55, 0.3);
-  
-  /* Midnight Blue палитра */
-  --midnight: #0a1628;
-  --midnight-light: #0f1f38;
-  --midnight-card: rgba(15, 31, 56, 0.6);
-  --midnight-glass: rgba(10, 22, 40, 0.85);
-  
-  /* Основные цвета (золото как primary) */
-  --primary: #D4AF37;
-  --primary-dark: #B8962E;
-  --primary-light: #E8C547;
-  --secondary: #0f1f38;
-  --accent: #D4AF37;
-  
-  /* Фоновые цвета */
-  --background: #050b14;
-  --background-secondary: rgba(15, 31, 56, 0.5);
-  --background-tertiary: rgba(15, 31, 56, 0.3);
-  
-  /* Текстовые цвета */
-  --foreground: #D4AF37;
-  --foreground-secondary: #c9a227;
-  --foreground-muted: #a68b2e;
-  
-  /* Границы и тени */
-  --border: rgba(212, 175, 55, 0.4);
-  --border-light: rgba(212, 175, 55, 0.2);
-  --shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 20px var(--gold-glow);
-  --shadow-xl: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 30px var(--gold-glow);
-  
-  /* Градиенты */
-  --gradient-primary: linear-gradient(135deg, #D4AF37 0%, #E8C547 50%, #B8962E 100%);
-  --gradient-secondary: linear-gradient(135deg, #0f1f38 0%, #0a1628 100%);
-  --gradient-accent: linear-gradient(135deg, #D4AF37 0%, #E8C547 100%);
-  --gradient-success: linear-gradient(135deg, #D4AF37 0%, #c9a227 100%);
-  --gradient-warning: linear-gradient(135deg, #E8C547 0%, #D4AF37 100%);
+  /* Золото */
+  --gold: #d4af37;
+  --gold-light: #e8c547;
+  --gold-dark: #b8962e;
+  --gold-bright: #fbbf24;
+  --gold-glow: rgba(212, 175, 55, 0.28);
+
+  /* Тёплый тёмный фон (stone) */
+  --luxury-bg: #1c1917;
+  --luxury-bg-deep: #141210;
+  --luxury-surface: rgba(50, 45, 40, 0.75);
+  --luxury-surface-glass: rgba(35, 32, 28, 0.92);
+
+  /* Текст: шампань / слоновая кость — не золотой на весь экран */
+  --foreground: #f5ebe0;
+  --foreground-secondary: #c9b896;
+  --foreground-muted: #9a8b75;
+
+  --primary: var(--gold);
+  --primary-dark: var(--gold-dark);
+  --primary-light: var(--gold-light);
+  --secondary: var(--luxury-surface);
+  --accent: var(--gold-bright);
+
+  --background: var(--luxury-bg-deep);
+  --background-secondary: var(--luxury-surface);
+  --background-tertiary: rgba(60, 54, 48, 0.45);
+
+  --border: rgba(212, 175, 55, 0.38);
+  --border-light: rgba(212, 175, 55, 0.15);
+
+  --shadow: 0 4px 24px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.5), 0 0 24px var(--gold-glow);
+  --shadow-xl: 0 24px 56px rgba(0, 0, 0, 0.55), 0 0 36px var(--gold-glow);
+
+  /* Семантика в рамках люкс-палитры */
+  --luxury-success: #c4a574;
+  --luxury-success-bg: rgba(196, 165, 116, 0.12);
+  --luxury-warn: #e8a54b;
+  --luxury-error: #c17b7b;
+  --luxury-error-bg: rgba(193, 123, 123, 0.12);
+  --luxury-info: var(--gold-light);
+
+  --gradient-primary: linear-gradient(135deg, #d4af37 0%, #fbbf24 45%, #b8962e 100%);
+  --gradient-secondary: linear-gradient(135deg, #292524 0%, #1c1917 100%);
+  --gradient-accent: linear-gradient(135deg, #e8c547 0%, #d4af37 100%);
+  --gradient-success: linear-gradient(135deg, #c4a574 0%, #d4af37 100%);
+  --gradient-warning: linear-gradient(135deg, #fbbf24 0%, #d4af37 100%);
+  --gradient-hero: linear-gradient(180deg, rgba(28, 25, 23, 0.92) 0%, rgba(20, 18, 16, 0.98) 100%);
+
+  /* Совместимость со старыми именами */
+  --midnight: var(--luxury-bg-deep);
+  --midnight-light: #292524;
+  --midnight-card: var(--luxury-surface);
+  --midnight-glass: var(--luxury-surface-glass);
 }
 
 @theme inline {
@@ -53,18 +66,25 @@
   --font-mono: var(--font-geist-mono);
 }
 
-/* Светлая тема (если переключить) */
+/* Светлая «люкс» (шампань) */
 [data-theme="light"] {
-  --background: #f8fafc;
+  --luxury-bg: #faf6ef;
+  --luxury-bg-deep: #f5efe4;
+  --luxury-surface: rgba(255, 252, 248, 0.92);
+  --luxury-surface-glass: rgba(255, 252, 248, 0.95);
+  --background: #faf6ef;
   --background-secondary: #ffffff;
-  --background-tertiary: #f1f5f9;
-  --foreground: #1e293b;
-  --foreground-secondary: #64748b;
-  --foreground-muted: #94a3b8;
-  --border: #e2e8f0;
-  --border-light: #f1f5f9;
-  --primary: #B8962E;
-  --gradient-primary: linear-gradient(135deg, #B8962E 0%, #D4AF37 100%);
+  --background-tertiary: #f0e8dc;
+  --foreground: #292524;
+  --foreground-secondary: #57534e;
+  --foreground-muted: #78716c;
+  --border: rgba(180, 140, 60, 0.35);
+  --border-light: rgba(180, 140, 60, 0.15);
+  --primary: #9a7b2c;
+  --gradient-primary: linear-gradient(135deg, #b8962e 0%, #d4af37 100%);
+  --shadow: 0 4px 20px rgba(41, 37, 36, 0.08);
+  --shadow-lg: 0 12px 36px rgba(41, 37, 36, 0.12);
+  --shadow-xl: 0 20px 48px rgba(41, 37, 36, 0.14);
 }
 
 * {
@@ -74,47 +94,62 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
-  line-height: 1.6;
+  font-family: var(--font-inter), 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  line-height: 1.65;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
 }
 
-/* Фон с созвездиями */
+/* Заголовки — люкс serif */
+h1,
+h2,
+h3,
+.font-display {
+  font-family: var(--font-display), 'Cormorant Garamond', 'Times New Roman', serif;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+/* Тонкая золотая сетка + тёплый виньет */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
-  background-image: 
-    radial-gradient(2px 2px at 20px 30px, rgba(212, 175, 55, 0.3), transparent),
-    radial-gradient(2px 2px at 40px 70px, rgba(212, 175, 55, 0.2), transparent),
-    radial-gradient(2px 2px at 50px 160px, rgba(212, 175, 55, 0.25), transparent),
-    radial-gradient(2px 2px at 90px 40px, rgba(212, 175, 55, 0.2), transparent),
-    radial-gradient(2px 2px at 130px 80px, rgba(212, 175, 55, 0.3), transparent),
-    radial-gradient(2px 2px at 160px 120px, rgba(212, 175, 55, 0.15), transparent),
-    radial-gradient(1px 1px at 200px 50px, rgba(212, 175, 55, 0.4), transparent),
-    radial-gradient(1px 1px at 250px 180px, rgba(212, 175, 55, 0.2), transparent),
-    radial-gradient(2px 2px at 300px 100px, rgba(212, 175, 55, 0.25), transparent);
-  background-size: 350px 350px;
+  background-image:
+    linear-gradient(90deg, rgba(212, 175, 55, 0.04) 1px, transparent 1px),
+    linear-gradient(rgba(212, 175, 55, 0.04) 1px, transparent 1px),
+    radial-gradient(1.5px 1.5px at 20% 30%, rgba(251, 191, 36, 0.15), transparent),
+    radial-gradient(1px 1px at 80% 70%, rgba(212, 175, 55, 0.12), transparent);
+  background-size:
+    48px 48px,
+    48px 48px,
+    100% 100%,
+    100% 100%;
   pointer-events: none;
   z-index: 0;
 }
 
-/* Градиентный оверлей */
 body::after {
   content: '';
   position: fixed;
   inset: 0;
-  background: linear-gradient(180deg, rgba(5, 11, 20, 0.3) 0%, transparent 50%, rgba(5, 11, 20, 0.5) 100%);
+  background: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(212, 175, 55, 0.09), transparent 55%),
+    radial-gradient(ellipse 70% 50% at 100% 100%, rgba(66, 32, 6, 0.35), transparent 50%),
+    linear-gradient(180deg, rgba(20, 18, 16, 0.5) 0%, transparent 40%, rgba(20, 18, 16, 0.65) 100%);
   pointer-events: none;
   z-index: 0;
 }
 
-/* Кастомные утилиты */
+[data-theme='light'] body::after {
+  background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(212, 175, 55, 0.12), transparent 55%),
+    linear-gradient(180deg, rgba(250, 246, 239, 0.9) 0%, transparent 50%);
+}
+
 .gradient-primary {
   background: var(--gradient-primary);
-  box-shadow: 0 0 20px var(--gold-glow);
+  box-shadow: 0 0 22px var(--gold-glow);
+  color: #1c1917;
 }
 
 .gradient-primary:hover {
@@ -138,26 +173,28 @@ body::after {
 }
 
 .glass {
-  background: var(--midnight-glass);
-  backdrop-filter: blur(12px);
+  background: var(--luxury-surface-glass);
+  backdrop-filter: blur(14px);
   border: 1px solid var(--border);
 }
 
-.card-midnight {
-  background: var(--midnight-card);
+.card-midnight,
+.card-luxury {
+  background: var(--luxury-surface);
   backdrop-filter: blur(12px);
   border: 1px solid var(--border);
   border-radius: 1rem;
   box-shadow: var(--shadow);
 }
 
-.card-midnight:hover {
+.card-midnight:hover,
+.card-luxury:hover {
   border-color: var(--gold);
   box-shadow: var(--shadow-lg);
 }
 
 .card-hover {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .card-hover:hover {
@@ -166,9 +203,8 @@ body::after {
   border-color: var(--gold);
 }
 
-/* Формы — Midnight Blue */
 .input-midnight {
-  background: rgba(15, 31, 56, 0.5);
+  background: rgba(45, 40, 36, 0.55);
   border: 1px solid var(--border);
   color: var(--foreground);
   border-radius: 0.75rem;
@@ -184,7 +220,11 @@ body::after {
   box-shadow: 0 0 0 2px var(--gold-glow);
 }
 
-/* Анимации */
+[data-theme='light'] .input-midnight {
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--foreground);
+}
+
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -208,7 +248,8 @@ body::after {
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {
@@ -228,7 +269,6 @@ body::after {
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
-/* Скроллбар */
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -238,12 +278,12 @@ body::after {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--gold);
+  background: linear-gradient(180deg, var(--gold-light), var(--gold-dark));
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--gold-light);
+  background: var(--gold-bright);
 }
 
 .custom-scrollbar::-webkit-scrollbar {
@@ -251,7 +291,7 @@ body::after {
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: var(--midnight-light);
+  background: var(--luxury-bg);
   border-radius: 10px;
 }
 
@@ -264,28 +304,24 @@ body::after {
   background: var(--gold-light);
 }
 
-/* Улучшенное отображение математических формул */
 .math-symbol {
   font-family: 'Cambria Math', 'Times New Roman', serif;
   font-size: 1.1em;
   line-height: 1;
 }
 
-/* Красивые степени */
 sup {
   vertical-align: super;
   font-size: 0.75em;
   line-height: 0;
 }
 
-/* Красивые нижние индексы */
 sub {
   vertical-align: sub;
   font-size: 0.75em;
   line-height: 0;
 }
 
-/* Красивый квадратный корень */
 .sqrt-wrapper {
   display: inline-flex;
   align-items: center;
@@ -317,7 +353,6 @@ sub {
   border-radius: 1px 1px 0 0;
 }
 
-/* Улучшенный корень для маленького текста */
 .text-sm .sqrt-wrapper {
   line-height: 1.2;
 }

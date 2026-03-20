@@ -24,7 +24,7 @@ export const ClusteringStepsView: React.FC<ClusteringStepsViewProps> = ({ steps,
         >
           {/* Заголовок шага */}
           <div className="flex items-center gap-3 mb-4 pb-3 border-b-2 border-gray-100">
-            <span className="bg-blue-600 text-white text-sm font-bold px-4 py-2 rounded-lg shadow-sm">
+            <span className="bg-[#D4AF37] text-[#1c1917] text-sm font-bold px-4 py-2 rounded-lg shadow-sm">
               {step.action === 'initialization' ? 'Шаг 0' : `Шаг ${step.step}`}
             </span>
             <h4 className="text-lg font-semibold ">
@@ -34,7 +34,7 @@ export const ClusteringStepsView: React.FC<ClusteringStepsViewProps> = ({ steps,
 
           {/* Детальное описание */}
           {step.detailedDescription && (
-            <div className="mb-4 p-4 bg-blue-50 rounded-lg border ">
+            <div className="mb-4 p-4 bg-[rgba(212,175,55,0.06)] rounded-lg border ">
               <p className="text-sm  leading-relaxed">
                 {step.detailedDescription}
               </p>
@@ -98,7 +98,7 @@ export const ClusteringStepsView: React.FC<ClusteringStepsViewProps> = ({ steps,
                             key={colIndex}
                             className={`border  px-3 py-2 text-sm text-center font-mono ${
                               isMinDistance
-                                ? 'bg-red-200 font-bold text-red-900'
+                                ? 'bg-red-200 font-bold text-[#5c3d3d]'
                                 : isMergedCluster
                                 ? 'bg-yellow-50'
                                 : cell === 0
@@ -119,9 +119,9 @@ export const ClusteringStepsView: React.FC<ClusteringStepsViewProps> = ({ steps,
 
           {/* Пояснение по формированию новой матрицы */}
           {step.action === 'merge' && step.minDistanceIndices && (
-            <div className="mt-4 p-3 bg-green-50 rounded-lg border border-green-200">
+            <div className="mt-4 p-3 bg-[rgba(212,175,55,0.08)] rounded-lg border border-[#D4AF37]/25">
               <p className="text-sm ">
-                <span className="font-semibold text-green-800">При формировании новой матрицы расстояний:</span>{' '}
+                <span className="font-semibold text-[#e8dcc8]">При формировании новой матрицы расстояний:</span>{' '}
                 выбираем соответствующее значение из расстояний объектов №{step.minDistanceIndices[0] + 1} и №{step.minDistanceIndices[1] + 1}.
               </p>
             </div>

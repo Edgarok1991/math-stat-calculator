@@ -1,0 +1,3 @@
+#!/bin/sh
+# Автоматический push в origin после каждого коммита
+git push origin main 2>/dev/null || true

@@ -128,7 +128,7 @@ export default function HomePage() {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
-              <Button asChild size="lg" className="gradient-primary text-[#0a1628] font-bold hover:opacity-90 transition-all duration-300 shadow-lg hover:shadow-xl">
+              <Button asChild size="lg" className="gradient-primary text-[#1c1917] font-bold hover:opacity-90 transition-all duration-300 shadow-lg hover:shadow-xl">
                 <Link href="/regression" className="flex items-center gap-2">
                   <Calculator className="w-5 h-5" />
                   Начать работу

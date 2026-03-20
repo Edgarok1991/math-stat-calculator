@@ -94,7 +94,7 @@ export function LoginForm({ onSuccess, onSwitchToRegister }: LoginFormProps) {
           <Button
             type="submit"
             loading={isLoading}
-            className="w-full gradient-primary text-[#0a1628] font-bold py-3"
+            className="w-full gradient-primary text-[#1c1917] font-bold py-3"
           >
             {isLoading ? 'Вход...' : 'Войти'}
           </Button>

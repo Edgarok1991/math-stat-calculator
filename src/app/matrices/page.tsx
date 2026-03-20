@@ -753,7 +753,7 @@ const MatricesPage = () => {
             <button
               type="button"
               onClick={() => setActiveTab('operations')}
-              className={`px-6 py-2 rounded-md transition-all ${activeTab === 'operations' ? 'gradient-primary text-white' : ''}`}
+              className={`px-6 py-2 rounded-md transition-all ${activeTab === 'operations' ? 'gradient-primary text-[#1c1917]' : ''}`}
               style={activeTab === 'operations' ? {} : { color: 'var(--foreground-secondary)' }}
             >
               Операции с матрицами
@@ -761,7 +761,7 @@ const MatricesPage = () => {
             <button
               type="button"
               onClick={() => setActiveTab('gauss')}
-              className={`px-6 py-2 rounded-md transition-all ${activeTab === 'gauss' ? 'gradient-primary text-white' : ''}`}
+              className={`px-6 py-2 rounded-md transition-all ${activeTab === 'gauss' ? 'gradient-primary text-[#1c1917]' : ''}`}
               style={activeTab === 'gauss' ? {} : { color: 'var(--foreground-secondary)' }}
             >
               Метод Гаусса (СЛАУ)
@@ -879,7 +879,7 @@ const MatricesPage = () => {
                             <select 
                               value={laplaceIndex}
                               onChange={(e) => setLaplaceIndex(parseInt(e.target.value))}
-                              className="px-2 py-1 text-xs border rounded focus:border-blue-500 focus:outline-none">
+                              className="px-2 py-1 text-xs border rounded focus:border-[#D4AF37] focus:outline-none">
                               {Array.from({ length: variables }, (_, i) => (
                                 <option key={i} value={i}>{i + 1}</option>
                               ))}
@@ -913,7 +913,7 @@ const MatricesPage = () => {
                     </div>
                     <button 
                       type="button"
-                      className="w-full mt-3 px-4 py-2 rounded-lg bg-gradient-to-r from-green-500 to-teal-500 text-white font-medium hover:from-green-600 hover:to-teal-600 transition-all"
+                      className="w-full mt-3 px-4 py-2 rounded-lg gradient-primary text-[#1c1917] font-medium hover:opacity-95 transition-all"
                       onClick={onADeterminant}>
                       Вычислить
                     </button>
@@ -923,7 +923,7 @@ const MatricesPage = () => {
               
               {/* 2. Обратная матрица */}
               <button type="button" 
-                className="col-span-2 px-4 py-2.5 text-sm font-medium rounded-lg border-2 transition-all hover:scale-105 hover:shadow-md hover:bg-gradient-to-r hover:from-pink-50 hover:to-red-50"
+                className="col-span-2 px-4 py-2.5 text-sm font-medium rounded-lg border-2 transition-all hover:scale-105 hover:shadow-md hover:bg-[rgba(212,175,55,0.08)]"
                 style={{ borderColor: 'var(--border)', background: 'var(--background)' }}
                 onClick={onAInverse}>
                 Обратная матрица A<sup>-1</sup>
@@ -931,7 +931,7 @@ const MatricesPage = () => {
               
               {/* 3. Ранг */}
               <button type="button" 
-                className="col-span-2 px-4 py-2.5 text-sm font-medium rounded-lg border-2 transition-all hover:scale-105 hover:shadow-md hover:bg-gradient-to-r hover:from-yellow-50 hover:to-orange-50"
+                className="col-span-2 px-4 py-2.5 text-sm font-medium rounded-lg border-2 transition-all hover:scale-105 hover:shadow-md hover:bg-[rgba(232,197,71,0.1)]"
                 style={{ borderColor: 'var(--border)', background: 'var(--background)' }}
                 onClick={onARank}>
                 Найти ранг
@@ -1027,7 +1027,7 @@ const MatricesPage = () => {
                       {row.map((cell, j) => (
                         <td key={j} className="p-1.5">
                           <input value={cell as string} onChange={(e)=>updateMatrix2Cell(i,j,e.target.value)}
-                            className="w-20 px-3 py-2 rounded-lg border-2 text-center font-mono font-semibold transition-all focus:border-green-500 focus:ring-2 focus:ring-green-200 focus:outline-none hover:border-green-300"
+                            className="w-20 px-3 py-2 rounded-lg border-2 text-center font-mono font-semibold transition-all focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/30 focus:outline-none hover:border-[#D4AF37]/50"
                             style={{ borderColor: 'var(--border)' }}
                             placeholder="0" />
                         </td>
@@ -1096,7 +1096,7 @@ const MatricesPage = () => {
                             <select 
                               value={laplaceIndex}
                               onChange={(e) => setLaplaceIndex(parseInt(e.target.value))}
-                              className="px-2 py-1 text-xs border rounded focus:border-blue-500 focus:outline-none">
+                              className="px-2 py-1 text-xs border rounded focus:border-[#D4AF37] focus:outline-none">
                               {Array.from({ length: variables }, (_, i) => (
                                 <option key={i} value={i}>{i + 1}</option>
                               ))}
@@ -1130,7 +1130,7 @@ const MatricesPage = () => {
                     </div>
                     <button 
                       type="button"
-                      className="w-full mt-3 px-4 py-2 rounded-lg bg-gradient-to-r from-green-500 to-teal-500 text-white font-medium hover:from-green-600 hover:to-teal-600 transition-all"
+                      className="w-full mt-3 px-4 py-2 rounded-lg gradient-primary text-[#1c1917] font-medium hover:opacity-95 transition-all"
                       onClick={async()=>{
                         const B = getNumericB();
                         if (!B.length) return;
@@ -1167,7 +1167,7 @@ const MatricesPage = () => {
               
               {/* 2. Обратная матрица */}
               <button type="button" 
-                className="col-span-2 px-4 py-2.5 text-sm font-medium rounded-lg border-2 transition-all hover:scale-105 hover:shadow-md hover:bg-gradient-to-r hover:from-pink-50 hover:to-red-50"
+                className="col-span-2 px-4 py-2.5 text-sm font-medium rounded-lg border-2 transition-all hover:scale-105 hover:shadow-md hover:bg-[rgba(212,175,55,0.08)]"
                 style={{ borderColor: 'var(--border)', background: 'var(--background)' }}
                 onClick={async()=>{
                 const B = getNumericB();
@@ -1187,7 +1187,7 @@ const MatricesPage = () => {
               
               {/* 3. Ранг */}
               <button type="button" 
-                className="col-span-2 px-4 py-2.5 text-sm font-medium rounded-lg border-2 transition-all hover:scale-105 hover:shadow-md hover:bg-gradient-to-r hover:from-yellow-50 hover:to-orange-50"
+                className="col-span-2 px-4 py-2.5 text-sm font-medium rounded-lg border-2 transition-all hover:scale-105 hover:shadow-md hover:bg-[rgba(232,197,71,0.1)]"
                 style={{ borderColor: 'var(--border)', background: 'var(--background)' }}
                 onClick={async()=>{
                 const B = getNumericB();
@@ -1216,7 +1216,7 @@ const MatricesPage = () => {
                   Умножить на
                 </button>
                 <input type="number" step="any" value={kValueB} onChange={(e)=>setKValueB(parseFloat(e.target.value)||0)}
-                  className="w-20 px-2 py-2.5 text-sm border-2 rounded-lg text-center font-mono transition-all focus:border-green-500 focus:ring-2 focus:ring-green-200 focus:outline-none" 
+                  className="w-20 px-2 py-2.5 text-sm border-2 rounded-lg text-center font-mono transition-all focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/30 focus:outline-none" 
                   style={{ borderColor: 'var(--border)' }}
                   placeholder="k" />
               </div>
@@ -1236,7 +1236,7 @@ const MatricesPage = () => {
                   Возвести в степень
                 </button>
                 <input type="number" min={0} max={20} value={pValueB} onChange={(e)=>setPValueB(parseInt(e.target.value)||0)}
-                  className="w-20 px-2 py-2.5 text-sm border-2 rounded-lg text-center font-mono transition-all focus:border-green-500 focus:ring-2 focus:ring-green-200 focus:outline-none" 
+                  className="w-20 px-2 py-2.5 text-sm border-2 rounded-lg text-center font-mono transition-all focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/30 focus:outline-none" 
                   style={{ borderColor: 'var(--border)' }}
                   placeholder="p" />
               </div>
@@ -1253,7 +1253,7 @@ const MatricesPage = () => {
             style={{ borderColor: 'var(--border)', background: 'linear-gradient(135deg, var(--background-secondary) 0%, var(--background-tertiary) 100%)' }}>
             {opMatrixResult && (
               <div className="mb-8">
-                <h3 className="text-3xl font-bold mb-6 text-center bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
+                <h3 className="text-3xl font-bold mb-6 text-center bg-gradient-to-r from-[#D4AF37] to-[#E8C547] bg-clip-text text-transparent">
                   Результат C
                 </h3>
                 <div className="overflow-auto card-midnight p-6 rounded-xl border-2 shadow-inner" style={{ borderColor: 'var(--border)' }}>
@@ -1262,7 +1262,7 @@ const MatricesPage = () => {
                       {opMatrixResult.map((row, i) => (
                         <tr key={i}>
                           {row.map((cell, j) => (
-                            <td key={j} className="px-6 py-4 text-center border-2 font-mono text-xl font-bold transition-all hover:bg-orange-50" 
+                            <td key={j} className="px-6 py-4 text-center border-2 font-mono text-xl font-bold transition-all hover:bg-[rgba(232,197,71,0.08)]" 
                               style={{ borderColor: '#e0e0e0' }}>
                               <Fraction value={decimalToFraction(cell)} />
                             </td>
@@ -1320,11 +1320,11 @@ const MatricesPage = () => {
                     >
                       <div className="mb-4">
                         <div className="flex items-center gap-3 mb-3">
-                          <span className="px-3 py-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-bold text-sm rounded-full">
+                          <span className="px-3 py-1 gradient-primary text-[#1c1917] font-bold text-sm rounded-full">
                             Шаг {step.step}
                           </span>
                         </div>
-                        <div className="text-base font-medium leading-relaxed  bg-blue-50 p-4 rounded-lg">
+                        <div className="text-base font-medium leading-relaxed  bg-[rgba(212,175,55,0.06)] p-4 rounded-lg">
                           <MathExpression expression={step.description.replaceAll('Infinity/Infinity', 'деление на ноль (неопределено)')} />
                         </div>
                       </div>
@@ -1365,7 +1365,7 @@ const MatricesPage = () => {
                         </div>
                       )}
                       {step.operation === 'normalize' && (
-                        <div className="mt-3 px-4 py-2 rounded-lg text-sm font-semibold inline-block bg-green-900/30 text-green-300">
+                        <div className="mt-3 px-4 py-2 rounded-lg text-sm font-semibold inline-block bg-[rgba(212,175,55,0.12)] text-[#d4c4a0]">
                           ✓ Диагональный элемент нормализован к 1
                         </div>
                       )}
@@ -1503,14 +1503,14 @@ const MatricesPage = () => {
           {'solutionType' in result && result.message && (
             <div className="mb-4">
               <div className={`p-4 rounded-lg border-l-4 ${
-                result.solutionType === 'unique' ? 'bg-green-50 border-green-500' :
-                result.solutionType === 'infinite' ? 'bg-blue-50 border-blue-500' :
+                result.solutionType === 'unique' ? 'bg-[rgba(212,175,55,0.06)] border-[#D4AF37]' :
+                result.solutionType === 'infinite' ? 'bg-[rgba(212,175,55,0.06)] border-[#D4AF37]' :
                 'bg-yellow-50 border-yellow-500'
               }`}>
                 <h4 className="text-lg font-semibold mb-2 flex items-center gap-2">
                   <span className={`w-3 h-3 rounded-full ${
-                    result.solutionType === 'unique' ? 'bg-green-500' :
-                    result.solutionType === 'infinite' ? 'bg-blue-500' :
+                    result.solutionType === 'unique' ? 'bg-[#D4AF37]' :
+                    result.solutionType === 'infinite' ? 'bg-[rgba(212,175,55,0.06)]0' :
                     'bg-yellow-500'
                   }`}></span>
                   {result.message}
@@ -1522,7 +1522,7 @@ const MatricesPage = () => {
           {result.solution && result.solution.length > 0 && (
             <div className="mb-4">
               <h4 className="text-lg font-semibold mb-2 flex items-center gap-2">
-                <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                <span className="w-2 h-2 bg-[#D4AF37] rounded-full"></span>
                 {result.solutionType === 'infinite' ? 'Общее решение:' : 'Решение:'}
               </h4>
               <div className=" p-4 rounded-lg font-mono text-lg" style={{ background: 'var(--background-tertiary)' }}>
@@ -1551,7 +1551,7 @@ const MatricesPage = () => {
           {result.determinant !== undefined && (
             <div className="mb-4">
               <h4 className="text-lg font-semibold mb-2 flex items-center gap-2">
-                <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                <span className="w-2 h-2 bg-[rgba(212,175,55,0.06)]0 rounded-full"></span>
                 Определитель:
               </h4>
               <div className=" p-3 rounded-lg font-mono text-xl" style={{ background: 'var(--background-tertiary)' }}>
@@ -1582,7 +1582,7 @@ const MatricesPage = () => {
           {result.detailedSteps && result.detailedSteps.length > 0 && (
             <div className="mb-4">
               <h4 className="text-lg font-semibold mb-2 flex items-center gap-2">
-                <span className="w-2 h-2 bg-orange-500 rounded-full"></span>
+                <span className="w-2 h-2 bg-[rgba(232,197,71,0.08)]0 rounded-full"></span>
                 Пошаговое решение:
               </h4>
               <div className=" p-4 rounded-lg max-h-96 overflow-y-auto" style={{ background: 'var(--background-tertiary)' }}>
@@ -1600,7 +1600,7 @@ const MatricesPage = () => {
                   >
                     <div className="mb-2">
                       <div className="flex items-center gap-2 mb-2">
-                        <span className="text-blue-600 font-bold text-sm">
+                        <span className="text-[#D4AF37] font-bold text-sm">
                           Шаг {step.step}:
                         </span>
                       </div>
@@ -1646,12 +1646,12 @@ const MatricesPage = () => {
                       </div>
                     )}
                     {step.operation === 'normalize' && (
-                      <div className="mt-2 text-xs text-green-600 font-medium">
+                      <div className="mt-2 text-xs text-[#c9b896] font-medium">
                         ✓ Диагональный элемент нормализован к 1
                       </div>
                     )}
                     {step.operation === 'solution' && (
-                      <div className="mt-2 text-xs text-blue-600 font-medium">
+                      <div className="mt-2 text-xs text-[#D4AF37] font-medium">
                         ✓ Матрица приведена к единичному виду
                       </div>
                     )}

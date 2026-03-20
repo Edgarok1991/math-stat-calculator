@@ -7,7 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "deploy": "bash deploy-git.sh"
+    "deploy": "bash deploy-git.sh",
+    "auto-deploy": "node scripts/watch-and-deploy.js",
+    "postinstall": "bash scripts/install-git-hooks.sh 2>/dev/null || true",
+    "generate-mockups": "node scripts/generate-mockups.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -36,8 +39,10 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/react-plotly.js": "^2.6.3",
+    "chokidar": "^4.0.1",
     "eslint": "^9",
     "eslint-config-next": "15.5.10",
+    "sharp": "^0.33.5",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

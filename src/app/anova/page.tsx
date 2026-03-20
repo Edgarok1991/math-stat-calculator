@@ -252,7 +252,7 @@ function AnovaPage() {
                       <div>
                         <span className="font-medium" style={{ color: 'var(--foreground-secondary)' }}>Результат:</span>
                         <p className={`text-lg font-semibold ${
-                          result.significant ? 'text-red-400' : 'text-green-400'
+                          result.significant ? 'text-red-400' : 'text-[#c9b896]'
                         }`}>
                           {result.significant ? 'Значимо' : 'Не значимо'}
                         </p>

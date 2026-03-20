@@ -92,22 +92,22 @@ export function RegisterForm({ onSuccess, onSwitchToLogin }: RegisterFormProps) 
         )}
 
         {successMessage && (
-          <div className={`mb-4 p-4 rounded-lg ${emailPreviewUrl ? 'bg-green-50 border border-green-200' : ''}`} style={!emailPreviewUrl ? { background: 'rgba(212,175,55,0.15)', border: '1px solid rgba(212,175,55,0.4)' } : {}}>
-            <p className={`text-sm font-semibold mb-2 ${emailPreviewUrl ? 'text-green-400' : ''}`} style={!emailPreviewUrl ? { color: 'var(--foreground)' } : {}}>
+          <div className={`mb-4 p-4 rounded-lg ${emailPreviewUrl ? 'bg-[rgba(212,175,55,0.08)] border border-[#D4AF37]/25' : ''}`} style={!emailPreviewUrl ? { background: 'rgba(212,175,55,0.15)', border: '1px solid rgba(212,175,55,0.4)' } : {}}>
+            <p className={`text-sm font-semibold mb-2 ${emailPreviewUrl ? 'text-[#c9b896]' : ''}`} style={!emailPreviewUrl ? { color: 'var(--foreground)' } : {}}>
               {successMessage}
             </p>
             {emailPreviewUrl ? (
               <>
-                <p className="text-xs text-green-700 mb-2">
+                <p className="text-xs text-[#78716c] mb-2">
                   📧 В режиме разработки письма не доставляются на реальный email. Используйте ссылку ниже:
                 </p>
-                <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded">
-                  <p className="text-xs text-blue-800 font-semibold mb-1">🔗 Открыть письмо в браузере:</p>
+                <div className="mt-3 p-3 bg-[rgba(212,175,55,0.06)] border border-[#D4AF37]/25 rounded">
+                  <p className="text-xs text-[#D4AF37] font-semibold mb-1">🔗 Открыть письмо в браузере:</p>
                   <a
                     href={emailPreviewUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-xs text-blue-600 hover:underline break-all"
+                    className="text-xs text-[#E8C547] hover:underline break-all"
                   >
                     {emailPreviewUrl}
                   </a>
@@ -181,7 +181,7 @@ export function RegisterForm({ onSuccess, onSwitchToLogin }: RegisterFormProps) 
           <Button
             type="submit"
             loading={isLoading}
-            className="w-full gradient-primary text-[#0a1628] font-bold py-3"
+            className="w-full gradient-primary text-[#1c1917] font-bold py-3"
           >
             {isLoading ? 'Регистрация...' : 'Зарегистрироваться'}
           </Button>

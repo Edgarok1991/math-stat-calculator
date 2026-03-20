@@ -32,10 +32,10 @@ export default function AuthPage() {
         >
           <div className="inline-flex flex-col items-center gap-2 mb-4">
             <div className="w-16 h-16 gradient-primary rounded-2xl flex items-center justify-center shadow-lg">
-              <Calculator className="w-8 h-8 text-[#0a1628]" />
+              <Calculator className="w-8 h-8 text-[#1c1917]" />
             </div>
             <h1 className="text-4xl font-bold" style={{ color: 'var(--foreground)' }}>MathCalc</h1>
-            <p className="text-sm" style={{ color: 'var(--foreground-secondary)' }}>Midnight Blue Edition</p>
+            <p className="text-sm" style={{ color: 'var(--foreground-secondary)' }}>Luxury Gold Edition</p>
           </div>
           <p style={{ color: 'var(--foreground-secondary)' }}>Математический калькулятор с авторизацией</p>
         </motion.div>

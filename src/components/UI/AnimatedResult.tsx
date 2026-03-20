@@ -18,8 +18,8 @@ const iconMap = {
 };
 
 const colorMap = {
-  success: 'text-green-400 bg-green-900/30 border-green-500/50',
-  error: 'text-red-400 bg-red-900/30 border-red-500/50',
+  success: 'text-[#c9b896] bg-[rgba(212,175,55,0.12)] border-[#D4AF37]/45',
+  error: 'text-red-400 bg-red-900/30 border-[#a67c7c]/50',
   info: 'text-[#D4AF37] bg-[rgba(212,175,55,0.2)] border-[rgba(212,175,55,0.4)]',
   calculation: 'text-[#E8C547] bg-[rgba(212,175,55,0.2)] border-[rgba(212,175,55,0.4)]',
 };

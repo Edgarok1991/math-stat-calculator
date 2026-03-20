@@ -66,7 +66,7 @@ export default function ResendVerificationPage() {
 
           <div className="text-center mb-8">
             <div className="w-16 h-16 gradient-primary rounded-full flex items-center justify-center mx-auto mb-4">
-              <Mail className="w-8 h-8 text-[#0a1628]" />
+              <Mail className="w-8 h-8 text-[#1c1917]" />
             </div>
             <h2 className="text-3xl font-bold mb-2" style={{ color: 'var(--foreground)' }}>
               Повторная отправка письма
@@ -77,14 +77,14 @@ export default function ResendVerificationPage() {
           </div>
 
           {message && (
-            <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
-              <p className="text-sm text-green-800">{message}</p>
+            <div className="mb-4 p-3 bg-[rgba(212,175,55,0.1)] border border-[#D4AF37]/35 rounded-lg">
+              <p className="text-sm text-[#57534e]">{message}</p>
             </div>
           )}
 
           {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-sm text-red-800">{error}</p>
+            <div className="mb-4 p-3 bg-[rgba(193,123,123,0.12)] border border-[#a67c7c]/50 rounded-lg">
+              <p className="text-sm text-[#5c3d3d]">{error}</p>
             </div>
           )}
 
@@ -106,7 +106,7 @@ export default function ResendVerificationPage() {
             <Button
               type="submit"
               loading={isLoading}
-              className="w-full gradient-primary text-[#0a1628] font-bold py-3"
+              className="w-full gradient-primary text-[#1c1917] font-bold py-3"
             >
               {isLoading ? 'Отправка...' : 'Отправить письмо'}
             </Button>

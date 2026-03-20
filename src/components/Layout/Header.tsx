@@ -34,15 +34,15 @@ export default function Header() {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <Link href="/" className="flex items-center space-x-3 group">
-            <div className="w-10 h-10 gradient-primary rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
-              <Calculator className="w-6 h-6 text-white" />
+              <div className="w-10 h-10 gradient-primary rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
+              <Calculator className="w-6 h-6 text-[#1c1917]" />
             </div>
             <div>
               <span className="text-2xl font-bold block" style={{ color: 'var(--foreground)' }}>
                 MathCalc
               </span>
               <span className="text-xs font-medium opacity-80" style={{ color: 'var(--foreground-secondary)' }}>
-                Midnight Blue Edition
+                Luxury Gold Edition
               </span>
             </div>
           </Link>
@@ -61,7 +61,7 @@ export default function Header() {
                     href={item.href}
                     className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 ${
                       isActive
-                        ? 'gradient-primary text-[#0a1628] font-bold shadow-lg'
+                        ? 'gradient-primary text-[#1c1917] font-bold shadow-lg'
                         : 'border border-[#D4AF37]/40 text-[#D4AF37] hover:bg-[#D4AF37]/10'
                     }`}
                   >
@@ -117,7 +117,7 @@ export default function Header() {
             ) : (
               <Link
                 href="/auth"
-                className="hidden md:flex items-center gap-2 px-4 py-2 rounded-xl gradient-primary text-[#0a1628] font-bold hover:opacity-90 transition-opacity"
+                className="hidden md:flex items-center gap-2 px-4 py-2 rounded-xl gradient-primary text-[#1c1917] font-bold hover:opacity-90 transition-opacity"
               >
                 <User className="w-4 h-4" />
                 <span className="text-sm font-medium">Войти</span>
@@ -162,7 +162,7 @@ export default function Header() {
                     onClick={() => setIsMobileMenuOpen(false)}
                     className={`flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 ${
                       isActive
-                        ? 'gradient-primary text-[#0a1628] font-bold shadow-lg'
+                        ? 'gradient-primary text-[#1c1917] font-bold shadow-lg'
                         : 'border border-[#D4AF37]/40 text-[#D4AF37] hover:bg-[#D4AF37]/10'
                     }`}
                   >

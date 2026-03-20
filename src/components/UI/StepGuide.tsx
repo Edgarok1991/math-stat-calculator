@@ -148,7 +148,7 @@ export const StepGuide = ({ steps, title, description }: StepGuideProps) => {
                         index === currentStep
                           ? 'gradient-primary'
                           : index < currentStep
-                          ? 'bg-green-500'
+                          ? 'bg-[#D4AF37]'
                           : ''
                       }`}
                       style={index > currentStep ? { background: 'var(--background-tertiary)' } : {}}

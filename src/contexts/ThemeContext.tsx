@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
-type Theme = 'midnight' | 'light';
+type Theme = 'luxury' | 'light';
 
 interface ThemeContextType {
   theme: Theme;
@@ -25,13 +25,15 @@ interface ThemeProviderProps {
 }
 
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
-  const [theme, setThemeState] = useState<Theme>('midnight');
+  const [theme, setThemeState] = useState<Theme>('luxury');
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') as Theme;
-    if (savedTheme === 'midnight' || savedTheme === 'light') {
-      setThemeState(savedTheme);
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'light') {
+      setThemeState('light');
+    } else if (savedTheme === 'luxury' || savedTheme === 'midnight') {
+      setThemeState('luxury');
     }
     setMounted(true);
   }, []);
@@ -39,12 +41,12 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   useEffect(() => {
     if (mounted) {
       const root = document.documentElement;
-      root.setAttribute('data-theme', theme);
+      root.setAttribute('data-theme', theme === 'luxury' ? 'luxury' : 'light');
     }
   }, [theme, mounted]);
 
   const toggleTheme = () => {
-    const newTheme = theme === 'midnight' ? 'light' : 'midnight';
+    const newTheme = theme === 'luxury' ? 'light' : 'luxury';
     setThemeState(newTheme);
     localStorage.setItem('theme', newTheme);
   };
