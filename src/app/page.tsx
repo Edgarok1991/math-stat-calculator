@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Calculator, BarChart3, Grid3X3, FunctionSquare, Zap, Shield, Globe, Sparkles, Brain, Target, ArrowRight, TrendingUp, PieChart, LineChart } from 'lucide-react';
+import { Calculator, BarChart3, Grid3X3, FunctionSquare, Sparkles, Brain, Globe, ArrowRight, PieChart, LineChart } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/UI/Button';
 import { useAuth } from '@/contexts/AuthContext';
@@ -56,27 +56,6 @@ const features = [
     href: '/matrices',
     gradient: 'gradient-primary',
     color: 'text-[#D4AF37]',
-  },
-];
-
-const benefits = [
-  {
-    icon: Zap,
-    title: 'Быстрые вычисления',
-    description: 'Мощные алгоритмы для мгновенных результатов',
-    gradient: 'gradient-primary',
-  },
-  {
-    icon: Shield,
-    title: 'Точность',
-    description: 'Высокая точность вычислений с контролем погрешности',
-    gradient: 'gradient-success',
-  },
-  {
-    icon: Globe,
-    title: 'Современные технологии',
-    description: 'Построено на Next.js, NestJS и современных библиотеках',
-    gradient: 'gradient-accent',
   },
 ];
 
@@ -215,71 +194,6 @@ export default function HomePage() {
               </div>
             </motion.div>
           ))}
-        </div>
-      </div>
-
-      {/* Benefits Section */}
-      <div className="py-20 glass">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-center"
-          >
-            <h2 className="text-4xl md:text-5xl font-bold mb-4" style={{ color: 'var(--foreground)' }}>
-              Почему выбирают нас
-            </h2>
-            <p className="text-xl mb-16" style={{ color: 'var(--foreground-secondary)' }}>
-              Надежность, точность и удобство в одном решении
-            </p>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {benefits.map((benefit, index) => (
-                <motion.div
-                  key={benefit.title}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
-                  className="text-center"
-                >
-                  <div className={`w-20 h-20 ${benefit.gradient} rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg`}>
-                    <benefit.icon className="w-10 h-10 text-white" />
-                  </div>
-                  <h3 className="text-2xl font-bold mb-4" style={{ color: 'var(--foreground)' }}>
-                    {benefit.title}
-                  </h3>
-                  <p className="text-lg" style={{ color: 'var(--foreground-secondary)' }}>
-                    {benefit.description}
-                  </p>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-        </div>
-      </div>
-
-      {/* CTA Section */}
-      <div className="py-20 gradient-primary">
-        <div className="container mx-auto px-4 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-          >
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-              Готовы начать расчеты?
-            </h2>
-            <p className="text-xl text-white/90 mb-10 max-w-2xl mx-auto">
-              Выберите нужный калькулятор и начните работу прямо сейчас
-            </p>
-            <Button size="lg" className="gradient-primary text-[#0a1628] font-bold shadow-xl">
-              <Link href="/regression" className="flex items-center gap-2">
-                Начать работу
-                <ArrowRight className="w-5 h-5" />
-              </Link>
-            </Button>
-          </motion.div>
         </div>
       </div>
     </div>
