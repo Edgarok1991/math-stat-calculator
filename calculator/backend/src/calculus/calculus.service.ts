@@ -642,76 +642,198 @@ export class CalculusService {
     return cleanExpr || '0';
   }
 
+  /** Результат интегрирования с метаданными о методе */
+  private integralResult: { result: string; method: 'table' | 'substitution' | 'by_parts'; substitution?: { u: string; du: string }; byParts?: { u: string; dv: string; du: string; v: string } } = { result: '', method: 'table' };
+
   private simplifyIntegral(expression: string, variable: string): string {
-    const cleanExpr = expression.replace(/\s/g, '');
+    const cleanExpr = expression.replace(/\s/g, '').replace(/ln\(/g, 'log(');
+    this.integralResult = { result: '', method: 'table' };
     
     try {
-      // Таблица известных интегралов
+      // === МЕТОД ПОДСТАНОВКИ (замена переменной) ===
+      
+      // ∫x*exp(x^2)dx — подстановка u = x^2, du = 2x dx
+      const xExpX2Match = cleanExpr.match(new RegExp(`${variable}\\*exp\\(${variable}\\^2\\)`));
+      if (xExpX2Match) {
+        this.integralResult = { result: `exp(${variable}^2)/2 + C`, method: 'substitution', substitution: { u: `${variable}^2`, du: `2${variable} d${variable}` } };
+        return this.integralResult.result;
+      }
+      
+      // ∫2x*exp(x^2)dx или ∫2*x*exp(x^2)dx
+      const twoXExpX2Match = cleanExpr.match(/2\*?x\*?exp\(x\^2\)/);
+      if (twoXExpX2Match) {
+        this.integralResult = { result: `exp(${variable}^2) + C`, method: 'substitution', substitution: { u: `${variable}^2`, du: `2${variable} d${variable}` } };
+        return this.integralResult.result;
+      }
+      
+      // ∫1/(x+a)dx — подстановка u = x+a
+      const oneOverLinearMatch = cleanExpr.match(new RegExp(`1/\\(${variable}\\+([^)]+)\\)`));
+      if (oneOverLinearMatch) {
+        const a = oneOverLinearMatch[1];
+        this.integralResult = { result: `log(abs(${variable}+${a})) + C`, method: 'substitution', substitution: { u: `${variable}+${a}`, du: `d${variable}` } };
+        return this.integralResult.result;
+      }
+      
+      // ∫1/(ax+b)dx при a≠1 — подстановка u = ax+b
+      const oneOverAxbMatch = cleanExpr.match(new RegExp(`1/\\(([0-9]+)${variable}\\+([^)]+)\\)`));
+      if (oneOverAxbMatch) {
+        const a = parseInt(oneOverAxbMatch[1]);
+        const b = oneOverAxbMatch[2];
+        this.integralResult = { result: `log(abs(${a}${variable}+${b}))/${a} + C`, method: 'substitution', substitution: { u: `${a}${variable}+${b}`, du: `${a} d${variable}` } };
+        return this.integralResult.result;
+      }
+      
+      // ∫2x/(x^2+1)dx — подстановка u = x^2+1
+      const twoXOverX2Plus1Match = cleanExpr.match(/2\*?x\*?\/\*?\(x\^2\+1\)/);
+      if (twoXOverX2Plus1Match) {
+        this.integralResult = { result: `log(abs(${variable}^2+1)) + C`, method: 'substitution', substitution: { u: `${variable}^2+1`, du: `2${variable} d${variable}` } };
+        return this.integralResult.result;
+      }
+      
+      // ∫x/(x^2+1)dx — подстановка u = x^2+1
+      const xOverX2Plus1Match = cleanExpr.match(new RegExp(`${variable}/\\s*\\(${variable}\\^2\\+1\\)`));
+      if (xOverX2Plus1Match) {
+        this.integralResult = { result: `log(abs(${variable}^2+1))/2 + C`, method: 'substitution', substitution: { u: `${variable}^2+1`, du: `2${variable} d${variable}` } };
+        return this.integralResult.result;
+      }
+      
+      // ∫(x+a)^n dx — подстановка u = x+a
+      const linearPowerMatch = cleanExpr.match(new RegExp(`\\(${variable}\\+([^)]+)\\)\\^(\\d+)`));
+      if (linearPowerMatch) {
+        const a = linearPowerMatch[1];
+        const n = parseInt(linearPowerMatch[2]);
+        const newPower = n + 1;
+        this.integralResult = { result: `(${variable}+${a})^${newPower}/${newPower} + C`, method: 'substitution', substitution: { u: `${variable}+${a}`, du: `d${variable}` } };
+        return this.integralResult.result;
+      }
+      
+      // ∫(ax+b)^n dx при a≠1 — подстановка u = ax+b
+      const axbPowerMatch = cleanExpr.match(new RegExp(`\\(([0-9]+)${variable}\\+([^)]+)\\)\\^(\\d+)`));
+      if (axbPowerMatch) {
+        const a = parseInt(axbPowerMatch[1]);
+        const b = axbPowerMatch[2];
+        const n = parseInt(axbPowerMatch[3]);
+        const newPower = n + 1;
+        this.integralResult = { result: `(${a}${variable}+${b})^${newPower}/(${a}*${newPower}) + C`, method: 'substitution', substitution: { u: `${a}${variable}+${b}`, du: `${a} d${variable}` } };
+        return this.integralResult.result;
+      }
+      
+      // ∫sin(ax)dx, ∫cos(ax)dx при a≠1 — подстановка u = ax
+      const sinAxMatch = cleanExpr.match(/sin\(([0-9]+)x\)/);
+      if (sinAxMatch) {
+        const a = parseInt(sinAxMatch[1]);
+        if (a !== 1) {
+          this.integralResult = { result: `-cos(${a}${variable})/${a} + C`, method: 'substitution', substitution: { u: `${a}${variable}`, du: `${a} d${variable}` } };
+          return this.integralResult.result;
+        }
+      }
+      
+      const cosAxMatch = cleanExpr.match(/cos\(([0-9]+)x\)/);
+      if (cosAxMatch) {
+        const a = parseInt(cosAxMatch[1]);
+        if (a !== 1) {
+          this.integralResult = { result: `sin(${a}${variable})/${a} + C`, method: 'substitution', substitution: { u: `${a}${variable}`, du: `${a} d${variable}` } };
+          return this.integralResult.result;
+        }
+      }
+      
+      // === ИНТЕГРИРОВАНИЕ ПО ЧАСТЯМ ===
+      
+      // ∫log(x)dx или ∫ln(x)dx — по частям: u=log(x), dv=dx
+      if (cleanExpr === `log(${variable})`) {
+        this.integralResult = { result: `${variable}*log(${variable})-${variable} + C`, method: 'by_parts', byParts: { u: `log(${variable})`, dv: `d${variable}`, du: `1/${variable} d${variable}`, v: variable } };
+        return this.integralResult.result;
+      }
+      
+      // ∫x*log(x)dx или ∫x*ln(x)dx — по частям: u=log(x), dv=x dx
+      if (cleanExpr === `${variable}*log(${variable})` || cleanExpr === `log(${variable})*${variable}`) {
+        this.integralResult = { result: `${variable}^2*log(${variable})/2-${variable}^2/4 + C`, method: 'by_parts', byParts: { u: `log(${variable})`, dv: `${variable} d${variable}`, du: `1/${variable} d${variable}`, v: `${variable}^2/2` } };
+        return this.integralResult.result;
+      }
+      
+      // ∫x*exp(x)dx — по частям: u=x, dv=exp(x)dx
+      if (cleanExpr === `${variable}*exp(${variable})` || cleanExpr === `exp(${variable})*${variable}`) {
+        this.integralResult = { result: `(${variable}-1)*exp(${variable}) + C`, method: 'by_parts', byParts: { u: variable, dv: `exp(${variable}) d${variable}`, du: `d${variable}`, v: `exp(${variable})` } };
+        return this.integralResult.result;
+      }
+      
+      // ∫x^2*exp(x)dx — по частям дважды
+      if (cleanExpr === `${variable}^2*exp(${variable})` || cleanExpr === `exp(${variable})*${variable}^2`) {
+        this.integralResult = { result: `(${variable}^2-2*${variable}+2)*exp(${variable}) + C`, method: 'by_parts', byParts: { u: `${variable}^2`, dv: `exp(${variable}) d${variable}`, du: `2*${variable} d${variable}`, v: `exp(${variable})` } };
+        return this.integralResult.result;
+      }
+      
+      // ∫x*sin(x)dx — по частям: u=x, dv=sin(x)dx
+      if (cleanExpr === `${variable}*sin(${variable})` || cleanExpr === `sin(${variable})*${variable}`) {
+        this.integralResult = { result: `sin(${variable})-${variable}*cos(${variable}) + C`, method: 'by_parts', byParts: { u: variable, dv: `sin(${variable}) d${variable}`, du: `d${variable}`, v: `-cos(${variable})` } };
+        return this.integralResult.result;
+      }
+      
+      // ∫x*cos(x)dx — по частям: u=x, dv=cos(x)dx
+      if (cleanExpr === `${variable}*cos(${variable})` || cleanExpr === `cos(${variable})*${variable}`) {
+        this.integralResult = { result: `cos(${variable})+${variable}*sin(${variable}) + C`, method: 'by_parts', byParts: { u: variable, dv: `cos(${variable}) d${variable}`, du: `d${variable}`, v: `sin(${variable})` } };
+        return this.integralResult.result;
+      }
+      
+      // ∫exp(x)*sin(x)dx — по частям дважды (круговой)
+      if ((cleanExpr === `exp(${variable})*sin(${variable})` || cleanExpr === `sin(${variable})*exp(${variable})`)) {
+        this.integralResult = { result: `exp(${variable})*(sin(${variable})-cos(${variable}))/2 + C`, method: 'by_parts', byParts: { u: `sin(${variable})`, dv: `exp(${variable}) d${variable}`, du: `cos(${variable}) d${variable}`, v: `exp(${variable})` } };
+        return this.integralResult.result;
+      }
+      
+      // ∫exp(x)*cos(x)dx
+      if ((cleanExpr === `exp(${variable})*cos(${variable})` || cleanExpr === `cos(${variable})*exp(${variable})`)) {
+        this.integralResult = { result: `exp(${variable})*(sin(${variable})+cos(${variable}))/2 + C`, method: 'by_parts', byParts: { u: `cos(${variable})`, dv: `exp(${variable}) d${variable}`, du: `-sin(${variable}) d${variable}`, v: `exp(${variable})` } };
+        return this.integralResult.result;
+      }
+      
+      // === ТАБЛИЦА ИЗВЕСТНЫХ ИНТЕГРАЛОВ ===
+      
       const integralTable: { [key: string]: string } = {
-        // Основные
         [`${variable}`]: `${variable}^2/2`,
         [`${variable}^2`]: `${variable}^3/3`,
         [`${variable}^3`]: `${variable}^4/4`,
         [`${variable}^4`]: `${variable}^5/5`,
-        
-        // Тригонометрические
         [`sin(${variable})`]: `-cos(${variable})`,
         [`cos(${variable})`]: `sin(${variable})`,
         [`tan(${variable})`]: `-log(abs(cos(${variable})))`,
-        
-        // Показательные
         [`exp(${variable})`]: `exp(${variable})`,
         [`e^${variable}`]: `exp(${variable})`,
-        
-        // Логарифмические
         [`1/${variable}`]: `log(abs(${variable}))`,
-        [`log(${variable})`]: `${variable}*log(${variable})-${variable}`,
       };
 
-      // Проверка точного совпадения
       if (integralTable[cleanExpr]) {
-        return integralTable[cleanExpr] + ' + C';
+        this.integralResult = { result: integralTable[cleanExpr] + ' + C', method: 'table' };
+        return this.integralResult.result;
       }
 
-      // Интеграл произведения x * exp(x) - интегрирование по частям
-      if (cleanExpr === `${variable}*exp(${variable})` || cleanExpr === `exp(${variable})*${variable}`) {
-        return `(${variable}-1)*exp(${variable}) + C`;
-      }
-
-      // Интеграл x * sin(x) - интегрирование по частям
-      if (cleanExpr === `${variable}*sin(${variable})` || cleanExpr === `sin(${variable})*${variable}`) {
-        return `sin(${variable})-${variable}*cos(${variable}) + C`;
-      }
-
-      // Интеграл x * cos(x) - интегрирование по частям
-      if (cleanExpr === `${variable}*cos(${variable})` || cleanExpr === `cos(${variable})*${variable}`) {
-        return `cos(${variable})+${variable}*sin(${variable}) + C`;
-      }
-
-      // Интеграл sin(x) * cos(x)
+      // ∫sin(x)*cos(x)dx
       if (cleanExpr === `sin(${variable})*cos(${variable})` || cleanExpr === `cos(${variable})*sin(${variable})`) {
-        return `sin(${variable})^2/2 + C`;
+        this.integralResult = { result: `sin(${variable})^2/2 + C`, method: 'table' };
+        return this.integralResult.result;
       }
 
-      // Попытка обработать x^n
-      const powerMatch = cleanExpr.match(new RegExp(`${variable}\\^(\\d+)`));
+      // ∫x^n
+      const powerMatch = cleanExpr.match(new RegExp(`${variable.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\^(\\d+)`));
       if (powerMatch) {
         const power = parseInt(powerMatch[1]);
         const newPower = power + 1;
-        return `1/${newPower}*${variable}^${newPower} + C`;
+        this.integralResult = { result: `1/${newPower}*${variable}^${newPower} + C`, method: 'table' };
+        return this.integralResult.result;
       }
 
-      // Попытка обработать коэффициент * x^n
-      const coeffPowerMatch = cleanExpr.match(new RegExp(`(\\d+)\\*${variable}\\^(\\d+)`));
+      // ∫a*x^n
+      const coeffPowerMatch = cleanExpr.match(new RegExp(`(\\d+)\\*${variable.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\^(\\d+)`));
       if (coeffPowerMatch) {
         const coeff = parseInt(coeffPowerMatch[1]);
         const power = parseInt(coeffPowerMatch[2]);
         const newPower = power + 1;
-        return `${coeff}/${newPower}*${variable}^${newPower} + C`;
+        this.integralResult = { result: `${coeff}/${newPower}*${variable}^${newPower} + C`, method: 'table' };
+        return this.integralResult.result;
       }
 
-      // Если не удалось распознать, возвращаем общую форму
-      return `∫(${expression})d${variable} + C`;
+      this.integralResult = { result: `∫(${expression})d${variable} + C`, method: 'table' };
+      return this.integralResult.result;
     } catch (error) {
       return 'C';
     }
@@ -746,51 +868,60 @@ export class CalculusService {
   }
 
   private getIntegralSteps(expression: string, variable: string): string[] {
-    const cleanExpr = expression.replace(/\s/g, '');
     const result = this.simplifyIntegral(expression, variable);
-    const steps = [
-      `Исходная функция: ${expression}`,
-      'Применяем правила интегрирования:'
-    ];
+    const steps: string[] = [];
 
-    // Определяем, какое правило применяется
-    if (cleanExpr.includes('*exp(') || cleanExpr.includes('exp(') && cleanExpr.includes('*')) {
-      steps.push('• Интегрирование по частям: ∫u·dv = u·v - ∫v·du');
-      steps.push(`• Для ${variable}·exp(${variable}): u = ${variable}, dv = exp(${variable})d${variable}`);
-    } else if (cleanExpr.includes('*sin(') || cleanExpr.includes('*cos(')) {
-      steps.push('• Интегрирование по частям: ∫u·dv = u·v - ∫v·du');
-    } else if (cleanExpr.includes('sin(') && cleanExpr.includes('cos(')) {
-      steps.push('• Используем формулу: sin(x)·cos(x) = sin(2x)/2');
-    } else if (cleanExpr.match(/\^\d+/)) {
-      steps.push('• ∫(x^n)dx = x^(n+1)/(n+1) + C');
-    } else if (cleanExpr.includes('sin(')) {
-      steps.push('• ∫sin(x)dx = -cos(x) + C');
-    } else if (cleanExpr.includes('cos(')) {
-      steps.push('• ∫cos(x)dx = sin(x) + C');
-    } else if (cleanExpr.includes('exp(')) {
-      steps.push('• ∫exp(x)dx = exp(x) + C');
-    } else if (cleanExpr === '1/' + variable) {
-      steps.push('• ∫(1/x)dx = ln|x| + C');
+    // Шаг 1: Исходный интеграл (как на integral-calculator.com)
+    steps.push(`Шаг 1. Записываем интеграл: ∫(${expression}) d${variable}`);
+
+    if (this.integralResult.method === 'substitution' && this.integralResult.substitution) {
+      const { u, du } = this.integralResult.substitution;
+      steps.push(`Шаг 2. Применяем метод замены переменной (подстановка):`);
+      steps.push(`   Пусть u = ${u}`);
+      steps.push(`   Тогда du = ${du}`);
+      steps.push(`Шаг 3. Выражаем d${variable} через du и подставляем в интеграл`);
+      steps.push(`Шаг 4. Интегрируем по новой переменной u`);
+      steps.push(`Шаг 5. Выполняем обратную подстановку: заменяем u на ${u}`);
+      steps.push(`Результат: ${result}`);
+    } else if (this.integralResult.method === 'by_parts' && this.integralResult.byParts) {
+      const { u, dv, du, v } = this.integralResult.byParts;
+      steps.push(`Шаг 2. Применяем интегрирование по частям: ∫u·dv = u·v − ∫v·du`);
+      steps.push(`   Выбираем: u = ${u}, dv = ${dv}`);
+      steps.push(`Шаг 3. Вычисляем: du = ${du}, v = ${v}`);
+      steps.push(`Шаг 4. Подставляем в формулу: ∫(${expression}) d${variable} = u·v − ∫v·du`);
+      steps.push(`Шаг 5. Вычисляем оставшийся интеграл ∫v·du`);
+      steps.push(`Шаг 6. Упрощаем и получаем первообразную`);
+      steps.push(`Результат: ${result}`);
     } else {
-      steps.push('• ∫(x^n)dx = x^(n+1)/(n+1) + C');
-      steps.push('• ∫(c)dx = c·x + C');
+      steps.push(`Шаг 2. Применяем таблицу основных интегралов:`);
+      steps.push(`   • ∫(x^n)dx = x^(n+1)/(n+1) + C`);
+      steps.push(`   • ∫sin(x)dx = -cos(x) + C, ∫cos(x)dx = sin(x) + C`);
+      steps.push(`   • ∫exp(x)dx = exp(x) + C, ∫(1/x)dx = ln|x| + C`);
+      steps.push(`Результат: ${result}`);
     }
 
-    steps.push(`Результат: ${result}`);
     return steps;
   }
 
   private getDefiniteIntegralSteps(expression: string, variable: string, bounds: { lower: number; upper: number }): string[] {
     const indefinite = this.simplifyIntegral(expression, variable);
-    return [
-      `Исходная функция: ${expression}`,
-      'Находим первообразную:',
-      `F(x) = ${indefinite}`,
-      `Вычисляем F(${bounds.upper}) - F(${bounds.lower}):`,
-      `F(${bounds.upper}) = ${this.evaluateExpression(indefinite.replace(' + C', ''), variable, bounds.upper)}`,
-      `F(${bounds.lower}) = ${this.evaluateExpression(indefinite.replace(' + C', ''), variable, bounds.lower)}`,
-      `Результат: ${this.simplifyDefiniteIntegral(expression, variable, bounds)}`
+    const steps: string[] = [
+      `Шаг 1. Записываем определённый интеграл: ∫[${bounds.lower}→${bounds.upper}] (${expression}) d${variable}`,
+      `Шаг 2. Находим первообразную F(${variable}) (неопределённый интеграл):`,
+      `   F(${variable}) = ${indefinite}`,
     ];
+    if (this.integralResult.method === 'substitution' && this.integralResult.substitution) {
+      steps.push(`   (применён метод подстановки: u = ${this.integralResult.substitution.u})`);
+    } else if (this.integralResult.method === 'by_parts' && this.integralResult.byParts) {
+      steps.push(`   (применено интегрирование по частям: u = ${this.integralResult.byParts.u})`);
+    }
+    steps.push(
+      `Шаг 3. Применяем формулу Ньютона—Лейбница: ∫[a→b] f(x)dx = F(b) − F(a)`,
+      `   F(${bounds.upper}) = ${this.evaluateExpression(indefinite.replace(' + C', ''), variable, bounds.upper)}`,
+      `   F(${bounds.lower}) = ${this.evaluateExpression(indefinite.replace(' + C', ''), variable, bounds.lower)}`,
+      `Результат: ${this.simplifyDefiniteIntegral(expression, variable, bounds)}`
+    );
+    return steps;
   }
 
   private toLatex(expression: string): string {
