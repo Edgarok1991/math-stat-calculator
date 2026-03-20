@@ -151,6 +151,26 @@
 - Убедитесь, что backend задеплоен с последним кодом (с `origin: true` в CORS)
 - Нажмите **Manual Deploy** → **Deploy latest commit**
 
+### Ошибка Prisma P1003 (Database server not found)
+
+- **Причина:** база данных недоступна — неверный URL или Supabase приостановлен.
+- **Что проверить:**
+  1. **Supabase:** зайдите в [supabase.com](https://supabase.com) → Dashboard. Если проект «Paused» — нажмите **Restore**.
+  2. **DATABASE_URL:** используйте **Session mode** (порт 5432):  
+     `postgresql://postgres.[REF]:[PASSWORD]@aws-0-eu-central-1.pooler.supabase.com:5432/postgres`
+  3. **DIRECT_URL:** используйте **Direct connection** (порт 5432) из Supabase → Project Settings → Database.
+  4. **Пароль:** спецсимволы `@`, `#`, `:` — закодируйте в URL (`%40`, `%23`, `%3A`).
+
+### Start Command — важно
+
+В Render в **Settings** → **Build & Deploy** → **Start Command** должно быть:
+
+```
+npx prisma db push && node dist/main.js
+```
+
+Если поле пустое, Render использует `npm start` — в `package.json` он уже настроен на production.
+
 ### Ошибка «Exited with status 127» при сборке
 
 - **Причина:** команда `nest` (NestJS CLI) не найдена — она была только в devDependencies
