@@ -100,7 +100,7 @@ export class AuthService {
       throw new UnauthorizedException('Неверный email или пароль');
     }
 
-    // Генерация токена
+    // Генерация токена (вход разрешён без подтверждения email)
     const token = this.generateToken(user.id, user.email);
 
     return {
