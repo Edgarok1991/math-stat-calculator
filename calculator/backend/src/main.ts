@@ -5,17 +5,20 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   
-  // Включение CORS
-  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
-  const corsOrigins = [
-    frontendUrl,
-    'http://localhost:3000',
-    'http://localhost:3003',
-    'https://math-stat-calculator.vercel.app',
-    'https://www.math-stat-calculator.vercel.app',
-  ];
+  // Включение CORS — разрешаем Vercel, localhost и FRONTEND_URL
+  const frontendUrl = process.env.FRONTEND_URL || '';
   app.enableCors({
-    origin: corsOrigins,
+    origin: (origin, callback) => {
+      const allowed = [
+        'http://localhost:3000',
+        'http://localhost:3003',
+        'https://math-stat-calculator.vercel.app',
+        'https://www.math-stat-calculator.vercel.app',
+        ...(frontendUrl ? [frontendUrl] : []),
+      ];
+      const isAllowed = !origin || allowed.includes(origin) || origin.endsWith('.vercel.app');
+      callback(null, isAllowed);
+    },
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
   });

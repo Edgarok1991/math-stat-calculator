@@ -8,12 +8,21 @@ import * as math from 'mathjs';
 @Injectable()
 export class CalculusService {
   // Новый метод для вычисления производной с пошаговым решением
+  /** Нормализует ввод: lnx→ln(x), e^x→exp(x) */
+  private normalizeExpression(expr: string): string {
+    return expr
+      .replace(/\bln\s*([a-z])\b/g, 'ln($1)')
+      .replace(/\blog\s*([a-z])\b/g, 'log($1)')
+      .replace(/\be\^([a-z0-9()+*\-.\s]+)/g, (_, e) => `exp(${e.trim()})`);
+  }
+
   calculateDerivativeDetailed(data: DerivativeDto): DerivativeResult {
     const { expression, variable, order = 1, simplify = true } = data;
+    const normalizedExpr = this.normalizeExpression(expression);
     
     try {
       // Преобразуем выражение для совместимости с mathjs
-      let processedExpression = expression
+      let processedExpression = normalizedExpr
         .replace(/ln\(/g, 'log(')  // ln -> log для mathjs
         .replace(/tg\(/g, 'tan(')  // tg -> tan для mathjs
         .replace(/ctg\(/g, 'cot(') // ctg -> cot для mathjs
@@ -76,7 +85,7 @@ export class CalculusService {
     const step = (xMax - xMin) / numPoints;
 
     // Преобразуем выражение для вычисления
-    const processedExpression = data.expression
+    const processedExpression = this.normalizeExpression(data.expression)
       .replace(/ln\(/g, 'log(')
       .replace(/tg\(/g, 'tan(')
       .replace(/ctg\(/g, 'cot(')
@@ -124,7 +133,7 @@ export class CalculusService {
     
     try {
       // Преобразуем выражение
-      const processedExpression = expression
+      const processedExpression = this.normalizeExpression(expression)
         .replace(/ln\(/g, 'log(')
         .replace(/tg\(/g, 'tan(')
         .replace(/ctg\(/g, 'cot(')
@@ -575,6 +584,7 @@ export class CalculusService {
 
   calculateIntegral(data: CalculusDto): CalculusResult {
     const { expression, variable, bounds } = data;
+    const normalizedExpr = this.normalizeExpression(expression);
     
     try {
       let integral: string;
@@ -582,12 +592,12 @@ export class CalculusService {
       
       if (bounds) {
         // Определенный интеграл
-        integral = this.simplifyDefiniteIntegral(expression, variable, bounds);
-        steps = this.getDefiniteIntegralSteps(expression, variable, bounds);
+        integral = this.simplifyDefiniteIntegral(normalizedExpr, variable, bounds);
+        steps = this.getDefiniteIntegralSteps(normalizedExpr, variable, bounds);
       } else {
         // Неопределенный интеграл
-        integral = this.simplifyIntegral(expression, variable);
-        steps = this.getIntegralSteps(expression, variable);
+        integral = this.simplifyIntegral(normalizedExpr, variable);
+        steps = this.getIntegralSteps(normalizedExpr, variable);
       }
       
       const latex = this.toLatex(integral);

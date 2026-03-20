@@ -37,6 +37,9 @@ export const MathExpression: React.FC<MathExpressionProps> = ({ expression, clas
 
   let formatted = expression;
 
+  // lnx, ln x → ln(x) для отображения
+  formatted = formatted.replace(/\bln\s*([a-z])\b/g, 'ln($1)');
+  formatted = formatted.replace(/\blog\s*([a-z])\b/g, 'log($1)');
   // Преобразуем exp(x) в eˣ для простых случаев
   formatted = formatted.replace(/exp\(([a-z])\)/g, 'e^$1');
 

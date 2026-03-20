@@ -97,6 +97,9 @@ function CalculusPage() {
     },
   });
 
+  const watchedDerivativeExpr = derivativeForm.watch('expression');
+  const watchedIntegralExpr = integralForm.watch('expression');
+
   const onSubmitDerivative = async (data: DerivativeFormData) => {
     setIsLoading(true);
     try {
@@ -270,6 +273,12 @@ function CalculusPage() {
                         style={{ borderColor: 'var(--border)' }}
                         placeholder="x^2"
                       />
+                      {watchedDerivativeExpr && (
+                        <div className="mt-2 p-3 rounded-lg min-h-[2.5rem] flex items-center" style={{ background: 'var(--background-secondary)', borderColor: 'var(--border)' }}>
+                          <span className="text-sm text-gray-500 mr-2">f(x) =</span>
+                          <MathExpression expression={watchedDerivativeExpr} className="text-xl" />
+                        </div>
+                      )}
                       {/* <div className="mt-3 p-3 bg-blue-50 rounded-lg">
                         <p className="text-xs font-semibold text-blue-900 mb-2">⚡ Быстрый выбор примеров:</p>
                         <div className="flex flex-wrap gap-2">
@@ -1067,6 +1076,12 @@ function CalculusPage() {
                         style={{ borderColor: 'var(--border)' }}
                         placeholder="x^2"
                       />
+                      {watchedIntegralExpr && (
+                        <div className="mt-2 p-3 rounded-lg min-h-[2.5rem] flex items-center" style={{ background: 'var(--background-secondary)', borderColor: 'var(--border)' }}>
+                          <span className="text-sm text-gray-500 mr-2">f(x) =</span>
+                          <MathExpression expression={watchedIntegralExpr} className="text-xl" />
+                        </div>
+                      )}
                       <div className="mt-3 p-3 bg-purple-50 rounded-lg">
                         <p className="text-xs font-semibold text-purple-900 mb-2">⚡ Быстрый выбор примеров:</p>
                         <div className="flex flex-wrap gap-2">
