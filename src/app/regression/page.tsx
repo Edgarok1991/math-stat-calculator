@@ -12,6 +12,7 @@ import { apiService } from '@/services/api';
 import { StepGuide } from '@/components/UI/StepGuide';
 import { InteractiveHint } from '@/components/UI/InteractiveHint';
 import { AnimatedResult } from '@/components/UI/AnimatedResult';
+import { FractionDisplay } from '@/components/UI';
 
 const regressionSchema = z.object({
   x: z.string().min(1, 'Введите значения X'),
@@ -270,14 +271,19 @@ function RegressionPage() {
                     <div>
                       <span className="font-medium" style={{ color: 'var(--foreground-secondary)' }}>Коэффициент детерминации (R²):</span>
                       <p className="text-lg font-mono">
-                        {result.rSquared.toFixed(4)}
+                        <FractionDisplay value={result.rSquared} />
                       </p>
                     </div>
                     
                     <div>
                       <span className="font-medium" style={{ color: 'var(--foreground-secondary)' }}>Коэффициенты:</span>
                       <p className="text-sm font-mono p-2 rounded border" style={{ background: 'var(--background-tertiary)', borderColor: 'var(--border)' }}>
-                        [{result.coefficients.map(c => c.toFixed(4)).join(', ')}]
+                        [{result.coefficients.map((c, i) => (
+                          <span key={i}>
+                            {i > 0 && ', '}
+                            <FractionDisplay value={c} className="inline" />
+                          </span>
+                        ))}]
                       </p>
                     </div>
                   </div>

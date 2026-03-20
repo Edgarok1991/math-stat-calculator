@@ -8,6 +8,8 @@ import { z } from 'zod';
 import { Button } from '@/components/UI/Button';
 import { apiService } from '@/services/api';
 import { AnimatedResult } from '@/components/UI/AnimatedResult';
+import { FractionDisplay } from '@/components/UI';
+import { decimalToFraction } from '@/lib/decimalToFraction';
 import { LineChart, Box, BarChart3, TrendingUp } from 'lucide-react';
 import dynamic from 'next/dynamic';
 
@@ -764,7 +766,7 @@ function GraphsPage() {
                     y: 0,
                     xref: 'x',
                     yref: 'y',
-                    text: `Min<br>${dataResult.min.toFixed(2)}`,
+                    text: `Min<br>${decimalToFraction(dataResult.min, 2)}`,
                     showarrow: true,
                     arrowhead: 2,
                     arrowsize: 1,
@@ -784,7 +786,7 @@ function GraphsPage() {
                     y: 0,
                     xref: 'x',
                     yref: 'y',
-                    text: `Q1<br>${dataResult.q1.toFixed(2)}`,
+                    text: `Q1<br>${decimalToFraction(dataResult.q1, 2)}`,
                     showarrow: true,
                     arrowhead: 2,
                     arrowsize: 1,
@@ -804,7 +806,7 @@ function GraphsPage() {
                     y: 0,
                     xref: 'x',
                     yref: 'y',
-                    text: `Медиана<br>${dataResult.median.toFixed(2)}`,
+                    text: `Медиана<br>${decimalToFraction(dataResult.median, 2)}`,
                     showarrow: true,
                     arrowhead: 2,
                     arrowsize: 1,
@@ -824,7 +826,7 @@ function GraphsPage() {
                     y: 0,
                     xref: 'x',
                     yref: 'y',
-                    text: `Q3<br>${dataResult.q3.toFixed(2)}`,
+                    text: `Q3<br>${decimalToFraction(dataResult.q3, 2)}`,
                     showarrow: true,
                     arrowhead: 2,
                     arrowsize: 1,
@@ -844,7 +846,7 @@ function GraphsPage() {
                     y: 0,
                     xref: 'x',
                     yref: 'y',
-                    text: `Max<br>${dataResult.max.toFixed(2)}`,
+                    text: `Max<br>${decimalToFraction(dataResult.max, 2)}`,
                     showarrow: true,
                     arrowhead: 2,
                     arrowsize: 1,
@@ -864,7 +866,7 @@ function GraphsPage() {
                     y: 0,
                     xref: 'x',
                     yref: 'y',
-                    text: `IQR = ${dataResult.iqr.toFixed(2)}`,
+                    text: `IQR = ${decimalToFraction(dataResult.iqr, 2)}`,
                     showarrow: false,
                     font: { size: 11, color: '#6366f1', family: 'Arial', weight: 'bold' },
                     bgcolor: 'rgba(99, 102, 241, 0.2)',
@@ -916,23 +918,23 @@ function GraphsPage() {
             <div className="mt-6 grid grid-cols-2 md:grid-cols-5 gap-3">
               <div className="p-3 rounded-lg  border-2 ">
                 <p className="text-xs  font-semibold">Минимум</p>
-                <p className="text-lg font-bold ">{dataResult.min.toFixed(2)}</p>
+                <p className="text-lg font-bold "><FractionDisplay value={dataResult.min} decimals={2} /></p>
               </div>
               <div className="p-3 rounded-lg  border-2 ">
                 <p className="text-xs  font-semibold">Q1 (25%)</p>
-                <p className="text-lg font-bold ">{dataResult.q1.toFixed(2)}</p>
+                <p className="text-lg font-bold "><FractionDisplay value={dataResult.q1} decimals={2} /></p>
               </div>
               <div className="p-3 rounded-lg  border-2 ">
                 <p className="text-xs  font-semibold">Медиана (50%)</p>
-                <p className="text-lg font-bold ">{dataResult.median.toFixed(2)}</p>
+                <p className="text-lg font-bold "><FractionDisplay value={dataResult.median} decimals={2} /></p>
               </div>
               <div className="p-3 rounded-lg  border-2 ">
                 <p className="text-xs  font-semibold">Q3 (75%)</p>
-                <p className="text-lg font-bold ">{dataResult.q3.toFixed(2)}</p>
+                <p className="text-lg font-bold "><FractionDisplay value={dataResult.q3} decimals={2} /></p>
               </div>
               <div className="p-3 rounded-lg  border-2 ">
                 <p className="text-xs  font-semibold">Максимум</p>
-                <p className="text-lg font-bold ">{dataResult.max.toFixed(2)}</p>
+                <p className="text-lg font-bold "><FractionDisplay value={dataResult.max} decimals={2} /></p>
               </div>
             </div>
 
@@ -944,12 +946,12 @@ function GraphsPage() {
                 <div className="flex flex-wrap gap-2 mb-2">
                   {dataResult.outliers.map((outlier, i) => (
                     <span key={i} className="px-3 py-1   rounded-full text-sm font-medium border ">
-                      {outlier.toFixed(3)}
+                      <FractionDisplay value={outlier} decimals={3} className="inline" />
                     </span>
                   ))}
                 </div>
                 <p className="text-xs   p-2 rounded">
-                  <strong>Границы выбросов:</strong> Нижняя: {dataResult.lowerFence.toFixed(2)} | Верхняя: {dataResult.upperFence.toFixed(2)}
+                  <strong>Границы выбросов:</strong> Нижняя: <FractionDisplay value={dataResult.lowerFence} decimals={2} className="inline" /> | Верхняя: <FractionDisplay value={dataResult.upperFence} decimals={2} className="inline" />
                 </p>
               </div>
             )}
@@ -1227,9 +1229,9 @@ function GraphsPage() {
                       width: 2,
                     },
                   },
-                  text: [`Range: ${dataResult.range.toFixed(2)}`],
+                  text: [`Range: ${decimalToFraction(dataResult.range, 2)}`],
                   textposition: 'inside',
-                  hovertemplate: `Min: ${dataResult.min.toFixed(2)}<br>Max: ${dataResult.max.toFixed(2)}<br>Range: ${dataResult.range.toFixed(2)}<extra></extra>`,
+                  hovertemplate: `Min: ${decimalToFraction(dataResult.min, 2)}<br>Max: ${decimalToFraction(dataResult.max, 2)}<br>Range: ${decimalToFraction(dataResult.range, 2)}<extra></extra>`,
                 } as any,
                 // IQR (Q1-Q3)
                 {
@@ -1245,9 +1247,9 @@ function GraphsPage() {
                       width: 3,
                     },
                   },
-                  text: [`IQR: ${dataResult.iqr.toFixed(2)}`],
+                  text: [`IQR: ${decimalToFraction(dataResult.iqr, 2)}`],
                   textposition: 'inside',
-                  hovertemplate: `Q1: ${dataResult.q1.toFixed(2)}<br>Q3: ${dataResult.q3.toFixed(2)}<br>IQR: ${dataResult.iqr.toFixed(2)}<extra></extra>`,
+                  hovertemplate: `Q1: ${decimalToFraction(dataResult.q1, 2)}<br>Q3: ${decimalToFraction(dataResult.q3, 2)}<br>IQR: ${decimalToFraction(dataResult.iqr, 2)}<extra></extra>`,
                 } as any,
               ]}
               layout={{
@@ -1305,7 +1307,7 @@ function GraphsPage() {
                 ] as any,
                 annotations: [
                   {
-                    text: `Медиана: ${dataResult.median.toFixed(2)}`,
+                    text: `Медиана: ${decimalToFraction(dataResult.median, 2)}`,
                     x: 0.6,
                     y: dataResult.median,
                     xref: 'x',
@@ -1318,7 +1320,7 @@ function GraphsPage() {
                     font: { color: 'white', size: 12 },
                   },
                   {
-                    text: `Среднее: ${dataResult.mean.toFixed(2)}`,
+                    text: `Среднее: ${decimalToFraction(dataResult.mean, 2)}`,
                     x: 0.6,
                     y: dataResult.mean,
                     xref: 'x',
@@ -1347,19 +1349,19 @@ function GraphsPage() {
             <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-3">
               <div className="p-3 rounded-lg  border border-green-200">
                 <p className="text-xs  font-semibold">Минимум</p>
-                <p className="text-lg font-bold ">{dataResult.min.toFixed(2)}</p>
+                <p className="text-lg font-bold "><FractionDisplay value={dataResult.min} decimals={2} /></p>
               </div>
               <div className="p-3 rounded-lg  border border-[#D4AF37]/25">
                 <p className="text-xs  font-semibold">Q1</p>
-                <p className="text-lg font-bold ">{dataResult.q1.toFixed(2)}</p>
+                <p className="text-lg font-bold "><FractionDisplay value={dataResult.q1} decimals={2} /></p>
               </div>
               <div className="p-3 rounded-lg  border border-[#D4AF37]/25">
                 <p className="text-xs  font-semibold">Q3</p>
-                <p className="text-lg font-bold ">{dataResult.q3.toFixed(2)}</p>
+                <p className="text-lg font-bold "><FractionDisplay value={dataResult.q3} decimals={2} /></p>
               </div>
               <div className="p-3 rounded-lg  border border-green-200">
                 <p className="text-xs  font-semibold">Максимум</p>
-                <p className="text-lg font-bold ">{dataResult.max.toFixed(2)}</p>
+                <p className="text-lg font-bold "><FractionDisplay value={dataResult.max} decimals={2} /></p>
               </div>
             </div>
           </div>
@@ -1663,19 +1665,19 @@ function GraphsPage() {
             <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-3">
               <div className="p-3 rounded-lg  border-2 border-[#D4AF37]/35">
                 <p className="text-xs text-[#78716c] font-semibold">Медиана</p>
-                <p className="text-lg font-bold ">{dataResult.median.toFixed(2)}</p>
+                <p className="text-lg font-bold "><FractionDisplay value={dataResult.median} decimals={2} /></p>
               </div>
               <div className="p-3 rounded-lg  border-2 ">
                 <p className="text-xs  font-semibold">Среднее</p>
-                <p className="text-lg font-bold ">{dataResult.mean.toFixed(2)}</p>
+                <p className="text-lg font-bold "><FractionDisplay value={dataResult.mean} decimals={2} /></p>
               </div>
               <div className="p-3 rounded-lg  border-2 ">
                 <p className="text-xs  font-semibold">IQR</p>
-                <p className="text-lg font-bold ">{dataResult.iqr.toFixed(2)}</p>
+                <p className="text-lg font-bold "><FractionDisplay value={dataResult.iqr} decimals={2} /></p>
               </div>
               <div className="p-3 rounded-lg  border-2 ">
                 <p className="text-xs  font-semibold">Ст. откл.</p>
-                <p className="text-lg font-bold ">{dataResult.stdDev.toFixed(2)}</p>
+                <p className="text-lg font-bold "><FractionDisplay value={dataResult.stdDev} decimals={2} /></p>
               </div>
             </div>
             
@@ -1822,7 +1824,7 @@ function GraphsPage() {
                   {
                     x: dataResult.median,
                     y: 50,
-                    text: `Медиана: ${dataResult.median.toFixed(2)}`,
+                    text: `Медиана: ${decimalToFraction(dataResult.median, 2)}`,
                     showarrow: true,
                     arrowhead: 2,
                     ax: 60,
@@ -1833,7 +1835,7 @@ function GraphsPage() {
                   {
                     x: dataResult.q1,
                     y: 25,
-                    text: `Q1: ${dataResult.q1.toFixed(2)}`,
+                    text: `Q1: ${decimalToFraction(dataResult.q1, 2)}`,
                     showarrow: true,
                     arrowhead: 2,
                     ax: -50,
@@ -1844,7 +1846,7 @@ function GraphsPage() {
                   {
                     x: dataResult.q3,
                     y: 75,
-                    text: `Q3: ${dataResult.q3.toFixed(2)}`,
+                    text: `Q3: ${decimalToFraction(dataResult.q3, 2)}`,
                     showarrow: true,
                     arrowhead: 2,
                     ax: -50,
@@ -1871,23 +1873,23 @@ function GraphsPage() {
             <div className="mt-6 grid grid-cols-2 md:grid-cols-5 gap-3">
               <div className="p-3 rounded-lg  border-2 border-[#D4AF37]/35">
                 <p className="text-xs text-[#78716c] font-semibold">0% (Min)</p>
-                <p className="text-lg font-bold ">{dataResult.min.toFixed(2)}</p>
+                <p className="text-lg font-bold "><FractionDisplay value={dataResult.min} decimals={2} /></p>
               </div>
               <div className="p-3 rounded-lg  border-2 ">
                 <p className="text-xs  font-semibold">25% (Q1)</p>
-                <p className="text-lg font-bold ">{dataResult.q1.toFixed(2)}</p>
+                <p className="text-lg font-bold "><FractionDisplay value={dataResult.q1} decimals={2} /></p>
               </div>
               <div className="p-3 rounded-lg  border-2 ">
                 <p className="text-xs  font-semibold">50% (Медиана)</p>
-                <p className="text-lg font-bold text-[#5c3d3d]">{dataResult.median.toFixed(2)}</p>
+                <p className="text-lg font-bold text-[#5c3d3d]"><FractionDisplay value={dataResult.median} decimals={2} /></p>
               </div>
               <div className="p-3 rounded-lg  border-2 ">
                 <p className="text-xs  font-semibold">75% (Q3)</p>
-                <p className="text-lg font-bold ">{dataResult.q3.toFixed(2)}</p>
+                <p className="text-lg font-bold "><FractionDisplay value={dataResult.q3} decimals={2} /></p>
               </div>
               <div className="p-3 rounded-lg  border-2 border-[#D4AF37]/35">
                 <p className="text-xs text-[#78716c] font-semibold">100% (Max)</p>
-                <p className="text-lg font-bold ">{dataResult.max.toFixed(2)}</p>
+                <p className="text-lg font-bold "><FractionDisplay value={dataResult.max} decimals={2} /></p>
               </div>
             </div>
             
@@ -2244,7 +2246,7 @@ function GraphsPage() {
                   },
                   name: 'Статистика',
                   hovertemplate: '%{theta}: %{text}<br>Норм.: %{r:.1f}%<extra></extra>',
-                  text: stats.map(s => s.value.toFixed(2)),
+                  text: stats.map(s => decimalToFraction(s.value, 2)),
                 } as any,
               ]}
               layout={{
@@ -2286,7 +2288,7 @@ function GraphsPage() {
               {stats.map((stat, idx) => (
                 <div key={idx} className="p-3 rounded-lg  border-2 border-[#D4AF37]/35">
                   <p className="text-xs text-[#78716c] font-semibold">{stat.label}</p>
-                  <p className="text-lg font-bold ">{stat.value.toFixed(2)}</p>
+                  <p className="text-lg font-bold "><FractionDisplay value={stat.value} decimals={2} /></p>
                 </div>
               ))}
             </div>

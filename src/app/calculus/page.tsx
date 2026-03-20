@@ -13,6 +13,8 @@ import { MathExpression } from '@/components/UI/MathExpression';
 import { MathFormula, Frac, Pow, Sqrt, Sub } from '@/components/UI/MathFormula';
 import { IntegralSymbol } from '@/components/UI/IntegralSymbol';
 import { TextWithFractions } from '@/components/UI/TextWithFractions';
+import { FractionDisplay } from '@/components/UI';
+import { decimalToFraction } from '@/lib/decimalToFraction';
 import dynamic from 'next/dynamic';
 
 const Plot = dynamic(() => import('react-plotly.js'), { ssr: false });
@@ -555,7 +557,7 @@ function CalculusPage() {
                             width: 2,
                             dash: 'dot',
                           },
-                          hovertemplate: `Касательная: y = ${pointResult.value.toFixed(4)}·(x - ${pointResult.point}) + ${pointResult.functionValue.toFixed(4)}<extra></extra>`,
+                          hovertemplate: `Касательная: y = ${decimalToFraction(pointResult.value, 4)}·(x - ${pointResult.point}) + ${decimalToFraction(pointResult.functionValue, 4)}<extra></extra>`,
                         } as any] : []),
                         // Точка касания
                         ...(selectedPoint !== null && pointResult ? [{
@@ -573,7 +575,7 @@ function CalculusPage() {
                               width: 2,
                             },
                           },
-                          hovertemplate: `Точка: (${pointResult.point}, ${pointResult.functionValue.toFixed(4)})<br>f'(${pointResult.point}) = ${pointResult.value.toFixed(4)}<extra></extra>`,
+                          hovertemplate: `Точка: (${pointResult.point}, ${decimalToFraction(pointResult.functionValue, 4)})<br>f'(${pointResult.point}) = ${decimalToFraction(pointResult.value, 4)}<extra></extra>`,
                         } as any] : []),
                       ]}
                       layout={{
@@ -657,7 +659,7 @@ function CalculusPage() {
                             <p className="text-xs text-[#c9b896] font-semibold mb-2">Значение функции:</p>
                             <div className="text-xl font-bold text-[#d4c4a0] flex items-baseline gap-2">
                               <span>f({pointResult.point}) =</span>
-                              <span className="text-2xl">{pointResult.functionValue.toFixed(4)}</span>
+                              <FractionDisplay value={pointResult.functionValue} decimals={4} className="text-2xl" />
                             </div>
                           </div>
                           
@@ -665,7 +667,7 @@ function CalculusPage() {
                             <p className="text-xs text-[#c9b896] font-semibold mb-2">Значение производной:</p>
                             <div className="text-xl font-bold text-[#d4c4a0] flex items-baseline gap-2">
                               <span>f'({pointResult.point}) =</span>
-                              <span className="text-2xl">{pointResult.value.toFixed(4)}</span>
+                              <FractionDisplay value={pointResult.value} decimals={4} className="text-2xl" />
                             </div>
                           </div>
                           
@@ -680,9 +682,9 @@ function CalculusPage() {
 
                         <div className="mt-4 p-3 rounded-lg bg-[rgba(212,175,55,0.12)]">
                           <p className="text-sm text-[#e8dcc8]">
-                            <strong>Геометрический смысл:</strong> Производная f'({pointResult.point}) = {pointResult.value.toFixed(4)} 
+                            <strong>Геометрический смысл:</strong> Производная f'({pointResult.point}) = <FractionDisplay value={pointResult.value} decimals={4} className="inline" /> 
                             показывает <strong>угловой коэффициент</strong> касательной к графику функции в точке 
-                            ({pointResult.point}, {pointResult.functionValue.toFixed(4)}). Это скорость изменения функции в данной точке.
+                            ({pointResult.point}, <FractionDisplay value={pointResult.functionValue} decimals={4} className="inline" />). Это скорость изменения функции в данной точке.
                           </p>
                         </div>
                       </motion.div>

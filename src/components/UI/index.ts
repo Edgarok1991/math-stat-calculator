@@ -1,5 +1,6 @@
 export { Button } from './Button';
 export { Fraction } from './Fraction';
+export { FractionDisplay } from './FractionDisplay';
 export { TextWithFractions } from './TextWithFractions';
 export { AnimatedResult } from './AnimatedResult';
 export { InteractiveHint } from './InteractiveHint';

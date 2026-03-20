@@ -10,6 +10,7 @@ import { AnovaData, AnovaResult } from '@/types/calculator';
 import { calculatorStore } from '@/stores/CalculatorStore';
 import { observer } from 'mobx-react-lite';
 import { StepGuide } from '@/components/UI/StepGuide';
+import { FractionDisplay } from '@/components/UI';
 import Link from 'next/link';
 
 const anovaSchema = z.object({
@@ -231,13 +232,13 @@ function AnovaPage() {
                       <div>
                         <span className="font-medium" style={{ color: 'var(--foreground-secondary)' }}>F-статистика:</span>
                         <p className="text-lg font-mono">
-                          {result.fStatistic.toFixed(4)}
+                          <FractionDisplay value={result.fStatistic} />
                         </p>
                       </div>
                       <div>
                         <span className="font-medium" style={{ color: 'var(--foreground-secondary)' }}>p-значение:</span>
                         <p className="text-lg font-mono">
-                          {result.pValue.toFixed(6)}
+                          <FractionDisplay value={result.pValue} decimals={6} />
                         </p>
                       </div>
                     </div>
@@ -246,7 +247,7 @@ function AnovaPage() {
                       <div>
                         <span className="font-medium" style={{ color: 'var(--foreground-secondary)' }}>Критическое значение:</span>
                         <p className="text-lg font-mono">
-                          {result.criticalValue.toFixed(4)}
+                          <FractionDisplay value={result.criticalValue} />
                         </p>
                       </div>
                       <div>
@@ -266,7 +267,7 @@ function AnovaPage() {
                           <div key={index} className="p-2 rounded border text-sm" style={{ background: 'var(--background-tertiary)', borderColor: 'var(--border)' }}>
                             <span className="font-medium">Группа {index + 1}:</span>
                             <span className="ml-2 font-mono">
-                              {mean.toFixed(2)}
+                              <FractionDisplay value={mean} />
                             </span>
                           </div>
                         ))}
@@ -280,7 +281,7 @@ function AnovaPage() {
                           <div key={index} className="p-2 rounded border text-sm" style={{ background: 'var(--background-tertiary)', borderColor: 'var(--border)' }}>
                             <span className="font-medium">Группа {index + 1}:</span>
                             <span className="ml-2 font-mono">
-                              {variance.toFixed(2)}
+                              <FractionDisplay value={variance} />
                             </span>
                           </div>
                         ))}

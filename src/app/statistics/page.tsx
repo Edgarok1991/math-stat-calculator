@@ -9,7 +9,7 @@ import { Button } from '@/components/UI/Button';
 import { apiService } from '@/services/api';
 import { StepGuide } from '@/components/UI/StepGuide';
 import { InteractiveHint } from '@/components/UI/InteractiveHint';
-import { AnimatedResult } from '@/components/UI/AnimatedResult';
+import { AnimatedResult, FractionDisplay } from '@/components/UI';
 import { BarChart3, TrendingUp, Calculator, PieChart } from 'lucide-react';
 
 const statisticsSchema = z.object({
@@ -134,10 +134,6 @@ function StatisticsPage() {
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const formatNumber = (num: number): string => {
-    return num.toFixed(4);
   };
 
   return (
@@ -383,11 +379,11 @@ function StatisticsPage() {
                     <div className="space-y-3">
                       <div>
                         <p className="text-sm" style={{ color: 'var(--foreground-secondary)' }}>Среднее</p>
-                        <p className="text-2xl font-bold" style={{ color: 'var(--foreground)' }}>{formatNumber(result.mean)}</p>
+                        <p className="text-2xl font-bold" style={{ color: 'var(--foreground)' }}><FractionDisplay value={result.mean} /></p>
                       </div>
                       <div>
                         <p className="text-sm" style={{ color: 'var(--foreground-secondary)' }}>Медиана</p>
-                        <p className="text-2xl font-bold" style={{ color: 'var(--foreground)' }}>{formatNumber(result.median)}</p>
+                        <p className="text-2xl font-bold" style={{ color: 'var(--foreground)' }}><FractionDisplay value={result.median} /></p>
                       </div>
                       <div>
                         <p className="text-sm" style={{ color: 'var(--foreground-secondary)' }}>Мода</p>
@@ -406,15 +402,15 @@ function StatisticsPage() {
                     <div className="space-y-3">
                       <div>
                         <p className="text-sm" style={{ color: 'var(--foreground-secondary)' }}>Размах</p>
-                        <p className="text-2xl font-bold" style={{ color: 'var(--foreground)' }}>{formatNumber(result.range)}</p>
+                        <p className="text-2xl font-bold" style={{ color: 'var(--foreground)' }}><FractionDisplay value={result.range} /></p>
                       </div>
                       <div>
                         <p className="text-sm" style={{ color: 'var(--foreground-secondary)' }}>Дисперсия</p>
-                        <p className="text-2xl font-bold" style={{ color: 'var(--foreground)' }}>{formatNumber(result.variance)}</p>
+                        <p className="text-2xl font-bold" style={{ color: 'var(--foreground)' }}><FractionDisplay value={result.variance} /></p>
                       </div>
                       <div>
                         <p className="text-sm" style={{ color: 'var(--foreground-secondary)' }}>Стд. отклонение</p>
-                        <p className="text-2xl font-bold" style={{ color: 'var(--foreground)' }}>{formatNumber(result.stdDev)}</p>
+                        <p className="text-2xl font-bold" style={{ color: 'var(--foreground)' }}><FractionDisplay value={result.stdDev} /></p>
                       </div>
                     </div>
                   </div>
@@ -427,15 +423,15 @@ function StatisticsPage() {
                     <div className="space-y-3">
                       <div>
                         <p className="text-sm" style={{ color: 'var(--foreground-secondary)' }}>Q1 (25%)</p>
-                        <p className="text-2xl font-bold" style={{ color: 'var(--foreground)' }}>{formatNumber(result.q1)}</p>
+                        <p className="text-2xl font-bold" style={{ color: 'var(--foreground)' }}><FractionDisplay value={result.q1} /></p>
                       </div>
                       <div>
                         <p className="text-sm" style={{ color: 'var(--foreground-secondary)' }}>Q3 (75%)</p>
-                        <p className="text-2xl font-bold" style={{ color: 'var(--foreground)' }}>{formatNumber(result.q3)}</p>
+                        <p className="text-2xl font-bold" style={{ color: 'var(--foreground)' }}><FractionDisplay value={result.q3} /></p>
                       </div>
                       <div>
                         <p className="text-sm" style={{ color: 'var(--foreground-secondary)' }}>IQR (Q3 - Q1)</p>
-                        <p className="text-2xl font-bold" style={{ color: 'var(--foreground)' }}>{formatNumber(result.iqr)}</p>
+                        <p className="text-2xl font-bold" style={{ color: 'var(--foreground)' }}><FractionDisplay value={result.iqr} /></p>
                       </div>
                     </div>
                   </div>
@@ -448,11 +444,11 @@ function StatisticsPage() {
                     <div className="space-y-3">
                       <div>
                         <p className="text-sm" style={{ color: 'var(--foreground-secondary)' }}>Минимум</p>
-                        <p className="text-2xl font-bold" style={{ color: 'var(--foreground)' }}>{formatNumber(result.min)}</p>
+                        <p className="text-2xl font-bold" style={{ color: 'var(--foreground)' }}><FractionDisplay value={result.min} /></p>
                       </div>
                       <div>
                         <p className="text-sm" style={{ color: 'var(--foreground-secondary)' }}>Максимум</p>
-                        <p className="text-2xl font-bold" style={{ color: 'var(--foreground)' }}>{formatNumber(result.max)}</p>
+                        <p className="text-2xl font-bold" style={{ color: 'var(--foreground)' }}><FractionDisplay value={result.max} /></p>
                       </div>
                     </div>
                   </div>
@@ -469,7 +465,7 @@ function StatisticsPage() {
                       </div>
                       <div>
                         <p className="text-sm" style={{ color: 'var(--foreground-secondary)' }}>Сумма</p>
-                        <p className="text-2xl font-bold" style={{ color: 'var(--foreground)' }}>{formatNumber(result.sum)}</p>
+                        <p className="text-2xl font-bold" style={{ color: 'var(--foreground)' }}><FractionDisplay value={result.sum} /></p>
                       </div>
                     </div>
                   </div>

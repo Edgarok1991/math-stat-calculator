@@ -13,6 +13,7 @@ import { StepGuide } from '@/components/UI/StepGuide';
 import { apiService } from '@/services/api';
 import { ClusteringStepsView } from '@/components/clustering/ClusteringStepsView';
 import { DendrogramView } from '@/components/clustering/DendrogramView';
+import { FractionDisplay } from '@/components/UI';
 import Link from 'next/link';
 
 const clusteringSchema = z.object({
@@ -284,7 +285,7 @@ function ClusteringPage() {
                       <div className="rounded-lg p-4 shadow-sm" style={{ background: 'var(--background-tertiary)' }}>
                         <span className="font-medium" style={{ color: 'var(--foreground-secondary)' }}>Расстояние между кластерами:</span>
                         <p className="text-2xl font-bold text-[#c9b896]">
-                          P = {result.finalDistance.toFixed(2)}
+                          P = <FractionDisplay value={result.finalDistance} />
                         </p>
                       </div>
                     )}
@@ -349,7 +350,7 @@ function ClusteringPage() {
                 </span>
                 {' '}получили <span className="font-bold text-[#c9b896]">{result.clusters.length} кластера</span>, 
                 расстояние между которыми равно{' '}
-                <span className="font-bold text-[#c9b896]">P = {result.finalDistance.toFixed(2)}</span>.
+                <span className="font-bold text-[#c9b896]">P = <FractionDisplay value={result.finalDistance} /></span>.
               </p>
               <p className="mt-3" style={{ color: 'var(--foreground-secondary)' }}>
                 Результаты иерархической классификации объектов представлены выше в виде дендрограммы.
