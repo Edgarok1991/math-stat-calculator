@@ -59,12 +59,12 @@ export default function AdminPage() {
 
           {/* Database File Info */}
           <div className="mb-8 p-4 rounded-lg" style={{ background: 'rgba(212,175,55,0.1)', border: '1px solid var(--border)' }}>
-            <h3 className="font-semibold mb-2" style={{ color: 'var(--foreground)' }}>📁 Расположение базы данных:</h3>
+            <h3 className="font-semibold mb-2" style={{ color: 'var(--foreground)' }}>Расположение базы данных:</h3>
             <code className="text-sm px-3 py-1 rounded" style={{ color: 'var(--foreground)', background: 'var(--background-tertiary)' }}>
               backend/prisma/dev.db
             </code>
             <p className="text-sm text-[#9a8b75] mt-3">
-              💡 Вы можете открыть этот файл в любом SQLite клиенте:
+              Вы можете открыть этот файл в любом SQLite клиенте:
             </p>
             <ul className="text-sm mt-2 ml-4 list-disc" style={{ color: 'var(--foreground-secondary)' }}>
               <li>DB Browser for SQLite (бесплатно)</li>
@@ -122,7 +122,7 @@ export default function AdminPage() {
 
           {/* Download Links */}
           <div className="p-6 border-2 border-[#D4AF37]/45 rounded-xl bg-[rgba(212,175,55,0.08)]">
-            <h3 className="font-semibold text-[#d4c4a0] mb-4">💡 Рекомендуемые инструменты для просмотра:</h3>
+            <h3 className="font-semibold text-[#d4c4a0] mb-4">Рекомендуемые инструменты для просмотра:</h3>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <a
@@ -162,7 +162,7 @@ export default function AdminPage() {
 
           {/* Direct File Access */}
           <div className="mt-8 p-4 rounded-lg border border-amber-500/50 bg-amber-900/20">
-            <h3 className="font-semibold text-amber-300 mb-2">🔍 Прямой доступ к файлу:</h3>
+            <h3 className="font-semibold text-amber-300 mb-2">Прямой доступ к файлу:</h3>
             <p className="text-sm text-amber-200/90 mb-3">
               Файл базы данных можно открыть напрямую любым инструментом:
             </p>

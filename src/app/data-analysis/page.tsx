@@ -150,7 +150,7 @@ export default function DataAnalysisPage() {
                   <ul className="space-y-2">
                     {tool.features.map((feature, i) => (
                       <li key={i} className="flex items-start gap-2 text-sm" style={{ color: 'var(--foreground-secondary)' }}>
-                        <span className={`mt-1 ${tool.color}`}>✓</span>
+                        <span className={`mt-1 ${tool.color}`}>•</span>
                         <span>{feature}</span>
                       </li>
                     ))}

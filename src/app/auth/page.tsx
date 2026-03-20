@@ -66,19 +66,19 @@ export default function AuthPage() {
           </h3>
           <ul className="space-y-2 text-sm" style={{ color: 'var(--foreground-secondary)' }}>
             <li className="flex items-start gap-2">
-              <span className="text-[#D4AF37]">✓</span>
+              <span className="text-[#D4AF37]">•</span>
               <span>История всех ваших вычислений</span>
             </li>
             <li className="flex items-start gap-2">
-              <span className="text-[#D4AF37]">✓</span>
+              <span className="text-[#D4AF37]">•</span>
               <span>Доступ с любого устройства</span>
             </li>
             <li className="flex items-start gap-2">
-              <span className="text-[#D4AF37]">✓</span>
+              <span className="text-[#D4AF37]">•</span>
               <span>Безопасное хранение данных</span>
             </li>
             <li className="flex items-start gap-2">
-              <span className="text-[#D4AF37]">✓</span>
+              <span className="text-[#D4AF37]">•</span>
               <span>Персональные настройки</span>
             </li>
           </ul>

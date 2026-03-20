@@ -938,8 +938,7 @@ function GraphsPage() {
 
             {dataResult.outliers.length > 0 && (
               <div className="mt-4 p-4  rounded-lg border-2 ">
-                <h4 className="text-sm font-semibold  mb-2 flex items-center gap-2">
-                  <span className="text-lg">⚠️</span>
+                <h4 className="text-sm font-semibold  mb-2">
                   Выбросы (Outliers): {dataResult.outliers.length}
                 </h4>
                 <div className="flex flex-wrap gap-2 mb-2">
@@ -1440,7 +1439,7 @@ function GraphsPage() {
       return (
         <AnimatedResult type="info" title="Q-Q Plot (Квантиль-Квантильная диаграмма)">
           <div className="p-6 rounded-xl border-2 card-midnight" style={{ borderColor: 'var(--border)' }}>
-            <h3 className="text-2xl font-bold mb-4 ">📐 Q-Q Plot (Quantile-Quantile Plot)</h3>
+            <h3 className="text-2xl font-bold mb-4 ">Q-Q Plot (Quantile-Quantile Plot)</h3>
             
             {/* Описание графика */}
             <div className="mb-6 p-4 rounded-lg border-l-4" style={{ background: 'rgba(212,175,55,0.1)', borderColor: 'var(--gold)' }}>
@@ -1547,7 +1546,7 @@ function GraphsPage() {
             
             {/* Выводы */}
             <div className="mt-6 p-4 bg-gradient-to-r  rounded-lg border ">
-              <h4 className="font-bold  mb-2">💡 Рекомендации по использованию:</h4>
+              <h4 className="font-bold  mb-2">Рекомендации по использованию:</h4>
               <div className="text-sm  space-y-2">
                 <p><strong> Подходит для:</strong> Любых количественных данных (непрерывных и дискретных)</p>
                 <p><strong> Размер выборки:</strong> Эффективен при n ≥ 20 (чем больше, тем точнее)</p>
@@ -1565,7 +1564,7 @@ function GraphsPage() {
       return (
         <AnimatedResult type="info" title="Violin Plot (Скрипичная диаграмма)">
           <div className="p-6 rounded-xl border-2 card-midnight" style={{ borderColor: 'var(--border)' }}>
-            <h3 className="text-2xl font-bold mb-4 text-[#D4AF37]">🎻 Violin Plot (Скрипичная диаграмма)</h3>
+            <h3 className="text-2xl font-bold mb-4 text-[#D4AF37]">Violin Plot (Скрипичная диаграмма)</h3>
             
             {/* Описание графика */}
             <div className="mb-6 p-4 rounded-lg border-l-4" style={{ background: 'rgba(212,175,55,0.1)', borderColor: 'var(--gold)' }}>
@@ -1682,7 +1681,7 @@ function GraphsPage() {
             
             {/* Преимущества */}
             <div className="mt-6 p-4 bg-gradient-to-r  rounded-lg border ">
-              <h4 className="font-bold  mb-2">✨ Преимущества Violin Plot:</h4>
+              <h4 className="font-bold  mb-2">Преимущества Violin Plot:</h4>
               <div className="grid md:grid-cols-2 gap-3 text-sm text-[#57534e]">
                 <div>
                   <p><strong className=""> Больше информации:</strong> Показывает и квартили, и плотность</p>
@@ -1934,7 +1933,7 @@ function GraphsPage() {
                 плавной кривой через точки данных.
               </p>
               
-              <h4 className="font-bold  mb-2">🎯 Для чего нужен?</h4>
+              <h4 className="font-bold  mb-2">Для чего нужен?</h4>
               <ul className="text-sm text-amber-800 space-y-1 mb-3 list-disc list-inside">
                 <li><strong>Форма распределения:</strong> Визуализирует, как распределены данные (нормальное, скошенное, бимодальное)</li>
                 <li><strong>Сглаживание:</strong> Убирает "шум" гистограммы, показывая общий тренд</li>
@@ -2088,7 +2087,7 @@ function GraphsPage() {
                 Обычно используется для корреляционных матриц, но здесь показывает распределение частот данных по интервалам.
               </p>
               
-              <h4 className="font-bold  mb-2">🎯 Для чего нужен?</h4>
+              <h4 className="font-bold  mb-2">Для чего нужен?</h4>
               <ul className="text-sm text-rose-800 space-y-1 mb-3 list-disc list-inside">
                 <li><strong>Корреляции:</strong> Находить взаимосвязи между переменными</li>
                 <li><strong>Паттерны:</strong> Обнаруживать скрытые закономерности в данных</li>
@@ -2199,7 +2198,7 @@ function GraphsPage() {
       return (
         <AnimatedResult type="info" title="Radar Chart (Радарная диаграмма)">
           <div className="p-6 rounded-xl border-2 card-midnight" style={{ borderColor: 'var(--border)' }}>
-            <h3 className="text-2xl font-bold mb-4 text-[#D4AF37]">🕸️ Radar Chart (Многомерное сравнение)</h3>
+            <h3 className="text-2xl font-bold mb-4 text-[#D4AF37]">Radar Chart (Многомерное сравнение)</h3>
             
             {/* Описание графика */}
             <div className="mb-6 p-4 rounded-lg border-l-4" style={{ background: 'rgba(212,175,55,0.1)', borderColor: 'var(--gold)' }}>
@@ -2403,7 +2402,7 @@ function GraphsPage() {
                     disabled={isLoading}
                     className="w-full h-12 text-lg font-bold rounded-xl shadow-lg hover:shadow-xl transition-all hover:scale-105 gradient-primary text-[#1c1917]"
                   >
-                    {isLoading ? '⏳ Строим...' : ' Построить график'}
+                    {isLoading ? 'Строим...' : 'Построить график'}
                   </Button>
                 </form>
               </div>
@@ -2468,7 +2467,7 @@ function GraphsPage() {
                     disabled={isLoading}
                     className="w-full h-12 font-bold rounded-xl shadow-lg hover:shadow-xl transition-all hover:scale-105 gradient-primary text-[#1c1917]"
                   >
-                    {isLoading ? '⏳ Строим...' : ' Построить 2D график'}
+                    {isLoading ? 'Строим...' : 'Построить 2D график'}
                   </Button>
                 </form>
               </div>
@@ -2557,7 +2556,7 @@ function GraphsPage() {
                     disabled={isLoading}
                     className="w-full h-12 font-bold rounded-xl shadow-lg hover:shadow-xl transition-all hover:scale-105 gradient-primary text-[#1c1917]"
                   >
-                    {isLoading ? '⏳ Строим...' : ' Построить 3D график'}
+                    {isLoading ? 'Строим...' : 'Построить 3D график'}
                   </Button>
                 </form>
               </div>

@@ -790,7 +790,7 @@ const MatricesPage = () => {
                   className="px-4 py-2 rounded-lg border text-sm font-medium transition-all hover:scale-105 hover:shadow-md"
                   style={{ borderColor: 'var(--border)', background: 'var(--background)' }}
                   onClick={clearMatrixA}>
-                  🗑️ Очистить
+                  Очистить
                 </button>
                 <div className="flex items-center gap-2 px-4 py-2 border rounded-lg text-sm font-medium" style={{ borderColor: 'var(--border)', background: 'var(--background)' }}>
                   <span>Размер:</span>
@@ -1007,7 +1007,7 @@ const MatricesPage = () => {
                   className="px-4 py-2 rounded-lg border text-sm font-medium transition-all hover:scale-105 hover:shadow-md"
                   style={{ borderColor: 'var(--border)', background: 'var(--background)' }}
                   onClick={clearMatrixB}>
-                  🗑️ Очистить
+                  Очистить
                 </button>
                 <div className="flex items-center gap-2 px-4 py-2 border rounded-lg text-sm font-medium" style={{ borderColor: 'var(--border)', background: 'var(--background)' }}>
                   <span>Размер:</span>
@@ -1278,7 +1278,6 @@ const MatricesPage = () => {
             {result && result.steps && result.steps.length > 0 && (
               <div className="mb-6">
                 <h4 className="text-2xl font-bold mb-4 flex items-center gap-3" style={{ color: 'var(--foreground)' }}>
-                  <span className="text-3xl">📝</span>
                   Пошаговое решение
                 </h4>
                 <div className="card-midnight p-6 rounded-xl border-2 shadow-inner max-h-96 overflow-y-auto" style={{ borderColor: 'var(--border)' }}>
@@ -1302,7 +1301,6 @@ const MatricesPage = () => {
             {result && result.detailedSteps && result.detailedSteps.length > 0 && (
               <div>
                 <h4 className="text-2xl font-bold mb-4 flex items-center gap-3" style={{ color: 'var(--foreground)' }}>
-                  <span className="text-3xl">🔍</span>
                   Детальные шаги с визуализацией
                 </h4>
                 <div className="card-midnight p-6 rounded-xl border-2 shadow-inner max-h-96 overflow-y-auto" style={{ borderColor: 'var(--border)' }}>
@@ -1361,17 +1359,17 @@ const MatricesPage = () => {
                       {/* Дополнительная информация - обновленные бейджи */}
                       {step.operation === 'eliminate' && step.factor && (
                         <div className="mt-3 px-4 py-2 rounded-lg text-sm font-semibold inline-block" style={{ background: 'rgba(212,175,55,0.2)', color: 'var(--foreground)' }}>
-                          📊 Коэффициент: <Fraction value={decimalToFraction(step.factor)} />
+                          Коэффициент: <Fraction value={decimalToFraction(step.factor)} />
                         </div>
                       )}
                       {step.operation === 'normalize' && (
                         <div className="mt-3 px-4 py-2 rounded-lg text-sm font-semibold inline-block bg-[rgba(212,175,55,0.12)] text-[#d4c4a0]">
-                          ✓ Диагональный элемент нормализован к 1
+                          Диагональный элемент нормализован к 1
                         </div>
                       )}
                       {step.operation === 'solution' && (
                         <div className="mt-3 px-4 py-2 rounded-lg text-sm font-semibold inline-block" style={{ background: 'rgba(212,175,55,0.2)', color: 'var(--foreground)' }}>
-                          ✓ Результат получен
+                          Результат получен
                         </div>
                       )}
                     </motion.div>
@@ -1419,7 +1417,7 @@ const MatricesPage = () => {
               max="6"
               placeholder="Введите количество переменных"
             />
-            {errors.variables && <p className="text-red-500 text-sm italic mt-2">⚠️ {errors.variables.message}</p>}
+            {errors.variables && <p className="text-red-500 text-sm italic mt-2">{errors.variables.message}</p>}
           </div>
 
           {/* Система уравнений для Гаусса */}
@@ -1488,7 +1486,7 @@ const MatricesPage = () => {
 
           <Button type="submit" loading={isLoading} disabled={isLoading} 
             className="w-full h-14 text-lg font-bold rounded-xl shadow-lg hover:shadow-xl transition-all hover:scale-105 bg-gradient-to-r gradient-primary ">
-            {isLoading ? '⏳ Решаем...' : ' Решить систему методом Гаусса'}
+            {isLoading ? 'Решаем...' : 'Решить систему методом Гаусса'}
           </Button>
         </form>
       )}
@@ -1647,12 +1645,12 @@ const MatricesPage = () => {
                     )}
                     {step.operation === 'normalize' && (
                       <div className="mt-2 text-xs text-[#c9b896] font-medium">
-                        ✓ Диагональный элемент нормализован к 1
+                        Диагональный элемент нормализован к 1
                       </div>
                     )}
                     {step.operation === 'solution' && (
                       <div className="mt-2 text-xs text-[#D4AF37] font-medium">
-                        ✓ Матрица приведена к единичному виду
+                        Матрица приведена к единичному виду
                       </div>
                     )}
                   </motion.div>

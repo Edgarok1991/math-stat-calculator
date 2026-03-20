@@ -38,7 +38,7 @@ export default function ResendVerificationPage() {
       setMessage(data.message || 'Письмо отправлено! Проверьте почту.');
       
       if (data.devEmailPreview) {
-        console.log('🔗 Ссылка для просмотра письма:', data.devEmailPreview);
+        console.log('Ссылка для просмотра письма:', data.devEmailPreview);
       }
     } catch (err: any) {
       setError(err.message || 'Ошибка отправки письма');

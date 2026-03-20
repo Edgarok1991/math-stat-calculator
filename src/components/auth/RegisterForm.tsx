@@ -65,7 +65,7 @@ export function RegisterForm({ onSuccess, onSwitchToLogin }: RegisterFormProps) 
       // Ссылка на просмотр письма только если письмо реально отправлено (DEV)
       if (result.devEmailPreview) {
         setEmailPreviewUrl(result.devEmailPreview);
-        console.log('📧 Просмотр письма:', result.devEmailPreview);
+        console.log('Просмотр письма:', result.devEmailPreview);
       }
     } catch (err: any) {
       setError(err.message || 'Ошибка регистрации');
@@ -99,10 +99,10 @@ export function RegisterForm({ onSuccess, onSwitchToLogin }: RegisterFormProps) 
             {emailPreviewUrl ? (
               <>
                 <p className="text-xs text-[#78716c] mb-2">
-                  📧 В режиме разработки письма не доставляются на реальный email. Используйте ссылку ниже:
+                  В режиме разработки письма не доставляются на реальный email. Используйте ссылку ниже:
                 </p>
                 <div className="mt-3 p-3 bg-[rgba(212,175,55,0.06)] border border-[#D4AF37]/25 rounded">
-                  <p className="text-xs text-[#D4AF37] font-semibold mb-1">🔗 Открыть письмо в браузере:</p>
+                  <p className="text-xs text-[#D4AF37] font-semibold mb-1">Открыть письмо в браузере:</p>
                   <a
                     href={emailPreviewUrl}
                     target="_blank"

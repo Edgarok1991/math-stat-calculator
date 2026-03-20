@@ -180,7 +180,7 @@ function ClusteringPage() {
             <div>
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <div className="rounded-lg p-4 mb-4" style={{ background: 'rgba(212,175,55,0.1)', border: '1px solid var(--border)' }}>
-                  <h4 className="text-sm font-semibold mb-2" style={{ color: 'var(--foreground)' }}>📋 Формат ввода данных</h4>
+                  <h4 className="text-sm font-semibold mb-2" style={{ color: 'var(--foreground)' }}>Формат ввода данных</h4>
                   <p className="text-xs mb-2" style={{ color: 'var(--foreground-secondary)' }}>
                     Каждая строка = один объект. Значения разделяйте запятыми.
                   </p>
@@ -229,13 +229,13 @@ function ClusteringPage() {
                     {...register('method')}
                     className="w-full px-3 py-2 input-midnight rounded-md"
                   >
-                    <option value="single">🔵 Ближний сосед (Single Linkage)</option>
-                    <option value="complete">🔴 Дальний сосед (Complete Linkage)</option>
-                    <option value="average">🟡 Средний (Average Linkage)</option>
-                    <option value="kmeans">⚡ K-means</option>
+                    <option value="single">Ближний сосед (Single Linkage)</option>
+                    <option value="complete">Дальний сосед (Complete Linkage)</option>
+                    <option value="average">Средний (Average Linkage)</option>
+                    <option value="kmeans">K-means</option>
                   </select>
                   <p className="mt-2 text-xs" style={{ color: 'var(--foreground-secondary)' }}>
-                    💡 Для детального пошагового решения выбирайте иерархические методы
+                    Для детального пошагового решения выбирайте иерархические методы
                   </p>
                 </div>
 

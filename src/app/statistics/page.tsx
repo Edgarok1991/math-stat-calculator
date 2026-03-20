@@ -208,7 +208,7 @@ function StatisticsPage() {
                   disabled={isLoading}
                   className="w-full h-11 text-base font-bold rounded-xl shadow-lg hover:shadow-xl transition-all hover:scale-105 gradient-primary text-[#1c1917]"
                 >
-                  {isLoading ? '⏳ Рассчитываем...' : '🧮 Рассчитать статистику'}
+                  {isLoading ? 'Рассчитываем...' : 'Рассчитать статистику'}
                 </Button>
               </form>
 
@@ -233,7 +233,7 @@ function StatisticsPage() {
                 {/* Меры центральной тенденции */}
                 <div className="p-4 rounded-xl border-2 shadow-lg hover:shadow-xl transition-shadow" style={{ background: 'rgba(212,175,55,0.1)', borderColor: 'var(--border)' }}>
                   <h4 className="font-bold mb-2 text-base flex items-center gap-2" style={{ color: 'var(--foreground)' }}>
-                    📊 Меры центральной тенденции
+                    Меры центральной тенденции
                   </h4>
                   <div className="space-y-2 text-sm">
                   <div>
@@ -257,7 +257,7 @@ function StatisticsPage() {
                 {/* Меры разброса */}
                 <div className="p-4 rounded-xl border-2 border-[#D4AF37]/45 bg-[rgba(212,175,55,0.08)] shadow-lg hover:shadow-xl transition-shadow">
                   <h4 className="font-bold text-[#d4c4a0] mb-2 text-base flex items-center gap-2">
-                    📏 Меры разброса (вариации)
+                    Меры разброса (вариации)
                   </h4>
                   <div className="space-y-2 text-sm">
                   <div>
@@ -282,7 +282,7 @@ function StatisticsPage() {
                 {/* Квартили и IQR */}
                 <div className="p-4 rounded-xl border-2 shadow-lg hover:shadow-xl transition-shadow" style={{ background: 'rgba(212,175,55,0.08)', borderColor: 'var(--border)' }}>
                   <h4 className="font-bold mb-2 text-base flex items-center gap-2" style={{ color: 'var(--foreground)' }}>
-                    📦 Квартили и межквартильный размах
+                    Квартили и межквартильный размах
                   </h4>
                   <div className="space-y-2 text-sm">
                   <div>
@@ -310,7 +310,7 @@ function StatisticsPage() {
                 {/* Границы и выбросы */}
                 <div className="p-4 rounded-xl border-2 border-[#D4AF37]/40 bg-[rgba(212,175,55,0.08)] shadow-lg hover:shadow-xl transition-shadow">
                   <h4 className="font-bold text-[#E8C547] mb-2 text-base flex items-center gap-2">
-                    🚨 Границы и выбросы
+                    Границы и выбросы
                   </h4>
                   <div className="space-y-2 text-sm">
                   <div>
@@ -336,7 +336,7 @@ function StatisticsPage() {
                 {/* Дополнительные показатели */}
                 {/* <div className="p-4 rounded-xl border-2 bg-gradient-to-br from-gray-50 to-gray-100 border-gray-300 shadow-lg hover:shadow-xl transition-shadow">
                   <h4 className="font-bold text-gray-900 mb-2 text-base flex items-center gap-2">
-                    ➕ Дополнительные показатели
+                    Дополнительные показатели
                   </h4>
                   <div className="space-y-2 text-sm">
                   <div>
@@ -353,7 +353,7 @@ function StatisticsPage() {
                 {/* Практический совет */}
                 <div className="md:col-span-2 p-4 rounded-xl border-2 shadow-md" style={{ background: 'rgba(212,175,55,0.1)', borderColor: 'var(--border)' }}>
                   <p className="text-sm" style={{ color: 'var(--foreground)' }}>
-                    <strong>💡 Совет:</strong> Используйте несколько показателей вместе для полного понимания данных. 
+                    <strong>Совет:</strong> Используйте несколько показателей вместе для полного понимания данных. 
                     Например, если среднее сильно отличается от медианы — это признак асимметричного распределения или наличия выбросов.
                   </p>
                 </div>
@@ -498,7 +498,7 @@ function StatisticsPage() {
                       </div>
                     ) : (
                       <div className="p-4 bg-green-50 rounded-lg border border-green-200">
-                        <p className="text-sm text-[#78716c]">✓ Выбросов не обнаружено</p>
+                        <p className="text-sm text-[#78716c]">Выбросов не обнаружено</p>
                       </div>
                     )}
                   </div>
