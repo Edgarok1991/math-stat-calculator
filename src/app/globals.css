@@ -1,10 +1,10 @@
 @import "tailwindcss";
 
-/* Neue Montreal Medium — Pangram Pangram (положите WOFF2 в public/fonts/, см. public/fonts/README.md) */
+/* Neue Montreal Thin 200 — Pangram Pangram (WOFF2 в public/fonts/, см. public/fonts/README.md) */
 @font-face {
   font-family: 'Neue Montreal';
-  src: url('/fonts/NeueMontreal-Medium.woff2') format('woff2');
-  font-weight: 500;
+  src: url('/fonts/NeueMontreal-Thin.woff2') format('woff2');
+  font-weight: 200;
   font-style: normal;
   font-display: swap;
 }
@@ -105,27 +105,31 @@
 
 html {
   font-family: var(--font-app);
-  font-weight: 500;
+  font-weight: 200;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: inherit;
+  font-weight: 200;
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
 }
 
-/* Заголовки — тот же Neue Montreal Medium */
+/* Заголовки — Neue Montreal Thin 200 */
 h1,
 h2,
 h3,
+h4,
+h5,
+h6,
 .font-display {
   font-family: var(--font-app);
-  font-weight: 500;
-  letter-spacing: 0.01em;
+  font-weight: 200;
+  letter-spacing: 0.02em;
 }
 
 button,
@@ -330,6 +334,7 @@ body::after {
 
 .math-symbol {
   font-family: var(--font-app);
+  font-weight: 200;
   font-size: 1.1em;
   line-height: 1;
 }
@@ -358,7 +363,7 @@ sub {
 .sqrt-symbol {
   font-size: 1.6em;
   line-height: 0.9;
-  font-weight: 500;
+  font-weight: 200;
   font-family: var(--font-app);
   margin-right: 0;
   position: relative;
@@ -399,4 +404,22 @@ sub {
 .text-xs .sqrt-content {
   padding: 1px 4px 0 4px;
   border-top-width: 1.5px;
+}
+
+/* Thin 200 везде: перебиваем утилиты Tailwind и семантические теги */
+.font-thin,
+.font-extralight,
+.font-light,
+.font-normal,
+.font-medium,
+.font-semibold,
+.font-bold,
+.font-extrabold,
+.font-black {
+  font-weight: 200 !important;
+}
+
+b,
+strong {
+  font-weight: 200 !important;
 }
