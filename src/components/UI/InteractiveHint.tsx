@@ -20,10 +20,10 @@ const iconMap = {
 };
 
 const colorMap = {
-  info: 'text-blue-600 bg-blue-50 border-blue-200',
-  tip: 'text-amber-600 bg-amber-50 border-amber-200',
-  warning: 'text-red-600 bg-red-50 border-red-200',
-  help: 'text-purple-600 bg-purple-50 border-purple-200',
+  info: 'text-[#D4AF37] bg-[rgba(212,175,55,0.15)] border-[rgba(212,175,55,0.4)]',
+  tip: 'text-[#E8C547] bg-[rgba(232,197,71,0.15)] border-[rgba(232,197,71,0.4)]',
+  warning: 'text-red-400 bg-red-900/30 border-red-500/50',
+  help: 'text-[#D4AF37] bg-[rgba(212,175,55,0.15)] border-[rgba(212,175,55,0.4)]',
 };
 
 export const InteractiveHint = ({ 

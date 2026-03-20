@@ -15,7 +15,7 @@ const features = [
     description: 'Производные и интегралы с пошаговым решением, графиками и касательными',
     href: '/calculus',
     gradient: 'gradient-primary',
-    color: 'text-indigo-600',
+    color: 'text-[#D4AF37]',
   },
   {
     icon: LineChart,
@@ -23,7 +23,7 @@ const features = [
     description: '14 типов графиков: Box Plot, Violin, Q-Q, Density, Heatmap, Polar, Contour и другие',
     href: '/graphs',
     gradient: 'gradient-accent',
-    color: 'text-cyan-600',
+    color: 'text-[#D4AF37]',
   },
   {
     icon: PieChart,
@@ -39,7 +39,7 @@ const features = [
     description: 'Линейная, полиномиальная и экспоненциальная регрессия с визуализацией',
     href: '/regression',
     gradient: 'gradient-secondary',
-    color: 'text-pink-600',
+    color: 'text-[#D4AF37]',
   },
   {
     icon: Brain,
@@ -47,7 +47,7 @@ const features = [
     description: 'Кластеризация и ANOVA - мощные инструменты для статистического анализа',
     href: '/data-analysis',
     gradient: 'gradient-success',
-    color: 'text-emerald-600',
+    color: 'text-[#D4AF37]',
   },
   {
     icon: Grid3X3,
@@ -55,7 +55,7 @@ const features = [
     description: 'Решение СЛАУ методом Гаусса, обратные матрицы, определители',
     href: '/matrices',
     gradient: 'gradient-primary',
-    color: 'text-indigo-600',
+    color: 'text-[#D4AF37]',
   },
 ];
 
@@ -96,8 +96,8 @@ export default function HomePage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full mx-auto mb-4"></div>
-          <p className="text-gray-600">Загрузка...</p>
+          <div className="animate-spin w-12 h-12 border-4 border-[#D4AF37] border-t-transparent rounded-full mx-auto mb-4"></div>
+          <p style={{ color: 'var(--foreground-secondary)' }}>Загрузка...</p>
         </div>
       </div>
     );
@@ -112,10 +112,9 @@ export default function HomePage() {
     <div className="min-h-screen" style={{ background: 'var(--background)' }}>
       {/* Hero Section */}
       <div className="relative overflow-hidden">
-        <div className="absolute inset-0 gradient-primary opacity-10"></div>
         <div className="absolute inset-0 opacity-20">
           <div className="absolute inset-0" style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%236366f1' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23D4AF37' fill-opacity='0.15'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
             backgroundRepeat: 'repeat'
           }}></div>
         </div>
@@ -128,7 +127,7 @@ export default function HomePage() {
             className="text-center"
           >
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass mb-6">
-              <Sparkles className="w-4 h-4 text-indigo-600" />
+              <Sparkles className="w-4 h-4 text-[#D4AF37]" />
               <span className="text-sm font-medium" style={{ color: 'var(--foreground-secondary)' }}>
                 Современный математический инструмент
               </span>
@@ -145,18 +144,18 @@ export default function HomePage() {
             
             <p className="text-xl md:text-2xl mb-10 max-w-4xl mx-auto" style={{ color: 'var(--foreground-secondary)' }}>
               Решайте сложные математические и статистические задачи с помощью 
-              <span className="font-semibold text-indigo-600"> интуитивного интерфейса</span> и 
-              <span className="font-semibold text-purple-600"> подробных объяснений</span>
+              <span className="font-semibold text-[#E8C547]"> интуитивного интерфейса</span> и 
+              <span className="font-semibold text-[#D4AF37]"> подробных объяснений</span>
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
-              <Button asChild size="lg" className="gradient-primary text-white hover:opacity-90 transition-all duration-300 shadow-lg hover:shadow-xl">
+              <Button asChild size="lg" className="gradient-primary text-[#0a1628] font-bold hover:opacity-90 transition-all duration-300 shadow-lg hover:shadow-xl">
                 <Link href="/regression" className="flex items-center gap-2">
                   <Calculator className="w-5 h-5" />
                   Начать работу
                 </Link>
               </Button>
-              <Button asChild variant="outline" size="lg" className="glass border-white/20 hover:bg-white/10">
+              <Button asChild variant="outline" size="lg">
                 <Link href="#features" className="flex items-center gap-2">
                   <Globe className="w-5 h-5" />
                   Узнать больше
@@ -193,12 +192,7 @@ export default function HomePage() {
               className="group"
             >
               <div 
-                className="h-full p-8 rounded-2xl card-hover"
-                style={{ 
-                  background: 'var(--background-secondary)',
-                  border: '1px solid var(--border)',
-                  boxShadow: 'var(--shadow)'
-                }}
+                className="h-full p-8 rounded-2xl card-hover card-midnight"
               >
                 <div className={`w-16 h-16 rounded-2xl ${feature.gradient} flex items-center justify-center mb-6 group-hover:scale-110 transition-all duration-300 shadow-lg`}>
                   <feature.icon className="w-8 h-8 text-white" />
@@ -225,7 +219,7 @@ export default function HomePage() {
       </div>
 
       {/* Benefits Section */}
-      <div className="py-20" style={{ background: 'var(--background-tertiary)' }}>
+      <div className="py-20 glass">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -279,7 +273,7 @@ export default function HomePage() {
             <p className="text-xl text-white/90 mb-10 max-w-2xl mx-auto">
               Выберите нужный калькулятор и начните работу прямо сейчас
             </p>
-            <Button size="lg" className="bg-white text-indigo-600 hover:bg-white/90 shadow-xl">
+            <Button size="lg" className="gradient-primary text-[#0a1628] font-bold shadow-xl">
               <Link href="/regression" className="flex items-center gap-2">
                 Начать работу
                 <ArrowRight className="w-5 h-5" />

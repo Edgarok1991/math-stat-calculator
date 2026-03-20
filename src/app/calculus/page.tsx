@@ -174,7 +174,7 @@ function CalculusPage() {
           {/* Заголовок */}
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-3 mb-4">
-              <Calculator className="w-12 h-12 text-indigo-600" />
+              <Calculator className="w-12 h-12" style={{ color: 'var(--gold)' }} />
               <h1 className="text-4xl md:text-5xl font-bold" style={{ color: 'var(--foreground)' }}>
                 Математический анализ
               </h1>
@@ -232,7 +232,7 @@ function CalculusPage() {
                   style={{ borderColor: 'var(--border)', background: 'var(--background-secondary)' }}>
                   <div className="flex justify-between items-start mb-6">
                     <h2 className="text-2xl font-bold flex items-center gap-2" style={{ color: 'var(--foreground)' }}>
-                      <TrendingUp className="w-6 h-6 text-indigo-600" />
+                      <TrendingUp className="w-6 h-6" style={{ color: 'var(--gold)' }} />
                       Вычисление производной
                     </h2>
                     <StepGuide 
@@ -269,13 +269,13 @@ function CalculusPage() {
                   </label>
                   <input
                         {...derivativeForm.register('expression')}
-                        className="w-full px-4 py-3 rounded-lg border-2 text-lg font-mono transition-all focus:ring-2 focus:ring-indigo-500"
+                        className="w-full px-4 py-3 rounded-lg border-2 text-lg font-mono transition-all input-midnight"
                         style={{ borderColor: 'var(--border)' }}
                         placeholder="x^2"
                       />
                       {watchedDerivativeExpr && (
                         <div className="mt-2 p-3 rounded-lg min-h-[2.5rem] flex items-center" style={{ background: 'var(--background-secondary)', borderColor: 'var(--border)' }}>
-                          <span className="text-sm text-gray-500 mr-2">f(x) =</span>
+                          <span className="text-sm mr-2" style={{ color: 'var(--foreground-secondary)' }}>f(x) =</span>
                           <MathExpression expression={watchedDerivativeExpr} className="text-xl" />
                         </div>
                       )}
@@ -306,7 +306,7 @@ function CalculusPage() {
                         </div>
                       </div> */}
                       {derivativeForm.formState.errors.expression && (
-                        <p className="mt-1 text-sm text-red-600">{derivativeForm.formState.errors.expression.message}</p>
+                        <p className="mt-1 text-sm text-red-400">{derivativeForm.formState.errors.expression.message}</p>
                   )}
                 </div>
 
@@ -351,7 +351,7 @@ function CalculusPage() {
                           <input
                             type="checkbox"
                             {...derivativeForm.register('simplify')}
-                            className="w-5 h-5 rounded border-2 text-indigo-600 focus:ring-2 focus:ring-indigo-500"
+                            className="w-5 h-5 rounded border-2 accent-[#D4AF37]"
                             defaultChecked
                           />
                           <span className="ml-2 text-sm" style={{ color: 'var(--foreground)' }}>Да</span>
@@ -408,25 +408,25 @@ function CalculusPage() {
                   className="space-y-8"
                 >
                   {/* Результат производной */}
-                  <div className="p-6 rounded-2xl border-2 bg-white shadow-xl" style={{ borderColor: 'var(--border)' }}>
-                    <h3 className="text-2xl font-bold mb-4 text-indigo-600">📊 Результат</h3>
+                  <div className="p-6 rounded-2xl border-2 shadow-xl card-midnight" style={{ borderColor: 'var(--border)' }}>
+                    <h3 className="text-2xl font-bold mb-4" style={{ color: 'var(--gold)' }}>📊 Результат</h3>
                   
                   <div className="space-y-4">
                       {/* Исходная функция */}
-                      <div className="p-4 bg-gray-50 rounded-lg">
-                        <p className="text-sm text-gray-600 mb-1">Исходная функция:</p>
-                        <div className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+                      <div className="p-4 rounded-lg" style={{ background: 'var(--background-tertiary)' }}>
+                        <p className="text-sm mb-1" style={{ color: 'var(--foreground-secondary)' }}>Исходная функция:</p>
+                        <div className="text-2xl font-bold flex items-center gap-2" style={{ color: 'var(--foreground)' }}>
                           <span>f({derivativeResult.variable}) =</span>
                           <MathExpression expression={derivativeResult.original} className="text-2xl" />
                         </div>
                       </div>
 
                       {/* Производная */}
-                      <div className="p-4 bg-indigo-50 rounded-lg border-2 border-indigo-300">
-                        <p className="text-sm text-indigo-600 mb-1">
+                      <div className="p-4 rounded-lg border-2" style={{ background: 'rgba(212,175,55,0.15)', borderColor: 'rgba(212,175,55,0.5)' }}>
+                        <p className="text-sm mb-1" style={{ color: 'var(--gold)' }}>
                           {derivativeResult.order === 1 ? 'Первая производная' : `Производная ${derivativeResult.order}-го порядка`}:
                         </p>
-                        <div className="text-2xl font-bold text-indigo-900 flex items-center gap-2">
+                        <div className="text-2xl font-bold flex items-center gap-2" style={{ color: 'var(--foreground)' }}>
                           <span>f{"'".repeat(derivativeResult.order)}({derivativeResult.variable}) =</span>
                           <MathExpression expression={derivativeResult.derivative} className="text-2xl" />
                         </div>
@@ -434,11 +434,11 @@ function CalculusPage() {
 
                       {/* Упрощённая форма */}
                       {derivativeResult.simplified && derivativeResult.simplified !== derivativeResult.derivative && (
-                        <div className="p-4 bg-green-50 rounded-lg border-2 border-green-300">
-                          <p className="text-sm text-green-600 mb-1 flex items-center gap-2">
+                        <div className="p-4 rounded-lg border-2 border-green-500/50 bg-green-900/20">
+                          <p className="text-sm text-green-400 mb-1 flex items-center gap-2">
                             ✨ Упрощённая форма:
                           </p>
-                          <div className="text-2xl font-bold text-green-900">
+                          <div className="text-2xl font-bold text-green-300">
                             <MathExpression expression={derivativeResult.simplified} className="text-2xl" />
                           </div>
                         </div>
@@ -447,8 +447,8 @@ function CalculusPage() {
                   </div>
 
                   {/* Пошаговое решение */}
-                  <div className="p-6 rounded-2xl border-2 bg-white shadow-xl" style={{ borderColor: 'var(--border)' }}>
-                    <h3 className="text-2xl font-bold mb-6 text-purple-600">📝 Пошаговое решение</h3>
+                  <div className="p-6 rounded-2xl border-2 shadow-xl card-midnight" style={{ borderColor: 'var(--border)' }}>
+                    <h3 className="text-2xl font-bold mb-6" style={{ color: 'var(--gold)' }}>📝 Пошаговое решение</h3>
                     
                     <div className="space-y-4">
                       {derivativeResult.steps.map((step, index) => (
@@ -457,18 +457,19 @@ function CalculusPage() {
                           initial={{ opacity: 0, x: -20 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ duration: 0.3, delay: index * 0.1 }}
-                          className="p-4 rounded-lg border-l-4 border-purple-500 bg-purple-50"
+                          className="p-4 rounded-lg border-l-4"
+                          style={{ borderColor: 'var(--gold)', background: 'rgba(212,175,55,0.1)' }}
                         >
                           <div className="flex items-start gap-3">
-                            <div className="flex-shrink-0 w-10 h-10 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold">
+                            <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[#D4AF37] text-[#0a1628] flex items-center justify-center font-bold">
                               {step.step}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <h4 className="font-bold text-purple-900 mb-2 text-lg">{step.rule}</h4>
-                              <div className="text-sm text-purple-700 mb-3" style={{ lineHeight: '1.6' }}>
+                              <h4 className="font-bold mb-2 text-lg" style={{ color: 'var(--foreground)' }}>{step.rule}</h4>
+                              <div className="text-sm mb-3" style={{ color: 'var(--foreground-secondary)', lineHeight: '1.6' }}>
                                 <MathExpression expression={step.explanation} className="text-sm" />
                               </div>
-                              <div className="p-4 bg-white rounded-lg border-2 border-purple-200 shadow-sm overflow-x-auto">
+                              <div className="p-4 rounded-lg border-2 shadow-sm overflow-x-auto" style={{ background: 'var(--background-tertiary)', borderColor: 'var(--border)' }}>
                                 <div className="whitespace-nowrap">
                                   <MathExpression expression={step.expression} className="text-lg" />
                                 </div>
@@ -481,9 +482,9 @@ function CalculusPage() {
                   </div>
 
                   {/* Графики f(x) и f'(x) */}
-                  <div className="p-6 rounded-2xl border-2 bg-white shadow-xl" style={{ borderColor: 'var(--border)' }}>
+                  <div className="p-6 rounded-2xl border-2 shadow-xl card-midnight" style={{ borderColor: 'var(--border)' }}>
                     <div className="flex justify-between items-center mb-4">
-                      <h3 className="text-2xl font-bold text-blue-600">📈 Графическая визуализация</h3>
+                      <h3 className="text-2xl font-bold" style={{ color: 'var(--gold)' }}>📈 Графическая визуализация</h3>
                       
                       {/* Вычисление в точке */}
                       <div className="flex items-center gap-3">
@@ -580,31 +581,31 @@ function CalculusPage() {
                         height: 550,
                         title: {
                           text: `График f(${derivativeResult.variable}) и f${"'".repeat(derivativeResult.order)}(${derivativeResult.variable})`,
-                          font: { size: 20, color: '#1e293b' }
+                          font: { size: 20, color: '#D4AF37' }
                         },
                         xaxis: {
-                          title: { text: derivativeResult.variable, font: { size: 16 } },
-                          gridcolor: '#e2e8f0',
+                          title: { text: derivativeResult.variable, font: { size: 16, color: '#D4AF37' } },
+                          gridcolor: 'rgba(212,175,55,0.2)',
                           zeroline: true,
-                          zerolinecolor: '#94a3b8',
+                          zerolinecolor: 'rgba(212,175,55,0.4)',
                           zerolinewidth: 2,
                         },
                         yaxis: {
-                          title: { text: 'Значение', font: { size: 16 } },
-                          gridcolor: '#e2e8f0',
+                          title: { text: 'Значение', font: { size: 16, color: '#D4AF37' } },
+                          gridcolor: 'rgba(212,175,55,0.2)',
                           zeroline: true,
-                          zerolinecolor: '#94a3b8',
+                          zerolinecolor: 'rgba(212,175,55,0.4)',
                           zerolinewidth: 2,
                         },
-                        plot_bgcolor: '#fafafa',
-                        paper_bgcolor: 'white',
+                        plot_bgcolor: 'rgba(10,22,40,0.5)',
+                        paper_bgcolor: 'rgba(15,31,56,0.6)',
                         hovermode: 'x unified',
                         showlegend: true,
                         legend: {
                           x: 0.02,
                           y: 0.98,
-                          bgcolor: 'rgba(255,255,255,0.9)',
-                          bordercolor: '#e2e8f0',
+                          bgcolor: 'rgba(15,31,56,0.9)',
+                          bordercolor: 'rgba(212,175,55,0.4)',
                           borderwidth: 2,
                         },
                       }}
@@ -624,16 +625,16 @@ function CalculusPage() {
 
                     {/* Информация о графиках */}
                     <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="p-4 bg-blue-50 rounded-lg border-l-4 border-blue-500">
-                        <h4 className="font-bold text-blue-900 mb-2">📘 Исходная функция f({derivativeResult.variable})</h4>
-                        <p className="text-sm text-blue-800">
+                      <div className="p-4 rounded-lg border-l-4 border-[#3b82f6]" style={{ background: 'rgba(59,130,246,0.15)' }}>
+                        <h4 className="font-bold mb-2 text-blue-300">📘 Исходная функция f({derivativeResult.variable})</h4>
+                        <p className="text-sm text-blue-200/90">
                           Синяя сплошная линия показывает график исходной функции. Точки, где f'(x) = 0, являются 
                           <strong> экстремумами</strong> (максимумами или минимумами).
                         </p>
                           </div>
-                      <div className="p-4 bg-red-50 rounded-lg border-l-4 border-red-500">
-                        <h4 className="font-bold text-red-900 mb-2">📕 Производная f'({derivativeResult.variable})</h4>
-                        <p className="text-sm text-red-800">
+                      <div className="p-4 rounded-lg border-l-4 border-red-500 bg-red-900/20">
+                        <h4 className="font-bold text-red-300 mb-2">📕 Производная f'({derivativeResult.variable})</h4>
+                        <p className="text-sm text-red-200/90">
                           Красная пунктирная линия показывает производную. Где она <strong>положительна</strong> — функция растёт, 
                           где <strong>отрицательна</strong> — функция убывает, где <strong>= 0</strong> — экстремум.
                         </p>
@@ -645,40 +646,40 @@ function CalculusPage() {
                       <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="mt-6 p-5 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border-2 border-green-300"
+                        className="mt-6 p-5 rounded-xl border-2 border-green-500/50 bg-green-900/20"
                       >
-                        <h4 className="text-lg font-bold text-green-900 mb-4">
+                        <h4 className="text-lg font-bold text-green-300 mb-4">
                           🎯 Значения в точке {derivativeResult.variable} = {pointResult.point}
                         </h4>
                         
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                          <div className="p-4 bg-white rounded-lg border-2 border-green-300 shadow-sm">
-                            <p className="text-xs text-green-600 font-semibold mb-2">Значение функции:</p>
-                            <div className="text-xl font-bold text-green-900 flex items-baseline gap-2">
+                          <div className="p-4 rounded-lg border-2 border-green-500/50 shadow-sm" style={{ background: 'var(--background-tertiary)' }}>
+                            <p className="text-xs text-green-400 font-semibold mb-2">Значение функции:</p>
+                            <div className="text-xl font-bold text-green-300 flex items-baseline gap-2">
                               <span>f({pointResult.point}) =</span>
                               <span className="text-2xl">{pointResult.functionValue.toFixed(4)}</span>
                             </div>
                           </div>
                           
-                          <div className="p-4 bg-white rounded-lg border-2 border-green-300 shadow-sm">
-                            <p className="text-xs text-green-600 font-semibold mb-2">Значение производной:</p>
-                            <div className="text-xl font-bold text-green-900 flex items-baseline gap-2">
+                          <div className="p-4 rounded-lg border-2 border-green-500/50 shadow-sm" style={{ background: 'var(--background-tertiary)' }}>
+                            <p className="text-xs text-green-400 font-semibold mb-2">Значение производной:</p>
+                            <div className="text-xl font-bold text-green-300 flex items-baseline gap-2">
                               <span>f'({pointResult.point}) =</span>
                               <span className="text-2xl">{pointResult.value.toFixed(4)}</span>
                             </div>
                           </div>
                           
-                          <div className="p-4 bg-white rounded-lg border-2 border-green-300 shadow-sm">
-                            <p className="text-xs text-green-600 font-semibold mb-2">Уравнение касательной:</p>
-                            <div className="text-base font-bold text-green-900">
+                          <div className="p-4 rounded-lg border-2 border-green-500/50 shadow-sm" style={{ background: 'var(--background-tertiary)' }}>
+                            <p className="text-xs text-green-400 font-semibold mb-2">Уравнение касательной:</p>
+                            <div className="text-base font-bold text-green-300">
                               <span>y = </span>
                               <MathExpression expression={pointResult.tangentLine} />
                             </div>
                           </div>
                         </div>
 
-                        <div className="mt-4 p-3 bg-green-100 rounded-lg">
-                          <p className="text-sm text-green-800">
+                        <div className="mt-4 p-3 rounded-lg bg-green-900/30">
+                          <p className="text-sm text-green-200">
                             <strong>Геометрический смысл:</strong> Производная f'({pointResult.point}) = {pointResult.value.toFixed(4)} 
                             показывает <strong>угловой коэффициент</strong> касательной к графику функции в точке 
                             ({pointResult.point}, {pointResult.functionValue.toFixed(4)}). Это скорость изменения функции в данной точке.
@@ -696,15 +697,15 @@ function CalculusPage() {
               {/* Правая колонка: Таблица правил (sticky) */}
               <div className="lg:col-span-1">
                 <div className="sticky top-20">
-                  <div className="p-5 rounded-2xl border-2 bg-white shadow-xl" style={{ borderColor: 'var(--border)' }}>
-                    <h3 className="text-lg font-bold mb-4 text-emerald-600 border-b-2 border-emerald-200 pb-2">
+                  <div className="p-5 rounded-2xl border-2 shadow-xl card-midnight" style={{ borderColor: 'var(--border)' }}>
+                    <h3 className="text-lg font-bold mb-4 border-b-2 pb-2" style={{ color: 'var(--gold)', borderColor: 'var(--border)' }}>
                       Таблица производных
                     </h3>
                     
                     <div className="space-y-4 max-h-[calc(100vh-180px)] overflow-y-auto pr-2 custom-scrollbar">
                       {/* Базовые правила */}
                       <div>
-                        <h4 className="text-xs font-bold text-gray-500 uppercase mb-2 tracking-wide">
+                        <h4 className="text-xs font-bold uppercase mb-2 tracking-wide" style={{ color: 'var(--foreground-muted)' }}>
                           Базовые правила
                         </h4>
                         <div className="space-y-2">
@@ -724,7 +725,7 @@ function CalculusPage() {
 
                       {/* Степенные и корни */}
                       <div>
-                        <h4 className="text-xs font-bold text-gray-500 uppercase mb-2 tracking-wide">
+                        <h4 className="text-xs font-bold uppercase mb-2 tracking-wide" style={{ color: 'var(--foreground-muted)' }}>
                           Степени и корни
                         </h4>
                         <div className="space-y-2">
@@ -749,7 +750,7 @@ function CalculusPage() {
 
                       {/* Тригонометрические */}
                       <div>
-                        <h4 className="text-xs font-bold text-gray-500 uppercase mb-2 tracking-wide">
+                        <h4 className="text-xs font-bold uppercase mb-2 tracking-wide" style={{ color: 'var(--foreground-muted)' }}>
                           Тригонометрия
                         </h4>
                         <div className="space-y-2">
@@ -786,7 +787,7 @@ function CalculusPage() {
 
                       {/* Показательные и логарифмы */}
                       <div>
-                        <h4 className="text-xs font-bold text-gray-500 uppercase mb-2 tracking-wide">
+                        <h4 className="text-xs font-bold uppercase mb-2 tracking-wide" style={{ color: 'var(--foreground-muted)' }}>
                           Показательные и логарифмы
                         </h4>
                         <div className="space-y-2">
@@ -827,7 +828,7 @@ function CalculusPage() {
 
                       {/* Обратные тригонометрические */}
                       <div>
-                        <h4 className="text-xs font-bold text-gray-500 uppercase mb-2 tracking-wide">
+                        <h4 className="text-xs font-bold uppercase mb-2 tracking-wide" style={{ color: 'var(--foreground-muted)' }}>
                           Обратные тригонометрические
                         </h4>
                         <div className="space-y-2">
@@ -873,15 +874,15 @@ function CalculusPage() {
               {/* Правая колонка: Правила операций (sticky) */}
               <div className="lg:col-span-1">
                 <div className="sticky top-20">
-                  <div className="p-5 rounded-2xl border-2 bg-white shadow-xl" style={{ borderColor: 'var(--border)' }}>
-                    <h3 className="text-lg font-bold mb-4 text-purple-600 border-b-2 border-purple-200 pb-2">
+                  <div className="p-5 rounded-2xl border-2 shadow-xl card-midnight" style={{ borderColor: 'var(--border)' }}>
+                    <h3 className="text-lg font-bold mb-4 border-b-2 pb-2" style={{ color: 'var(--gold)', borderColor: 'var(--border)' }}>
                       Правила дифференцирования
                     </h3>
                     
                     <div className="space-y-4 max-h-[calc(100vh-180px)] overflow-y-auto pr-2 custom-scrollbar">
                       {/* Правила операций */}
                       <div>
-                        <h4 className="text-xs font-bold text-gray-500 uppercase mb-2 tracking-wide">
+                        <h4 className="text-xs font-bold uppercase mb-2 tracking-wide" style={{ color: 'var(--foreground-muted)' }}>
                           Правила операций
                         </h4>
                         <div className="space-y-2">
@@ -910,7 +911,7 @@ function CalculusPage() {
 
                       {/* Сложная функция */}
                       <div>
-                        <h4 className="text-xs font-bold text-gray-500 uppercase mb-2 tracking-wide">
+                        <h4 className="text-xs font-bold uppercase mb-2 tracking-wide" style={{ color: 'var(--foreground-muted)' }}>
                           Сложная функция
                         </h4>
                         <div className="space-y-2">
@@ -925,7 +926,7 @@ function CalculusPage() {
 
                       {/* Константа */}
                       <div>
-                        <h4 className="text-xs font-bold text-gray-500 uppercase mb-2 tracking-wide">
+                        <h4 className="text-xs font-bold uppercase mb-2 tracking-wide" style={{ color: 'var(--foreground-muted)' }}>
                           Умножение на константу
                         </h4>
                         <div className="space-y-2">
@@ -940,7 +941,7 @@ function CalculusPage() {
 
                       {/* Дополнительные правила */}
                       <div>
-                        <h4 className="text-xs font-bold text-gray-500 uppercase mb-2 tracking-wide">
+                        <h4 className="text-xs font-bold uppercase mb-2 tracking-wide" style={{ color: 'var(--foreground-muted)' }}>
                           Дополнительные правила
                         </h4>
                         <div className="space-y-2">
@@ -985,7 +986,7 @@ function CalculusPage() {
                 <div className="p-6 rounded-2xl border-2 shadow-lg" 
                   style={{ borderColor: 'var(--border)', background: 'var(--background-secondary)' }}>
                   <h2 className="text-2xl font-bold mb-6 flex items-center gap-2" style={{ color: 'var(--foreground)' }}>
-                    <Sigma className="w-6 h-6 text-purple-600" />
+                    <Sigma className="w-6 h-6" style={{ color: 'var(--gold)' }} />
                     Вычисление интеграла
                   </h2>
 
@@ -1012,20 +1013,20 @@ function CalculusPage() {
                           />
                           <div className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
                             integralType === 'indefinite'
-                              ? 'border-purple-500 bg-purple-50'
-                              : 'border-gray-300 hover:border-purple-300'
-                          }`}>
+                              ? 'border-[#D4AF37]'
+                              : ''
+                          }`} style={integralType === 'indefinite' ? { background: 'rgba(212,175,55,0.1)' } : { borderColor: 'var(--border)' }}>
                             <div className="flex items-center gap-2 mb-2">
                               <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                                integralType === 'indefinite' ? 'border-purple-500' : 'border-gray-300'
-                              }`}>
+                                integralType === 'indefinite' ? 'border-[#D4AF37]' : ''
+                              }`} style={integralType !== 'indefinite' ? { borderColor: 'var(--border)' } : {}}>
                                 {integralType === 'indefinite' && (
-                                  <div className="w-3 h-3 rounded-full bg-purple-500" />
+                                  <div className="w-3 h-3 rounded-full bg-[#D4AF37]" />
                                 )}
                               </div>
-                              <span className="font-semibold text-gray-900">Неопределённый интеграл</span>
+                              <span className="font-semibold" style={{ color: 'var(--foreground)' }}>Неопределённый интеграл</span>
                             </div>
-                            <p className="text-sm text-gray-600 ml-7">∫ f(x) dx = F(x) + C</p>
+                            <p className="text-sm ml-7" style={{ color: 'var(--foreground-secondary)' }}>∫ f(x) dx = F(x) + C</p>
                           </div>
                         </label>
 
@@ -1043,20 +1044,20 @@ function CalculusPage() {
                           />
                           <div className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
                             integralType === 'definite'
-                              ? 'border-purple-500 bg-purple-50'
-                              : 'border-gray-300 hover:border-purple-300'
-                          }`}>
+                              ? 'border-[#D4AF37]'
+                              : ''
+                          }`} style={integralType === 'definite' ? { background: 'rgba(212,175,55,0.1)' } : { borderColor: 'var(--border)' }}>
                             <div className="flex items-center gap-2 mb-2">
                               <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                                integralType === 'definite' ? 'border-purple-500' : 'border-gray-300'
-                              }`}>
+                                integralType === 'definite' ? 'border-[#D4AF37]' : ''
+                              }`} style={integralType !== 'definite' ? { borderColor: 'var(--border)' } : {}}>
                                 {integralType === 'definite' && (
-                                  <div className="w-3 h-3 rounded-full bg-purple-500" />
+                                  <div className="w-3 h-3 rounded-full bg-[#D4AF37]" />
                                 )}
                               </div>
-                              <span className="font-semibold text-gray-900">Определённый интеграл</span>
+                              <span className="font-semibold" style={{ color: 'var(--foreground)' }}>Определённый интеграл</span>
                             </div>
-                            <div className="text-sm text-gray-600 ml-7 flex items-center gap-1">
+                            <div className="text-sm ml-7 flex items-center gap-1" style={{ color: 'var(--foreground-secondary)' }}>
                               <IntegralSymbol type="definite" size="small" />
                               <span>f(x) dx = F(b) - F(a)</span>
                             </div>
@@ -1072,18 +1073,18 @@ function CalculusPage() {
                       </label>
                       <input
                         {...integralForm.register('expression')}
-                        className="w-full px-4 py-3 rounded-lg border-2 text-lg font-mono transition-all focus:ring-2 focus:ring-purple-500"
+                        className="w-full px-4 py-3 rounded-lg border-2 text-lg font-mono transition-all input-midnight"
                         style={{ borderColor: 'var(--border)' }}
                         placeholder="x^2"
                       />
                       {watchedIntegralExpr && (
                         <div className="mt-2 p-3 rounded-lg min-h-[2.5rem] flex items-center" style={{ background: 'var(--background-secondary)', borderColor: 'var(--border)' }}>
-                          <span className="text-sm text-gray-500 mr-2">f(x) =</span>
+                          <span className="text-sm mr-2" style={{ color: 'var(--foreground-secondary)' }}>f(x) =</span>
                           <MathExpression expression={watchedIntegralExpr} className="text-xl" />
                         </div>
                       )}
-                      <div className="mt-3 p-3 bg-purple-50 rounded-lg">
-                        <p className="text-xs font-semibold text-purple-900 mb-2">⚡ Быстрый выбор примеров:</p>
+                      <div className="mt-3 p-3 rounded-lg" style={{ background: 'rgba(212,175,55,0.1)', border: '1px solid var(--border)' }}>
+                        <p className="text-xs font-semibold mb-2" style={{ color: 'var(--foreground)' }}>⚡ Быстрый выбор примеров:</p>
                         <div className="flex flex-wrap gap-2">
                           {[
                             { expr: 'x^2', label: 'x²' },
@@ -1099,7 +1100,8 @@ function CalculusPage() {
                               key={idx}
                               type="button"
                               onClick={() => integralForm.setValue('expression', example.expr)}
-                              className="px-3 py-1.5 bg-white border-2 border-purple-300 rounded-lg text-sm font-medium text-purple-700 hover:bg-purple-100 hover:border-purple-400 transition-all hover:scale-105"
+                              className="px-3 py-1.5 border-2 rounded-lg text-sm font-medium transition-all hover:scale-105"
+                              style={{ background: 'var(--background-tertiary)', borderColor: 'var(--border)', color: 'var(--foreground)' }}
                             >
                               {example.label}
                             </button>
@@ -1169,8 +1171,8 @@ function CalculusPage() {
 
                     {/* Подсказка для неопределённого интеграла */}
                     {integralType === 'indefinite' && (
-                      <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                        <p className="text-sm text-blue-900">
+                      <div className="p-4 rounded-lg" style={{ background: 'rgba(212,175,55,0.1)', border: '1px solid var(--border)' }}>
+                        <p className="text-sm" style={{ color: 'var(--foreground)' }}>
                           <span className="font-semibold">💡 Неопределённый интеграл:</span> Результат будет содержать константу интегрирования C
                         </p>
                       </div>
@@ -1178,8 +1180,8 @@ function CalculusPage() {
 
                     {/* Подсказка для определённого интеграла */}
                     {integralType === 'definite' && (
-                      <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-                        <p className="text-sm text-green-900 flex items-center gap-2">
+                      <div className="p-4 rounded-lg border border-green-500/50 bg-green-900/20">
+                        <p className="text-sm text-green-300 flex items-center gap-2">
                           <span className="font-semibold">📊 Определённый интеграл:</span> 
                           <span>Результат будет числом - площадь под графиком от a до b</span>
                         </p>
@@ -1219,13 +1221,13 @@ function CalculusPage() {
                   <div className="p-8 rounded-2xl border-2 shadow-xl"
                     style={{ borderColor: 'var(--border)', background: 'var(--background-secondary)' }}>
                     <h2 className="text-2xl font-bold mb-6 flex items-center gap-2" style={{ color: 'var(--foreground)' }}>
-                      <Sigma className="w-6 h-6 text-purple-600" />
+                      <Sigma className="w-6 h-6" style={{ color: 'var(--gold)' }} />
                       Результат интегрирования
                     </h2>
 
                     {/* Результат */}
-                    <div className="mb-6 p-6 rounded-xl bg-gradient-to-br from-purple-50 to-indigo-50 border-2 border-purple-200">
-                      <h3 className="text-lg font-semibold mb-3 text-purple-900 flex items-center gap-2">
+                    <div className="mb-6 p-6 rounded-xl border-2" style={{ background: 'rgba(212,175,55,0.15)', borderColor: 'var(--border)' }}>
+                      <h3 className="text-lg font-semibold mb-3 flex items-center gap-2" style={{ color: 'var(--foreground)' }}>
                         {integralType === 'indefinite' ? (
                           <>
                             <IntegralSymbol type="indefinite" size="medium" />
@@ -1238,7 +1240,7 @@ function CalculusPage() {
                           </>
                         )}
                       </h3>
-                      <div className="text-3xl font-bold text-purple-900">
+                      <div className="text-3xl font-bold" style={{ color: 'var(--foreground)' }}>
                         <MathExpression expression={integralResult.result} className="font-mono" />
                       </div>
                     </div>
@@ -1256,9 +1258,10 @@ function CalculusPage() {
                               initial={{ opacity: 0, x: -20 }}
                               animate={{ opacity: 1, x: 0 }}
                               transition={{ delay: index * 0.1 }}
-                              className="p-4 rounded-lg bg-white border-2 border-gray-200"
+                              className="p-4 rounded-lg border-2"
+                              style={{ background: 'var(--background-tertiary)', borderColor: 'var(--border)' }}
                             >
-                              <p className="text-gray-700">
+                              <p style={{ color: 'var(--foreground-secondary)' }}>
                                 <MathExpression expression={step} />
                               </p>
                             </motion.div>
@@ -1269,9 +1272,9 @@ function CalculusPage() {
 
                     {/* LaTeX формула */}
                     {integralResult.latex && (
-                      <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-                        <p className="text-xs text-gray-500 mb-2">LaTeX формула:</p>
-                        <code className="text-sm font-mono text-gray-700">{integralResult.latex}</code>
+                      <div className="p-4 rounded-lg border" style={{ background: 'var(--background-tertiary)', borderColor: 'var(--border)' }}>
+                        <p className="text-xs mb-2" style={{ color: 'var(--foreground-secondary)' }}>LaTeX формула:</p>
+                        <code className="text-sm font-mono" style={{ color: 'var(--foreground)' }}>{integralResult.latex}</code>
                       </div>
                     )}
                   </div>

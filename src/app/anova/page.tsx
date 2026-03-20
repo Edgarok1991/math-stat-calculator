@@ -133,11 +133,11 @@ function AnovaPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen py-8" style={{ background: 'var(--background)' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Breadcrumb */}
         <div className="mb-4">
-          <Link href="/data-analysis" className="inline-flex items-center text-sm text-gray-600 hover:text-indigo-600 transition-colors">
+          <Link href="/data-analysis" className="inline-flex items-center text-sm hover:text-[#E8C547] transition-colors" style={{ color: 'var(--foreground-secondary)' }}>
             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
@@ -149,11 +149,11 @@ function AnovaPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="bg-white rounded-xl shadow-lg p-8"
+          className="rounded-xl shadow-lg p-8 card-midnight"
         >
           <div className="mb-8">
             <div className="flex items-center justify-center gap-4 mb-4">
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-3xl font-bold" style={{ color: 'var(--foreground)' }}>
                 Дисперсионный анализ (ANOVA)
               </h1>
               <StepGuide
@@ -162,7 +162,7 @@ function AnovaPage() {
                 description="Пошаговое руководство по использованию калькулятора дисперсионного анализа"
               />
             </div>
-            <p className="text-gray-600 text-center">
+            <p className="text-center" style={{ color: 'var(--foreground-secondary)' }}>
               Сравните средние значения нескольких групп с помощью F-теста
             </p>
           </div>
@@ -172,34 +172,34 @@ function AnovaPage() {
             <div>
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium mb-2" style={{ color: 'var(--foreground-secondary)' }}>
                     Данные групп (каждая группа на новой строке)
                   </label>
                   <textarea
                     {...register('groups')}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 input-midnight rounded-md"
                     rows={6}
                     placeholder="15, 16, 14, 15, 17&#10;18, 19, 17, 18, 20&#10;22, 21, 23, 22, 24&#10;19, 20, 18, 19, 21"
                   />
                   {errors.groups && (
-                    <p className="mt-1 text-sm text-red-600">{errors.groups.message}</p>
+                    <p className="mt-1 text-sm text-red-400">{errors.groups.message}</p>
                   )}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium mb-2" style={{ color: 'var(--foreground-secondary)' }}>
                     Уровень значимости (α)
                   </label>
                   <select
                     {...register('alpha', { valueAsNumber: true })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 input-midnight rounded-md"
                   >
                     <option value={0.01}>0.01 (1%)</option>
                     <option value={0.05}>0.05 (5%)</option>
                     <option value={0.1}>0.1 (10%)</option>
                   </select>
                   {errors.alpha && (
-                    <p className="mt-1 text-sm text-red-600">{errors.alpha.message}</p>
+                    <p className="mt-1 text-sm text-red-400">{errors.alpha.message}</p>
                   )}
                 </div>
 
@@ -220,22 +220,22 @@ function AnovaPage() {
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.5 }}
-                  className="bg-gray-50 rounded-lg p-6"
+                  className="rounded-lg p-6" style={{ background: 'var(--background-tertiary)' }}
                 >
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                  <h3 className="text-lg font-semibold mb-4" style={{ color: 'var(--foreground)' }}>
                     Результаты ANOVA
                   </h3>
                   
                   <div className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <span className="font-medium text-gray-700">F-статистика:</span>
+                        <span className="font-medium" style={{ color: 'var(--foreground-secondary)' }}>F-статистика:</span>
                         <p className="text-lg font-mono">
                           {result.fStatistic.toFixed(4)}
                         </p>
                       </div>
                       <div>
-                        <span className="font-medium text-gray-700">p-значение:</span>
+                        <span className="font-medium" style={{ color: 'var(--foreground-secondary)' }}>p-значение:</span>
                         <p className="text-lg font-mono">
                           {result.pValue.toFixed(6)}
                         </p>
@@ -244,15 +244,15 @@ function AnovaPage() {
                     
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <span className="font-medium text-gray-700">Критическое значение:</span>
+                        <span className="font-medium" style={{ color: 'var(--foreground-secondary)' }}>Критическое значение:</span>
                         <p className="text-lg font-mono">
                           {result.criticalValue.toFixed(4)}
                         </p>
                       </div>
                       <div>
-                        <span className="font-medium text-gray-700">Результат:</span>
+                        <span className="font-medium" style={{ color: 'var(--foreground-secondary)' }}>Результат:</span>
                         <p className={`text-lg font-semibold ${
-                          result.significant ? 'text-red-600' : 'text-green-600'
+                          result.significant ? 'text-red-400' : 'text-green-400'
                         }`}>
                           {result.significant ? 'Значимо' : 'Не значимо'}
                         </p>
@@ -263,7 +263,7 @@ function AnovaPage() {
                       <span className="font-medium text-gray-700">Средние по группам:</span>
                       <div className="mt-2 space-y-1">
                         {result.groupMeans.map((mean, index) => (
-                          <div key={index} className="bg-white p-2 rounded border text-sm">
+                          <div key={index} className="p-2 rounded border text-sm" style={{ background: 'var(--background-tertiary)', borderColor: 'var(--border)' }}>
                             <span className="font-medium">Группа {index + 1}:</span>
                             <span className="ml-2 font-mono">
                               {mean.toFixed(2)}
@@ -277,7 +277,7 @@ function AnovaPage() {
                       <span className="font-medium text-gray-700">Дисперсии по группам:</span>
                       <div className="mt-2 space-y-1">
                         {result.groupVariances.map((variance, index) => (
-                          <div key={index} className="bg-white p-2 rounded border text-sm">
+                          <div key={index} className="p-2 rounded border text-sm" style={{ background: 'var(--background-tertiary)', borderColor: 'var(--border)' }}>
                             <span className="font-medium">Группа {index + 1}:</span>
                             <span className="ml-2 font-mono">
                               {variance.toFixed(2)}

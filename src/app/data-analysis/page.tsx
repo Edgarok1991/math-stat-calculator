@@ -60,9 +60,9 @@ const benefits = [
 
 export default function DataAnalysisPage() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ background: 'var(--background)' }}>
       {/* Hero Section */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600">
+      <div className="relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #0a1628 0%, #0f1f38 50%, #050b14 100%)', borderBottom: '1px solid rgba(212,175,55,0.3)' }}>
         <div className="absolute inset-0 opacity-20">
           <div className="absolute inset-0" style={{
             backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.3'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
@@ -111,10 +111,10 @@ export default function DataAnalysisPage() {
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900">
+          <h2 className="text-4xl md:text-5xl font-bold mb-4" style={{ color: 'var(--foreground)' }}>
             Инструменты анализа
           </h2>
-          <p className="text-xl text-gray-600">
+          <p className="text-xl" style={{ color: 'var(--foreground-secondary)' }}>
             Выберите метод анализа для ваших данных
           </p>
         </motion.div>
@@ -128,17 +128,17 @@ export default function DataAnalysisPage() {
               transition={{ duration: 0.6, delay: index * 0.2 }}
               className="group"
             >
-              <div className="h-full p-8 rounded-2xl bg-white border-2 border-gray-200 hover:border-indigo-500 transition-all duration-300 shadow-lg hover:shadow-xl">
+              <div className="h-full p-8 rounded-2xl border-2 transition-all duration-300 shadow-lg hover:shadow-xl card-midnight hover:border-[#D4AF37]">
                 {/* Icon and Title */}
                 <div className="flex items-start gap-4 mb-6">
                   <div className={`w-16 h-16 rounded-2xl ${tool.gradient} flex items-center justify-center group-hover:scale-110 transition-all duration-300 shadow-lg`}>
                     <tool.icon className="w-8 h-8 text-white" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-2xl font-bold mb-2 text-gray-900">
+                    <h3 className="text-2xl font-bold mb-2" style={{ color: 'var(--foreground)' }}>
                       {tool.title}
                     </h3>
-                    <p className="text-gray-600">
+                    <p style={{ color: 'var(--foreground-secondary)' }}>
                       {tool.description}
                     </p>
                   </div>
@@ -146,10 +146,10 @@ export default function DataAnalysisPage() {
 
                 {/* Features */}
                 <div className={`mb-6 p-4 rounded-lg ${tool.bgColor}`}>
-                  <h4 className="font-semibold mb-3 text-gray-900">Возможности:</h4>
+                  <h4 className="font-semibold mb-3" style={{ color: 'var(--foreground)' }}>Возможности:</h4>
                   <ul className="space-y-2">
                     {tool.features.map((feature, i) => (
-                      <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
+                      <li key={i} className="flex items-start gap-2 text-sm" style={{ color: 'var(--foreground-secondary)' }}>
                         <span className={`mt-1 ${tool.color}`}>✓</span>
                         <span>{feature}</span>
                       </li>
@@ -171,7 +171,7 @@ export default function DataAnalysisPage() {
       </div>
 
       {/* Benefits Section */}
-      <div className="py-20 bg-white">
+      <div className="py-20" style={{ background: 'var(--background-secondary)' }}>
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -179,10 +179,10 @@ export default function DataAnalysisPage() {
             transition={{ duration: 0.8 }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl font-bold mb-4 text-gray-900">
+            <h2 className="text-4xl font-bold mb-4" style={{ color: 'var(--foreground)' }}>
               Почему анализ данных
             </h2>
-            <p className="text-xl text-gray-600">
+            <p className="text-xl" style={{ color: 'var(--foreground-secondary)' }}>
               Профессиональные инструменты для точного анализа
             </p>
           </motion.div>
@@ -199,10 +199,10 @@ export default function DataAnalysisPage() {
                 <div className="w-16 h-16 gradient-primary rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
                   <benefit.icon className="w-8 h-8 text-white" />
                 </div>
-                <h3 className="text-xl font-bold mb-3 text-gray-900">
+                <h3 className="text-xl font-bold mb-3" style={{ color: 'var(--foreground)' }}>
                   {benefit.title}
                 </h3>
-                <p className="text-gray-600">
+                <p style={{ color: 'var(--foreground-secondary)' }}>
                   {benefit.description}
                 </p>
               </motion.div>
@@ -212,7 +212,7 @@ export default function DataAnalysisPage() {
       </div>
 
       {/* CTA Section */}
-      <div className="py-20 bg-gradient-to-br from-indigo-600 to-purple-600">
+      <div className="py-20" style={{ background: 'linear-gradient(135deg, #0a1628 0%, #0f1f38 100%)', borderTop: '1px solid rgba(212,175,55,0.3)' }}>
         <div className="container mx-auto px-4 text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -232,7 +232,7 @@ export default function DataAnalysisPage() {
                   Кластерный анализ
                 </Link>
               </Button>
-              <Button size="lg" className="bg-white/10 text-white border-2 border-white hover:bg-white/20 shadow-xl">
+              <Button size="lg" variant="outline" className="border-2 border-[#D4AF37] text-[#D4AF37] hover:bg-[#D4AF37]/20 shadow-xl">
                 <Link href="/anova" className="flex items-center gap-2">
                   <BarChart2 className="w-5 h-5" />
                   ANOVA анализ

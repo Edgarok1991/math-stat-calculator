@@ -80,20 +80,20 @@ export function RegisterForm({ onSuccess, onSwitchToLogin }: RegisterFormProps) 
       animate={{ opacity: 1, y: 0 }}
       className="w-full max-w-md"
     >
-      <div className="bg-white rounded-2xl shadow-xl p-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-6 text-center">
+      <div className="card-midnight p-8">
+        <h2 className="text-3xl font-bold mb-6 text-center" style={{ color: 'var(--foreground)' }}>
           Регистрация
         </h2>
 
         {error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-            <p className="text-sm text-red-800">{error}</p>
+          <div className="mb-4 p-3 rounded-lg" style={{ background: 'rgba(239,68,68,0.2)', border: '1px solid rgba(239,68,68,0.5)' }}>
+            <p className="text-sm text-red-400">{error}</p>
           </div>
         )}
 
         {successMessage && (
-          <div className={`mb-4 p-4 rounded-lg ${emailPreviewUrl ? 'bg-green-50 border border-green-200' : 'bg-amber-50 border border-amber-200'}`}>
-            <p className={`text-sm font-semibold mb-2 ${emailPreviewUrl ? 'text-green-800' : 'text-amber-800'}`}>
+          <div className={`mb-4 p-4 rounded-lg ${emailPreviewUrl ? 'bg-green-50 border border-green-200' : ''}`} style={!emailPreviewUrl ? { background: 'rgba(212,175,55,0.15)', border: '1px solid rgba(212,175,55,0.4)' } : {}}>
+            <p className={`text-sm font-semibold mb-2 ${emailPreviewUrl ? 'text-green-400' : ''}`} style={!emailPreviewUrl ? { color: 'var(--foreground)' } : {}}>
               {successMessage}
             </p>
             {emailPreviewUrl ? (
@@ -114,7 +114,7 @@ export function RegisterForm({ onSuccess, onSwitchToLogin }: RegisterFormProps) 
                 </div>
               </>
             ) : (
-              <p className="text-xs text-amber-700">
+              <p className="text-xs" style={{ color: 'var(--foreground-secondary)' }}>
                 Перейдите на страницу <a href="/auth/resend" className="underline font-medium">повторной отправки</a> или обратитесь к администратору.
               </p>
             )}
@@ -123,65 +123,65 @@ export function RegisterForm({ onSuccess, onSwitchToLogin }: RegisterFormProps) 
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium mb-2" style={{ color: 'var(--foreground-secondary)' }}>
               Имя (необязательно)
             </label>
             <input
               {...register('name')}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              className="w-full px-4 py-3 input-midnight"
               placeholder="Иван Иванов"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium mb-2" style={{ color: 'var(--foreground-secondary)' }}>
               Email
             </label>
             <input
               {...register('email')}
               type="email"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              className="w-full px-4 py-3 input-midnight"
               placeholder="your@email.com"
             />
             {errors.email && (
-              <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+              <p className="mt-1 text-sm text-red-400">{errors.email.message}</p>
             )}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium mb-2" style={{ color: 'var(--foreground-secondary)' }}>
               Пароль
             </label>
             <input
               {...register('password')}
               type="password"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              className="w-full px-4 py-3 input-midnight"
               placeholder="••••••"
             />
             {errors.password && (
-              <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
+              <p className="mt-1 text-sm text-red-400">{errors.password.message}</p>
             )}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium mb-2" style={{ color: 'var(--foreground-secondary)' }}>
               Подтвердите пароль
             </label>
             <input
               {...register('confirmPassword')}
               type="password"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              className="w-full px-4 py-3 input-midnight"
               placeholder="••••••"
             />
             {errors.confirmPassword && (
-              <p className="mt-1 text-sm text-red-600">{errors.confirmPassword.message}</p>
+              <p className="mt-1 text-sm text-red-400">{errors.confirmPassword.message}</p>
             )}
           </div>
 
           <Button
             type="submit"
             loading={isLoading}
-            className="w-full gradient-primary text-white py-3"
+            className="w-full gradient-primary text-[#0a1628] font-bold py-3"
           >
             {isLoading ? 'Регистрация...' : 'Зарегистрироваться'}
           </Button>
@@ -189,12 +189,12 @@ export function RegisterForm({ onSuccess, onSwitchToLogin }: RegisterFormProps) 
 
         {onSwitchToLogin && (
           <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm" style={{ color: 'var(--foreground-secondary)' }}>
               Уже есть аккаунт?{' '}
               <button
                 type="button"
                 onClick={onSwitchToLogin}
-                className="text-indigo-600 font-semibold hover:text-indigo-700"
+                className="text-[#D4AF37] font-semibold hover:text-[#E8C547]"
               >
                 Войти
               </button>

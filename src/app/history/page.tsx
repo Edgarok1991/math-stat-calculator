@@ -111,21 +111,21 @@ export default function HistoryPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen py-8" style={{ background: 'var(--background)' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-xl shadow-lg p-8"
+          className="rounded-xl shadow-lg p-8 card-midnight"
         >
           {/* Header */}
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-                <History className="w-8 h-8 text-indigo-600" />
+              <h1 className="text-3xl font-bold flex items-center gap-3" style={{ color: 'var(--foreground)' }}>
+                <History className="w-8 h-8" style={{ color: 'var(--gold)' }} />
                 История вычислений
               </h1>
-              <p className="text-gray-600 mt-2">
+              <p className="mt-2" style={{ color: 'var(--foreground-secondary)' }}>
                 Все ваши расчёты сохранены
               </p>
             </div>
@@ -134,7 +134,7 @@ export default function HistoryPage() {
               <Button
                 onClick={clearHistory}
                 variant="outline"
-                className="text-red-600 border-red-200 hover:bg-red-50"
+                className="text-red-400 border-red-500/50 hover:bg-red-900/20"
               >
                 <Trash2 className="w-4 h-4 mr-2" />
                 Очистить всё
@@ -150,9 +150,9 @@ export default function HistoryPage() {
                 onClick={() => setFilter(type)}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                   filter === type
-                    ? 'gradient-primary text-white shadow-md'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
+                    ? 'gradient-primary text-[#0a1628] font-bold shadow-md'
+                    : ''
+                }`} style={filter !== type ? { background: 'var(--background-tertiary)', color: 'var(--foreground-secondary)' } : {}}
               >
                 {type === 'all' ? 'Все' : typeNames[type] || type}
               </button>
@@ -162,14 +162,14 @@ export default function HistoryPage() {
           {/* History List */}
           {isLoading ? (
             <div className="text-center py-12">
-              <div className="animate-spin w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full mx-auto"></div>
-              <p className="mt-4 text-gray-600">Загрузка...</p>
+              <div className="animate-spin w-8 h-8 border-4 border-t-transparent rounded-full mx-auto" style={{ borderColor: 'var(--gold)' }}></div>
+              <p className="mt-4" style={{ color: 'var(--foreground-secondary)' }}>Загрузка...</p>
             </div>
           ) : calculations.length === 0 ? (
             <div className="text-center py-12">
-              <History className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-600">История пуста</p>
-              <p className="text-sm text-gray-500 mt-2">
+              <History className="w-16 h-16 mx-auto mb-4" style={{ color: 'var(--foreground-muted)' }} />
+              <p style={{ color: 'var(--foreground-secondary)' }}>История пуста</p>
+              <p className="text-sm mt-2" style={{ color: 'var(--foreground-muted)' }}>
                 Выполните первое вычисление, и оно появится здесь
               </p>
             </div>
@@ -184,26 +184,26 @@ export default function HistoryPage() {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.05 }}
-                    className="p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow"
+                    className="p-4 border rounded-lg hover:shadow-md transition-shadow" style={{ borderColor: 'var(--border)' }}
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex items-start gap-3 flex-1">
-                        <div className="w-10 h-10 rounded-lg bg-indigo-50 flex items-center justify-center flex-shrink-0">
-                          <Icon className="w-5 h-5 text-indigo-600" />
+                        <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(212,175,55,0.2)' }}>
+                          <Icon className="w-5 h-5" style={{ color: 'var(--gold)' }} />
                         </div>
                         
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2">
-                            <h3 className="font-semibold text-gray-900">
+                            <h3 className="font-semibold" style={{ color: 'var(--foreground)' }}>
                               {typeNames[calc.type] || calc.type}
                             </h3>
-                            <span className="text-xs text-gray-500">
+                            <span className="text-xs" style={{ color: 'var(--foreground-muted)' }}>
                               {new Date(calc.createdAt).toLocaleString('ru-RU')}
                             </span>
                           </div>
                           
-                          <div className="text-sm text-gray-600">
-                            <pre className="bg-gray-50 p-2 rounded text-xs overflow-x-auto">
+                          <div className="text-sm" style={{ color: 'var(--foreground-secondary)' }}>
+                            <pre className="p-2 rounded text-xs overflow-x-auto" style={{ background: 'var(--background-tertiary)' }}>
                               {JSON.stringify(calc.input, null, 2)}
                             </pre>
                           </div>
@@ -212,7 +212,7 @@ export default function HistoryPage() {
 
                       <button
                         onClick={() => deleteCalculation(calc.id)}
-                        className="ml-4 p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                        className="ml-4 p-2 text-red-400 hover:bg-red-900/20 rounded-lg transition-colors"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>

@@ -784,7 +784,7 @@ const MatricesPage = () => {
           <div className="p-6 rounded-2xl border-2 shadow-lg transition-all hover:shadow-xl" 
             style={{ borderColor: 'var(--border)', background: 'linear-gradient(135deg, var(--background-secondary) 0%, var(--background-tertiary) 100%)' }}>
             <div className="mb-4">
-              <div className="text-3xl font-bold text-center mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">A</div>
+              <div className="text-3xl font-bold text-center mb-4" style={{ color: 'var(--gold)' }}>A</div>
               <div className="flex justify-between items-center gap-3 mb-4">
                 <button type="button" 
                   className="px-4 py-2 rounded-lg border text-sm font-medium transition-all hover:scale-105 hover:shadow-md"
@@ -796,13 +796,13 @@ const MatricesPage = () => {
                   <span>Размер:</span>
                   <input type="number" min={1} max={10} value={matrix.length || 3} onChange={(e)=>resizeMatrixA(parseInt(e.target.value)||1, matrix[0]?.length||3)}
                     className="w-14 px-2 py-1 text-center border rounded font-mono" style={{ borderColor: 'var(--border)' }} />
-                  <span className="text-gray-500">×</span>
+                  <span style={{ color: 'var(--foreground-secondary)' }}>×</span>
                   <input type="number" min={1} max={10} value={matrix[0]?.length || 3} onChange={(e)=>resizeMatrixA(matrix.length||3, parseInt(e.target.value)||1)}
                     className="w-14 px-2 py-1 text-center border rounded font-mono" style={{ borderColor: 'var(--border)' }} />
                 </div>
               </div>
             </div>
-            <div className="overflow-auto bg-white p-4 rounded-xl shadow-inner" style={{ borderColor: 'var(--border)' }}>
+            <div className="overflow-auto card-midnight p-4 rounded-xl shadow-inner" style={{ borderColor: 'var(--border)' }}>
               <table className="min-w-full border-collapse">
                 <tbody>
                   {matrix.map((row, i) => (
@@ -810,7 +810,7 @@ const MatricesPage = () => {
                       {row.map((cell, j) => (
                         <td key={j} className="p-1.5">
                           <input value={cell as string} onChange={(e)=>updateMatrixCell(i,j,e.target.value)}
-                            className="w-20 px-3 py-2 rounded-lg border-2 text-center font-mono font-semibold transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none hover:border-blue-300"
+                            className="w-20 px-3 py-2 rounded-lg border-2 text-center font-mono font-semibold transition-all  focus:outline-none "
                             style={{ borderColor: 'var(--border)' }}
                             placeholder="0" />
                         </td>
@@ -825,16 +825,16 @@ const MatricesPage = () => {
               {/* 1. Определитель - в самом верху */}
               <div className="col-span-2">
                 <button type="button" 
-                  className="w-full px-4 py-2.5 text-sm font-medium rounded-lg border-2 transition-all hover:scale-105 hover:shadow-md hover:bg-gradient-to-r hover:from-green-50 hover:to-teal-50"
+                  className="w-full px-4 py-2.5 text-sm font-medium rounded-lg border-2 transition-all hover:scale-105 hover:shadow-md hover:bg-gradient-to-r "
                   style={{ borderColor: 'var(--border)', background: 'var(--background)' }}
                   onClick={() => setShowMethodSelect(!showMethodSelect)}>
                   Найти определитель {showMethodSelect ? '▲' : '▼'}
                 </button>
                 {showMethodSelect && (
-                  <div className="mt-2 p-3 rounded-lg border-2 bg-white" style={{ borderColor: 'var(--border)' }}>
+                  <div className="mt-2 p-3 rounded-lg border-2 card-midnight" style={{ borderColor: 'var(--border)' }}>
                     <div className="text-sm font-semibold mb-2">Выберите метод:</div>
                     <div className="space-y-2">
-                      <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded">
+                      <label className="flex items-center gap-2 cursor-pointer hover:opacity-90 p-2 rounded">
                         <input 
                           type="radio" 
                           name="determinantMethod" 
@@ -848,8 +848,8 @@ const MatricesPage = () => {
                       
                       {/* Дополнительные опции для метода Лапласа */}
                       {determinantMethod === 'laplace' && (
-                        <div className="ml-6 mt-2 p-2 bg-gray-50 rounded space-y-2">
-                          <div className="text-xs font-medium text-gray-700">Разложить по:</div>
+                        <div className="ml-6 mt-2 p-2  rounded space-y-2">
+                          <div className="text-xs font-medium ">Разложить по:</div>
                           <div className="flex gap-4">
                             <label className="flex items-center gap-1 cursor-pointer">
                               <input 
@@ -875,7 +875,7 @@ const MatricesPage = () => {
                             </label>
                           </div>
                           <div className="flex items-center gap-2">
-                            <label className="text-xs text-gray-700">Номер {laplaceType === 'row' ? 'строки' : 'столбца'}:</label>
+                            <label className="text-xs ">Номер {laplaceType === 'row' ? 'строки' : 'столбца'}:</label>
                             <select 
                               value={laplaceIndex}
                               onChange={(e) => setLaplaceIndex(parseInt(e.target.value))}
@@ -888,7 +888,7 @@ const MatricesPage = () => {
                         </div>
                       )}
                       
-                      <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded">
+                      <label className="flex items-center gap-2 cursor-pointer hover:opacity-90 p-2 rounded">
                         <input 
                           type="radio" 
                           name="determinantMethod" 
@@ -899,7 +899,7 @@ const MatricesPage = () => {
                         />
                         <span className="text-sm">2. Правило Саррюса (только 3×3)</span>
                       </label>
-                      <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded">
+                      <label className="flex items-center gap-2 cursor-pointer hover:opacity-90 p-2 rounded">
                         <input 
                           type="radio" 
                           name="determinantMethod" 
@@ -939,7 +939,7 @@ const MatricesPage = () => {
               
               {/* 4. Транспонировать */}
               <button type="button" 
-                className="col-span-2 px-4 py-2.5 text-sm font-medium rounded-lg border-2 transition-all hover:scale-105 hover:shadow-md hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50"
+                className="col-span-2 px-4 py-2.5 text-sm font-medium rounded-lg border-2 transition-all hover:scale-105 hover:shadow-md hover:bg-gradient-to-r "
                 style={{ borderColor: 'var(--border)', background: 'var(--background)' }}
                 onClick={onATranspose}>
                 Транспонировать
@@ -954,7 +954,7 @@ const MatricesPage = () => {
                   Умножить на
                 </button>
                 <input type="number" step="any" value={kValueA} onChange={(e)=>setKValueA(parseFloat(e.target.value)||0)}
-                  className="w-20 px-2 py-2.5 text-sm border-2 rounded-lg text-center font-mono transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none" 
+                  className="w-20 px-2 py-2.5 text-sm border-2 rounded-lg text-center font-mono transition-all  focus:outline-none" 
                   style={{ borderColor: 'var(--border)' }}
                   placeholder="k" />
               </div>
@@ -968,7 +968,7 @@ const MatricesPage = () => {
                   Возвести в степень
                 </button>
                 <input type="number" min={0} max={20} value={pValueA} onChange={(e)=>setPValueA(parseInt(e.target.value)||0)}
-                  className="w-20 px-2 py-2.5 text-sm border-2 rounded-lg text-center font-mono transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none" 
+                  className="w-20 px-2 py-2.5 text-sm border-2 rounded-lg text-center font-mono transition-all  focus:outline-none" 
                   style={{ borderColor: 'var(--border)' }}
                   placeholder="p" />
               </div>
@@ -978,19 +978,19 @@ const MatricesPage = () => {
           {/* Центральная панель операций между A и B - единый стиль */}
           <div className="hidden lg:flex flex-col items-center justify-center gap-4 p-4">
             <button type="button" 
-              className="px-6 py-3 rounded-lg border-2 font-medium text-base transition-all hover:scale-105 hover:shadow-md hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50"
+              className="px-6 py-3 rounded-lg border-2 font-medium text-base transition-all hover:scale-105 hover:shadow-md hover:bg-gradient-to-r "
               style={{ borderColor: 'var(--border)', background: 'var(--background)' }}
               onClick={onAplusB}>
               A + B
             </button>
             <button type="button" 
-              className="px-6 py-3 rounded-lg border-2 font-medium text-base transition-all hover:scale-105 hover:shadow-md hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50"
+              className="px-6 py-3 rounded-lg border-2 font-medium text-base transition-all hover:scale-105 hover:shadow-md hover:bg-gradient-to-r "
               style={{ borderColor: 'var(--border)', background: 'var(--background)' }}
               onClick={onAminusB}>
               A − B
             </button>
             <button type="button" 
-              className="px-6 py-3 rounded-lg border-2 font-medium text-base transition-all hover:scale-105 hover:shadow-md hover:bg-gradient-to-r hover:from-green-50 hover:to-teal-50"
+              className="px-6 py-3 rounded-lg border-2 font-medium text-base transition-all hover:scale-105 hover:shadow-md hover:bg-gradient-to-r "
               style={{ borderColor: 'var(--border)', background: 'var(--background)' }}
               onClick={onAmulB}>
               A × B
@@ -1001,7 +1001,7 @@ const MatricesPage = () => {
           <div className="p-6 rounded-2xl border-2 shadow-lg transition-all hover:shadow-xl" 
             style={{ borderColor: 'var(--border)', background: 'linear-gradient(135deg, var(--background-secondary) 0%, var(--background-tertiary) 100%)' }}>
             <div className="mb-4">
-              <div className="text-3xl font-bold text-center mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">B</div>
+              <div className="text-3xl font-bold text-center mb-4" style={{ color: 'var(--gold)' }}>B</div>
               <div className="flex justify-between items-center gap-3 mb-4">
                 <button type="button" 
                   className="px-4 py-2 rounded-lg border text-sm font-medium transition-all hover:scale-105 hover:shadow-md"
@@ -1013,13 +1013,13 @@ const MatricesPage = () => {
                   <span>Размер:</span>
                   <input type="number" min={1} max={10} value={matrix2.length || 3} onChange={(e)=>resizeMatrixB(parseInt(e.target.value)||1, matrix2[0]?.length||3)}
                     className="w-14 px-2 py-1 text-center border rounded font-mono" style={{ borderColor: 'var(--border)' }} />
-                  <span className="text-gray-500">×</span>
+                  <span style={{ color: 'var(--foreground-secondary)' }}>×</span>
                   <input type="number" min={1} max={10} value={matrix2[0]?.length || 3} onChange={(e)=>resizeMatrixB(matrix2.length||3, parseInt(e.target.value)||1)}
                     className="w-14 px-2 py-1 text-center border rounded font-mono" style={{ borderColor: 'var(--border)' }} />
                 </div>
               </div>
             </div>
-            <div className="overflow-auto bg-white p-4 rounded-xl shadow-inner" style={{ borderColor: 'var(--border)' }}>
+            <div className="overflow-auto card-midnight p-4 rounded-xl shadow-inner" style={{ borderColor: 'var(--border)' }}>
               <table className="min-w-full border-collapse">
                 <tbody>
                   {matrix2.map((row, i) => (
@@ -1042,16 +1042,16 @@ const MatricesPage = () => {
               {/* 1. Определитель - в самом верху */}
               <div className="col-span-2">
                 <button type="button" 
-                  className="w-full px-4 py-2.5 text-sm font-medium rounded-lg border-2 transition-all hover:scale-105 hover:shadow-md hover:bg-gradient-to-r hover:from-green-50 hover:to-teal-50"
+                  className="w-full px-4 py-2.5 text-sm font-medium rounded-lg border-2 transition-all hover:scale-105 hover:shadow-md hover:bg-gradient-to-r "
                   style={{ borderColor: 'var(--border)', background: 'var(--background)' }}
                   onClick={() => setShowMethodSelect(!showMethodSelect)}>
                   Найти определитель {showMethodSelect ? '▲' : '▼'}
                 </button>
                 {showMethodSelect && (
-                  <div className="mt-2 p-3 rounded-lg border-2 bg-white" style={{ borderColor: 'var(--border)' }}>
+                  <div className="mt-2 p-3 rounded-lg border-2 card-midnight" style={{ borderColor: 'var(--border)' }}>
                     <div className="text-sm font-semibold mb-2">Выберите метод:</div>
                     <div className="space-y-2">
-                      <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded">
+                      <label className="flex items-center gap-2 cursor-pointer hover:opacity-90 p-2 rounded">
                         <input 
                           type="radio" 
                           name="determinantMethodB" 
@@ -1065,8 +1065,8 @@ const MatricesPage = () => {
                       
                       {/* Дополнительные опции для метода Лапласа */}
                       {determinantMethod === 'laplace' && (
-                        <div className="ml-6 mt-2 p-2 bg-gray-50 rounded space-y-2">
-                          <div className="text-xs font-medium text-gray-700">Разложить по:</div>
+                        <div className="ml-6 mt-2 p-2  rounded space-y-2">
+                          <div className="text-xs font-medium ">Разложить по:</div>
                           <div className="flex gap-4">
                             <label className="flex items-center gap-1 cursor-pointer">
                               <input 
@@ -1092,7 +1092,7 @@ const MatricesPage = () => {
                             </label>
                           </div>
                           <div className="flex items-center gap-2">
-                            <label className="text-xs text-gray-700">Номер {laplaceType === 'row' ? 'строки' : 'столбца'}:</label>
+                            <label className="text-xs ">Номер {laplaceType === 'row' ? 'строки' : 'столбца'}:</label>
                             <select 
                               value={laplaceIndex}
                               onChange={(e) => setLaplaceIndex(parseInt(e.target.value))}
@@ -1105,7 +1105,7 @@ const MatricesPage = () => {
                         </div>
                       )}
                       
-                      <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded">
+                      <label className="flex items-center gap-2 cursor-pointer hover:opacity-90 p-2 rounded">
                         <input 
                           type="radio" 
                           name="determinantMethodB" 
@@ -1116,7 +1116,7 @@ const MatricesPage = () => {
                         />
                         <span className="text-sm">2. Правило Саррюса (только 3×3)</span>
                       </label>
-                      <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded">
+                      <label className="flex items-center gap-2 cursor-pointer hover:opacity-90 p-2 rounded">
                         <input 
                           type="radio" 
                           name="determinantMethodB" 
@@ -1201,7 +1201,7 @@ const MatricesPage = () => {
               
               {/* 4. Транспонировать */}
               <button type="button" 
-                className="col-span-2 px-4 py-2.5 text-sm font-medium rounded-lg border-2 transition-all hover:scale-105 hover:shadow-md hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50"
+                className="col-span-2 px-4 py-2.5 text-sm font-medium rounded-lg border-2 transition-all hover:scale-105 hover:shadow-md hover:bg-gradient-to-r "
                 style={{ borderColor: 'var(--border)', background: 'var(--background)' }}
                 onClick={onBTranspose}>
                 Транспонировать
@@ -1256,7 +1256,7 @@ const MatricesPage = () => {
                 <h3 className="text-3xl font-bold mb-6 text-center bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
                   Результат C
                 </h3>
-                <div className="overflow-auto bg-white p-6 rounded-xl border-2 shadow-inner" style={{ borderColor: 'var(--border)' }}>
+                <div className="overflow-auto card-midnight p-6 rounded-xl border-2 shadow-inner" style={{ borderColor: 'var(--border)' }}>
                   <table className="mx-auto border-collapse">
                     <tbody>
                       {opMatrixResult.map((row, i) => (
@@ -1281,7 +1281,7 @@ const MatricesPage = () => {
                   <span className="text-3xl">📝</span>
                   Пошаговое решение
                 </h4>
-                <div className="bg-white p-6 rounded-xl border-2 shadow-inner max-h-96 overflow-y-auto" style={{ borderColor: 'var(--border)' }}>
+                <div className="card-midnight p-6 rounded-xl border-2 shadow-inner max-h-96 overflow-y-auto" style={{ borderColor: 'var(--border)' }}>
                   <div className="space-y-4">
                     {result.steps.map((s, i) => (
                       <motion.div 
@@ -1289,7 +1289,7 @@ const MatricesPage = () => {
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: i * 0.05 }}
-                        className="text-base leading-relaxed p-3 rounded-lg hover:bg-gray-50 transition-all"
+                        className="text-base leading-relaxed p-3 rounded-lg hover:opacity-90 transition-all"
                       >
                         <MathExpression expression={s} />
                       </motion.div>
@@ -1305,7 +1305,7 @@ const MatricesPage = () => {
                   <span className="text-3xl">🔍</span>
                   Детальные шаги с визуализацией
                 </h4>
-                <div className="bg-white p-6 rounded-xl border-2 shadow-inner max-h-96 overflow-y-auto" style={{ borderColor: 'var(--border)' }}>
+                <div className="card-midnight p-6 rounded-xl border-2 shadow-inner max-h-96 overflow-y-auto" style={{ borderColor: 'var(--border)' }}>
                   {result.detailedSteps.map((step, index) => (
                     <motion.div
                       key={index}
@@ -1324,7 +1324,7 @@ const MatricesPage = () => {
                             Шаг {step.step}
                           </span>
                         </div>
-                        <div className="text-base font-medium leading-relaxed text-gray-700 bg-blue-50 p-4 rounded-lg">
+                        <div className="text-base font-medium leading-relaxed  bg-blue-50 p-4 rounded-lg">
                           <MathExpression expression={step.description.replaceAll('Infinity/Infinity', 'деление на ноль (неопределено)')} />
                         </div>
                       </div>
@@ -1341,7 +1341,7 @@ const MatricesPage = () => {
                                     className={`px-4 py-3 text-center border-2 text-base font-mono font-semibold transition-all ${
                                       step.pivot && step.pivot.row === rowIndex && step.pivot.col === colIndex
                                         ? 'bg-yellow-300 text-yellow-900 scale-110 shadow-lg'
-                                        : 'bg-white hover:bg-gray-50'
+                                        : 'card-midnight hover:opacity-90'
                                     }`}
                                     style={{
                                       borderColor: step.pivot && step.pivot.row === rowIndex && step.pivot.col === colIndex
@@ -1360,17 +1360,17 @@ const MatricesPage = () => {
                       
                       {/* Дополнительная информация - обновленные бейджи */}
                       {step.operation === 'eliminate' && step.factor && (
-                        <div className="mt-3 px-4 py-2 bg-purple-100 text-purple-800 rounded-lg text-sm font-semibold inline-block">
+                        <div className="mt-3 px-4 py-2 rounded-lg text-sm font-semibold inline-block" style={{ background: 'rgba(212,175,55,0.2)', color: 'var(--foreground)' }}>
                           📊 Коэффициент: <Fraction value={decimalToFraction(step.factor)} />
                         </div>
                       )}
                       {step.operation === 'normalize' && (
-                        <div className="mt-3 px-4 py-2 bg-green-100 text-green-800 rounded-lg text-sm font-semibold inline-block">
+                        <div className="mt-3 px-4 py-2 rounded-lg text-sm font-semibold inline-block bg-green-900/30 text-green-300">
                           ✓ Диагональный элемент нормализован к 1
                         </div>
                       )}
                       {step.operation === 'solution' && (
-                        <div className="mt-3 px-4 py-2 bg-blue-100 text-blue-800 rounded-lg text-sm font-semibold inline-block">
+                        <div className="mt-3 px-4 py-2 rounded-lg text-sm font-semibold inline-block" style={{ background: 'rgba(212,175,55,0.2)', color: 'var(--foreground)' }}>
                           ✓ Результат получен
                         </div>
                       )}
@@ -1393,7 +1393,7 @@ const MatricesPage = () => {
             boxShadow: 'var(--shadow-lg)'
           }}
         >
-          <div className="mb-8 p-6 rounded-xl bg-white shadow-md border-2" style={{ borderColor: 'var(--border)' }}>
+          <div className="mb-8 p-6 rounded-xl card-midnight shadow-md border-2" style={{ borderColor: 'var(--border)' }}>
             <InteractiveHint
               title="Количество переменных"
               content="Укажите количество неизвестных в системе уравнений. Система будет иметь столько же уравнений."
@@ -1409,7 +1409,7 @@ const MatricesPage = () => {
               id="variables"
               {...register('variables')}
               onChange={(e) => handleVariablesChange(parseInt(e.target.value) || 2)}
-              className="w-full h-14 px-5 rounded-xl border-2 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-lg font-semibold"
+              className="w-full h-14 px-5 rounded-xl border-2 transition-all duration-300 focus:outline-none focus:ring-2  text-lg font-semibold"
               style={{ 
                 borderColor: 'var(--border)',
                 background: 'var(--background)',
@@ -1423,7 +1423,7 @@ const MatricesPage = () => {
           </div>
 
           {/* Система уравнений для Гаусса */}
-          <div className="mb-8 p-6 rounded-xl bg-white shadow-md border-2" style={{ borderColor: 'var(--border)' }}>
+          <div className="mb-8 p-6 rounded-xl card-midnight shadow-md border-2" style={{ borderColor: 'var(--border)' }}>
             <h3 className="text-xl font-bold mb-6 flex items-center gap-3" style={{ color: 'var(--foreground)' }}>
               <span className="text-2xl"></span>
               Система линейных уравнений
@@ -1441,7 +1441,7 @@ const MatricesPage = () => {
                           type="number"
                           value={coeff === '' ? '' : coeff}
                           onChange={(e) => updateMatrixCell(rowIndex, colIndex, e.target.value)}
-                          className={`w-16 h-10 text-center border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+                          className={`w-16 h-10 text-center border-2 rounded-lg focus:outline-none focus:ring-2  ${
                             coeff === '' ? 'border-red-300 bg-red-50' : 'border-gray-300'
                           }`}
                           style={{
@@ -1469,7 +1469,7 @@ const MatricesPage = () => {
                       type="number"
                       value={row[row.length - 1] === '' ? '' : row[row.length - 1]}
                       onChange={(e) => updateMatrixCell(rowIndex, row.length - 1, e.target.value)}
-                      className={`w-16 h-10 text-center border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+                      className={`w-16 h-10 text-center border-2 rounded-lg focus:outline-none focus:ring-2  ${
                         row[row.length - 1] === '' ? 'border-red-300 bg-red-50' : 'border-gray-300'
                       }`}
                       style={{
@@ -1487,7 +1487,7 @@ const MatricesPage = () => {
           </div>
 
           <Button type="submit" loading={isLoading} disabled={isLoading} 
-            className="w-full h-14 text-lg font-bold rounded-xl shadow-lg hover:shadow-xl transition-all hover:scale-105 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700">
+            className="w-full h-14 text-lg font-bold rounded-xl shadow-lg hover:shadow-xl transition-all hover:scale-105 bg-gradient-to-r gradient-primary ">
             {isLoading ? '⏳ Решаем...' : ' Решить систему методом Гаусса'}
           </Button>
         </form>
@@ -1525,7 +1525,7 @@ const MatricesPage = () => {
                 <span className="w-2 h-2 bg-green-500 rounded-full"></span>
                 {result.solutionType === 'infinite' ? 'Общее решение:' : 'Решение:'}
               </h4>
-              <div className="bg-gray-100 p-4 rounded-lg font-mono text-lg" style={{ background: 'var(--background-tertiary)' }}>
+              <div className=" p-4 rounded-lg font-mono text-lg" style={{ background: 'var(--background-tertiary)' }}>
                 <div className="space-y-2">
                   {result.solution.map((x, index) => (
                     <div key={index} className="flex items-center gap-2">
@@ -1535,7 +1535,7 @@ const MatricesPage = () => {
                       ) : (
                         // Для единственного решения отображаем в виде дроби
                         <>
-                          <span className="text-sm text-gray-600">x{index + 1} =</span>
+                          <span className="text-sm ">x{index + 1} =</span>
                           <span className="text-xl font-bold">
                             <Fraction value={decimalToFraction(x)} />
                           </span>
@@ -1554,7 +1554,7 @@ const MatricesPage = () => {
                 <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
                 Определитель:
               </h4>
-              <div className="bg-gray-100 p-3 rounded-lg font-mono text-xl" style={{ background: 'var(--background-tertiary)' }}>
+              <div className=" p-3 rounded-lg font-mono text-xl" style={{ background: 'var(--background-tertiary)' }}>
                 <div className="flex items-center gap-3">
                   <span className="text-2xl font-bold">
                     <Fraction value={typeof result.determinant === 'object' 
@@ -1570,10 +1570,10 @@ const MatricesPage = () => {
           {result.rank !== undefined && (
             <div className="mb-4">
               <h4 className="text-lg font-semibold mb-2 flex items-center gap-2">
-                <span className="w-2 h-2 bg-purple-500 rounded-full"></span>
+                <span className="w-2 h-2 bg-[#D4AF37] rounded-full"></span>
                 Ранг матрицы:
               </h4>
-              <div className="bg-gray-100 p-3 rounded-lg font-mono text-xl" style={{ background: 'var(--background-tertiary)' }}>
+              <div className=" p-3 rounded-lg font-mono text-xl" style={{ background: 'var(--background-tertiary)' }}>
                 {result.rank}
               </div>
             </div>
@@ -1585,7 +1585,7 @@ const MatricesPage = () => {
                 <span className="w-2 h-2 bg-orange-500 rounded-full"></span>
                 Пошаговое решение:
               </h4>
-              <div className="bg-gray-100 p-4 rounded-lg max-h-96 overflow-y-auto" style={{ background: 'var(--background-tertiary)' }}>
+              <div className=" p-4 rounded-lg max-h-96 overflow-y-auto" style={{ background: 'var(--background-tertiary)' }}>
                 {result.detailedSteps.map((step, index) => (
                   <motion.div
                     key={index}
@@ -1621,7 +1621,7 @@ const MatricesPage = () => {
                                   className={`px-3 py-2 text-center border text-sm font-mono ${
                                     step.pivot && step.pivot.row === rowIndex && step.pivot.col === colIndex
                                       ? 'bg-yellow-200 font-bold'
-                                      : 'bg-white'
+                                      : 'card-midnight'
                                   }`}
                                   style={{
                                     borderColor: 'var(--border)',
@@ -1641,7 +1641,7 @@ const MatricesPage = () => {
                     
                     {/* Дополнительная информация */}
                     {step.operation === 'eliminate' && step.factor && (
-                      <div className="mt-2 text-xs text-gray-600">
+                        <div className="mt-2 text-xs" style={{ color: 'var(--foreground-secondary)' }}>
                         Коэффициент: <Fraction value={decimalToFraction(step.factor)} />
                       </div>
                     )}

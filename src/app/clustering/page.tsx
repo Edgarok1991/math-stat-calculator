@@ -141,11 +141,11 @@ function ClusteringPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen py-8" style={{ background: 'var(--background)' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Breadcrumb */}
         <div className="mb-4">
-          <Link href="/data-analysis" className="inline-flex items-center text-sm text-gray-600 hover:text-indigo-600 transition-colors">
+          <Link href="/data-analysis" className="inline-flex items-center text-sm hover:text-[#E8C547] transition-colors" style={{ color: 'var(--foreground-secondary)' }}>
             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
@@ -157,11 +157,11 @@ function ClusteringPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="bg-white rounded-xl shadow-lg p-8"
+          className="rounded-xl shadow-lg p-8 card-midnight"
         >
           <div className="mb-8">
             <div className="flex items-center justify-center gap-4 mb-4">
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-3xl font-bold" style={{ color: 'var(--foreground)' }}>
                 Кластерный анализ
               </h1>
               <StepGuide
@@ -170,7 +170,7 @@ function ClusteringPage() {
                 description="Пошаговое руководство по использованию калькулятора кластеризации"
               />
             </div>
-            <p className="text-gray-600 text-center">
+            <p className="text-center" style={{ color: 'var(--foreground-secondary)' }}>
               Выполните K-means или иерархическую кластеризацию данных
             </p>
           </div>
@@ -179,33 +179,33 @@ function ClusteringPage() {
             {/* Форма ввода */}
             <div>
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-                  <h4 className="text-sm font-semibold text-blue-900 mb-2">📋 Формат ввода данных</h4>
-                  <p className="text-xs text-gray-700 mb-2">
+                <div className="rounded-lg p-4 mb-4" style={{ background: 'rgba(212,175,55,0.1)', border: '1px solid var(--border)' }}>
+                  <h4 className="text-sm font-semibold mb-2" style={{ color: 'var(--foreground)' }}>📋 Формат ввода данных</h4>
+                  <p className="text-xs mb-2" style={{ color: 'var(--foreground-secondary)' }}>
                     Каждая строка = один объект. Значения разделяйте запятыми.
                   </p>
-                  <p className="text-xs text-gray-600 font-mono bg-white px-2 py-1 rounded">
+                  <p className="text-xs font-mono px-2 py-1 rounded" style={{ color: 'var(--foreground-secondary)', background: 'var(--background-tertiary)' }}>
                     Пример: 2, 8 (объект с x=2, y=8)
                   </p>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium mb-2" style={{ color: 'var(--foreground-secondary)' }}>
                     Точки данных (каждая точка на новой строке)
                   </label>
                   <textarea
                     {...register('points')}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm"
+                    className="w-full px-3 py-2 input-midnight rounded-md font-mono text-sm"
                     rows={8}
                     placeholder="2, 8&#10;4, 10&#10;5, 7&#10;12, 6&#10;14, 6&#10;15, 4"
                   />
                   {errors.points && (
-                    <p className="mt-1 text-sm text-red-600">{errors.points.message}</p>
+                    <p className="mt-1 text-sm text-red-400">{errors.points.message}</p>
                   )}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium mb-2" style={{ color: 'var(--foreground-secondary)' }}>
                     Количество кластеров
                   </label>
                   <input
@@ -213,28 +213,28 @@ function ClusteringPage() {
                     {...register('k', { valueAsNumber: true })}
                     min="2"
                     max="20"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 input-midnight rounded-md"
                     placeholder=""
                   />
                   {errors.k && (
-                    <p className="mt-1 text-sm text-red-600">{errors.k.message}</p>
+                    <p className="mt-1 text-sm text-red-400">{errors.k.message}</p>
                   )}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium mb-2" style={{ color: 'var(--foreground-secondary)' }}>
                     Метод кластеризации
                   </label>
                   <select
                     {...register('method')}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 input-midnight rounded-md"
                   >
                     <option value="single">🔵 Ближний сосед (Single Linkage)</option>
                     <option value="complete">🔴 Дальний сосед (Complete Linkage)</option>
                     <option value="average">🟡 Средний (Average Linkage)</option>
                     <option value="kmeans">⚡ K-means</option>
                   </select>
-                  <p className="mt-2 text-xs text-gray-600">
+                  <p className="mt-2 text-xs" style={{ color: 'var(--foreground-secondary)' }}>
                     💡 Для детального пошагового решения выбирайте иерархические методы
                   </p>
                 </div>
@@ -256,16 +256,16 @@ function ClusteringPage() {
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.5 }}
-                  className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-6 border-2 border-blue-200 shadow-lg"
+                  className="rounded-lg p-6 border-2 shadow-lg" style={{ background: 'rgba(212,175,55,0.1)', borderColor: 'var(--border)' }}
                 >
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                  <h3 className="text-lg font-semibold mb-4" style={{ color: 'var(--foreground)' }}>
                     Краткие результаты
                   </h3>
                   
                   <div className="space-y-4">
-                    <div className="bg-white rounded-lg p-4 shadow-sm">
-                      <span className="font-medium text-gray-700">Метод:</span>
-                      <p className="text-lg font-semibold text-blue-900">
+                    <div className="rounded-lg p-4 shadow-sm" style={{ background: 'var(--background-tertiary)' }}>
+                      <span className="font-medium" style={{ color: 'var(--foreground-secondary)' }}>Метод:</span>
+                      <p className="text-lg font-semibold" style={{ color: 'var(--gold)' }}>
                         {result.method === 'single' ? 'Ближний сосед (Single Linkage)' :
                          result.method === 'complete' ? 'Дальний сосед (Complete Linkage)' :
                          result.method === 'average' ? 'Средний (Average Linkage)' :
@@ -273,29 +273,29 @@ function ClusteringPage() {
                       </p>
                     </div>
                     
-                    <div className="bg-white rounded-lg p-4 shadow-sm">
-                      <span className="font-medium text-gray-700">Количество кластеров:</span>
-                      <p className="text-2xl font-bold text-blue-900">
+                    <div className="rounded-lg p-4 shadow-sm" style={{ background: 'var(--background-tertiary)' }}>
+                      <span className="font-medium" style={{ color: 'var(--foreground-secondary)' }}>Количество кластеров:</span>
+                      <p className="text-2xl font-bold" style={{ color: 'var(--foreground)' }}>
                         {result.clusters.length}
                       </p>
                     </div>
 
                     {result.finalDistance !== undefined && (
-                      <div className="bg-white rounded-lg p-4 shadow-sm">
-                        <span className="font-medium text-gray-700">Расстояние между кластерами:</span>
-                        <p className="text-2xl font-bold text-green-900">
+                      <div className="rounded-lg p-4 shadow-sm" style={{ background: 'var(--background-tertiary)' }}>
+                        <span className="font-medium" style={{ color: 'var(--foreground-secondary)' }}>Расстояние между кластерами:</span>
+                        <p className="text-2xl font-bold text-green-400">
                           P = {result.finalDistance.toFixed(2)}
                         </p>
                       </div>
                     )}
                     
-                    <div className="bg-white rounded-lg p-4 shadow-sm">
-                      <span className="font-medium text-gray-700">Итоговые кластеры:</span>
+                    <div className="rounded-lg p-4 shadow-sm" style={{ background: 'var(--background-tertiary)' }}>
+                      <span className="font-medium" style={{ color: 'var(--foreground-secondary)' }}>Итоговые кластеры:</span>
                       <div className="mt-2 space-y-2">
                         {result.clusters.map((cluster, index) => (
-                          <div key={index} className="bg-blue-50 p-3 rounded-lg border border-blue-200">
-                            <span className="font-semibold text-blue-900">S({cluster.map(i => i + 1).join(',')}):</span>
-                            <span className="ml-2 text-sm font-mono text-gray-700">
+                          <div key={index} className="p-3 rounded-lg border" style={{ background: 'rgba(212,175,55,0.1)', borderColor: 'var(--border)' }}>
+                            <span className="font-semibold" style={{ color: 'var(--gold)' }}>S({cluster.map(i => i + 1).join(',')}):</span>
+                            <span className="ml-2 text-sm font-mono" style={{ color: 'var(--foreground-secondary)' }}>
                               объекты [{cluster.map(i => i + 1).join(', ')}]
                             </span>
                           </div>
@@ -338,20 +338,20 @@ function ClusteringPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.7 }}
-              className="mt-8 bg-green-50 rounded-lg p-6 border-2 border-green-200"
+              className="mt-8 rounded-lg p-6 border-2 border-green-500/50 bg-green-900/20"
             >
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Заключение</h3>
-              <p className="text-gray-700 leading-relaxed">
+              <h3 className="text-xl font-bold mb-3" style={{ color: 'var(--foreground)' }}>Заключение</h3>
+              <p className="leading-relaxed" style={{ color: 'var(--foreground-secondary)' }}>
                 Таким образом, при проведении кластерного анализа по принципу{' '}
                 <span className="font-semibold">
                   "{result.method === 'single' ? 'ближнего соседа' : 
                     result.method === 'complete' ? 'дальнего соседа' : 'среднего'}"
                 </span>
-                {' '}получили <span className="font-bold text-green-900">{result.clusters.length} кластера</span>, 
+                {' '}получили <span className="font-bold text-green-400">{result.clusters.length} кластера</span>, 
                 расстояние между которыми равно{' '}
-                <span className="font-bold text-green-900">P = {result.finalDistance.toFixed(2)}</span>.
+                <span className="font-bold text-green-400">P = {result.finalDistance.toFixed(2)}</span>.
               </p>
-              <p className="text-gray-700 mt-3">
+              <p className="mt-3" style={{ color: 'var(--foreground-secondary)' }}>
                 Результаты иерархической классификации объектов представлены выше в виде дендрограммы.
               </p>
             </motion.div>

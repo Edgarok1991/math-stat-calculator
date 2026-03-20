@@ -48,16 +48,17 @@ export default function ResendVerificationPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100 flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center p-4" style={{ background: 'var(--background)' }}>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-md"
       >
-        <div className="bg-white rounded-2xl shadow-xl p-8">
+        <div className="rounded-2xl shadow-xl p-8 card-midnight">
           <Link
             href="/auth"
-            className="inline-flex items-center text-sm text-gray-600 hover:text-indigo-600 mb-6"
+            className="inline-flex items-center text-sm mb-6 hover:text-[#E8C547]"
+            style={{ color: 'var(--foreground-secondary)' }}
           >
             <ArrowLeft className="w-4 h-4 mr-1" />
             Назад к входу
@@ -65,12 +66,12 @@ export default function ResendVerificationPage() {
 
           <div className="text-center mb-8">
             <div className="w-16 h-16 gradient-primary rounded-full flex items-center justify-center mx-auto mb-4">
-              <Mail className="w-8 h-8 text-white" />
+              <Mail className="w-8 h-8 text-[#0a1628]" />
             </div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">
+            <h2 className="text-3xl font-bold mb-2" style={{ color: 'var(--foreground)' }}>
               Повторная отправка письма
             </h2>
-            <p className="text-gray-600">
+            <p style={{ color: 'var(--foreground-secondary)' }}>
               Введите email для повторной отправки письма подтверждения
             </p>
           </div>
@@ -89,7 +90,7 @@ export default function ResendVerificationPage() {
 
           <form onSubmit={handleResend} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--foreground-secondary)' }}>
                 Email
               </label>
               <input
@@ -97,7 +98,7 @@ export default function ResendVerificationPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                className="w-full px-4 py-3 input-midnight"
                 placeholder="your@email.com"
               />
             </div>
@@ -105,7 +106,7 @@ export default function ResendVerificationPage() {
             <Button
               type="submit"
               loading={isLoading}
-              className="w-full gradient-primary text-white py-3"
+              className="w-full gradient-primary text-[#0a1628] font-bold py-3"
             >
               {isLoading ? 'Отправка...' : 'Отправить письмо'}
             </Button>

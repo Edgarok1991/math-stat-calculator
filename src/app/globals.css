@@ -1,38 +1,49 @@
 @import "tailwindcss";
 
+/* MathCalc: Midnight Blue Edition — премиальная тёмная тема */
 :root {
-  /* Основные цвета */
-  --primary: #6366f1;
-  --primary-dark: #4f46e5;
-  --primary-light: #8b5cf6;
-  --secondary: #06b6d4;
-  --secondary-dark: #0891b2;
-  --accent: #f59e0b;
-  --accent-dark: #d97706;
+  /* Золотые акценты */
+  --gold: #D4AF37;
+  --gold-light: #E8C547;
+  --gold-dark: #B8962E;
+  --gold-glow: rgba(212, 175, 55, 0.3);
+  
+  /* Midnight Blue палитра */
+  --midnight: #0a1628;
+  --midnight-light: #0f1f38;
+  --midnight-card: rgba(15, 31, 56, 0.6);
+  --midnight-glass: rgba(10, 22, 40, 0.85);
+  
+  /* Основные цвета (золото как primary) */
+  --primary: #D4AF37;
+  --primary-dark: #B8962E;
+  --primary-light: #E8C547;
+  --secondary: #0f1f38;
+  --accent: #D4AF37;
   
   /* Фоновые цвета */
-  --background: #f8fafc;
-  --background-secondary: #ffffff;
-  --background-tertiary: #f1f5f9;
+  --background: #050b14;
+  --background-secondary: rgba(15, 31, 56, 0.5);
+  --background-tertiary: rgba(15, 31, 56, 0.3);
   
   /* Текстовые цвета */
-  --foreground: #1e293b;
-  --foreground-secondary: #64748b;
-  --foreground-muted: #94a3b8;
+  --foreground: #D4AF37;
+  --foreground-secondary: #c9a227;
+  --foreground-muted: #a68b2e;
   
   /* Границы и тени */
-  --border: #e2e8f0;
-  --border-light: #f1f5f9;
-  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --border: rgba(212, 175, 55, 0.4);
+  --border-light: rgba(212, 175, 55, 0.2);
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 20px var(--gold-glow);
+  --shadow-xl: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 30px var(--gold-glow);
   
   /* Градиенты */
-  --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  --gradient-accent: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-  --gradient-success: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-  --gradient-warning: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  --gradient-primary: linear-gradient(135deg, #D4AF37 0%, #E8C547 50%, #B8962E 100%);
+  --gradient-secondary: linear-gradient(135deg, #0f1f38 0%, #0a1628 100%);
+  --gradient-accent: linear-gradient(135deg, #D4AF37 0%, #E8C547 100%);
+  --gradient-success: linear-gradient(135deg, #D4AF37 0%, #c9a227 100%);
+  --gradient-warning: linear-gradient(135deg, #E8C547 0%, #D4AF37 100%);
 }
 
 @theme inline {
@@ -42,30 +53,18 @@
   --font-mono: var(--font-geist-mono);
 }
 
-/* Темная тема будет управляться через data-theme атрибут */
-[data-theme="dark"] {
-  --background: #0f172a;
-  --background-secondary: #1e293b;
-  --background-tertiary: #334155;
-  --foreground: #f1f5f9;
-  --foreground-secondary: #cbd5e1;
+/* Светлая тема (если переключить) */
+[data-theme="light"] {
+  --background: #f8fafc;
+  --background-secondary: #ffffff;
+  --background-tertiary: #f1f5f9;
+  --foreground: #1e293b;
+  --foreground-secondary: #64748b;
   --foreground-muted: #94a3b8;
-  --border: #334155;
-  --border-light: #475569;
-}
-
-/* Автоматическая тема на основе системных настроек */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme]) {
-    --background: #0f172a;
-    --background-secondary: #1e293b;
-    --background-tertiary: #334155;
-    --foreground: #f1f5f9;
-    --foreground-secondary: #cbd5e1;
-    --foreground-muted: #94a3b8;
-    --border: #334155;
-    --border-light: #475569;
-  }
+  --border: #e2e8f0;
+  --border-light: #f1f5f9;
+  --primary: #B8962E;
+  --gradient-primary: linear-gradient(135deg, #B8962E 0%, #D4AF37 100%);
 }
 
 * {
@@ -79,11 +78,47 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+}
+
+/* Фон с созвездиями */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: 
+    radial-gradient(2px 2px at 20px 30px, rgba(212, 175, 55, 0.3), transparent),
+    radial-gradient(2px 2px at 40px 70px, rgba(212, 175, 55, 0.2), transparent),
+    radial-gradient(2px 2px at 50px 160px, rgba(212, 175, 55, 0.25), transparent),
+    radial-gradient(2px 2px at 90px 40px, rgba(212, 175, 55, 0.2), transparent),
+    radial-gradient(2px 2px at 130px 80px, rgba(212, 175, 55, 0.3), transparent),
+    radial-gradient(2px 2px at 160px 120px, rgba(212, 175, 55, 0.15), transparent),
+    radial-gradient(1px 1px at 200px 50px, rgba(212, 175, 55, 0.4), transparent),
+    radial-gradient(1px 1px at 250px 180px, rgba(212, 175, 55, 0.2), transparent),
+    radial-gradient(2px 2px at 300px 100px, rgba(212, 175, 55, 0.25), transparent);
+  background-size: 350px 350px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Градиентный оверлей */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(5, 11, 20, 0.3) 0%, transparent 50%, rgba(5, 11, 20, 0.5) 100%);
+  pointer-events: none;
+  z-index: 0;
 }
 
 /* Кастомные утилиты */
 .gradient-primary {
   background: var(--gradient-primary);
+  box-shadow: 0 0 20px var(--gold-glow);
+}
+
+.gradient-primary:hover {
+  box-shadow: 0 0 30px var(--gold-glow);
 }
 
 .gradient-secondary {
@@ -103,9 +138,22 @@ body {
 }
 
 .glass {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: var(--midnight-glass);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+}
+
+.card-midnight {
+  background: var(--midnight-card);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  box-shadow: var(--shadow);
+}
+
+.card-midnight:hover {
+  border-color: var(--gold);
+  box-shadow: var(--shadow-lg);
 }
 
 .card-hover {
@@ -115,6 +163,25 @@ body {
 .card-hover:hover {
   transform: translateY(-4px);
   box-shadow: var(--shadow-xl);
+  border-color: var(--gold);
+}
+
+/* Формы — Midnight Blue */
+.input-midnight {
+  background: rgba(15, 31, 56, 0.5);
+  border: 1px solid var(--border);
+  color: var(--foreground);
+  border-radius: 0.75rem;
+}
+
+.input-midnight::placeholder {
+  color: var(--foreground-muted);
+}
+
+.input-midnight:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 2px var(--gold-glow);
 }
 
 /* Анимации */
@@ -171,31 +238,30 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--primary);
+  background: var(--gold);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--primary-dark);
+  background: var(--gold-light);
 }
 
-/* Кастомный скроллбар для таблицы правил */
 .custom-scrollbar::-webkit-scrollbar {
   width: 6px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: var(--midnight-light);
   border-radius: 10px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #10b981;
+  background: var(--gold);
   border-radius: 10px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #059669;
+  background: var(--gold-light);
 }
 
 /* Улучшенное отображение математических формул */

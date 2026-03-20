@@ -44,7 +44,7 @@ export const StepGuide = ({ steps, title, description }: StepGuideProps) => {
         onClick={() => setIsOpen(true)}
         className="flex items-center gap-2"
       >
-        <span className="w-2 h-2 bg-indigo-500 rounded-full"></span>
+        <span className="w-2 h-2 rounded-full" style={{ background: 'var(--gold)' }}></span>
         Инструкция
       </Button>
 
@@ -79,8 +79,8 @@ export const StepGuide = ({ steps, title, description }: StepGuideProps) => {
                 </div>
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
-                  style={{ color: 'var(--foreground-secondary)' }}
+                  className="p-2 rounded-lg transition-colors hover:opacity-80"
+                  style={{ color: 'var(--foreground-secondary)', background: 'rgba(212,175,55,0.1)' }}
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -149,8 +149,9 @@ export const StepGuide = ({ steps, title, description }: StepGuideProps) => {
                           ? 'gradient-primary'
                           : index < currentStep
                           ? 'bg-green-500'
-                          : 'bg-gray-300'
+                          : ''
                       }`}
+                      style={index > currentStep ? { background: 'var(--background-tertiary)' } : {}}
                     />
                   ))}
                 </div>

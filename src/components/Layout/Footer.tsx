@@ -6,16 +6,15 @@ import { Calculator, Github, Twitter, Mail, Heart, ArrowUp } from 'lucide-react'
 export default function Footer() {
   return (
     <footer 
-      className="relative overflow-hidden"
+      className="relative overflow-hidden glass"
       style={{ 
-        background: 'var(--background-secondary)',
         borderTop: '1px solid var(--border)'
       }}
     >
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute inset-0" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%236366f1' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23D4AF37' fill-opacity='0.2'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
           backgroundRepeat: 'repeat'
         }}></div>
       </div>
@@ -25,7 +24,7 @@ export default function Footer() {
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center space-x-3 mb-6">
               <div className="w-10 h-10 gradient-primary rounded-xl flex items-center justify-center shadow-lg">
-                <Calculator className="w-6 h-6 text-white" />
+                <Calculator className="w-6 h-6 text-[#0a1628]" />
               </div>
               <span className="text-2xl font-bold" style={{ color: 'var(--foreground)' }}>
                 MathCalc
@@ -77,7 +76,7 @@ export default function Footer() {
               <li>
                 <Link 
                   href="/regression" 
-                  className="text-lg transition-colors duration-300 hover:text-indigo-600"
+                  className="text-lg transition-colors duration-300 hover:text-[#E8C547]"
                   style={{ color: 'var(--foreground-secondary)' }}
                 >
                   Регрессия
@@ -86,7 +85,7 @@ export default function Footer() {
               <li>
                 <Link 
                   href="/clustering" 
-                  className="text-lg transition-colors duration-300 hover:text-emerald-600"
+                  className="text-lg transition-colors duration-300 hover:text-[#E8C547]"
                   style={{ color: 'var(--foreground-secondary)' }}
                 >
                   Кластеризация
@@ -95,7 +94,7 @@ export default function Footer() {
               <li>
                 <Link 
                   href="/anova" 
-                  className="text-lg transition-colors duration-300 hover:text-amber-600"
+                  className="text-lg transition-colors duration-300 hover:text-[#E8C547]"
                   style={{ color: 'var(--foreground-secondary)' }}
                 >
                   ANOVA
@@ -104,7 +103,7 @@ export default function Footer() {
               <li>
                 <Link 
                   href="/matrices" 
-                  className="text-lg transition-colors duration-300 hover:text-pink-600"
+                  className="text-lg transition-colors duration-300 hover:text-[#E8C547]"
                   style={{ color: 'var(--foreground-secondary)' }}
                 >
                   Матрицы
@@ -113,7 +112,7 @@ export default function Footer() {
               <li>
                 <Link 
                   href="/calculus" 
-                  className="text-lg transition-colors duration-300 hover:text-cyan-600"
+                  className="text-lg transition-colors duration-300 hover:text-[#E8C547]"
                   style={{ color: 'var(--foreground-secondary)' }}
                 >
                   Математика
@@ -130,7 +129,7 @@ export default function Footer() {
               <li>
                 <a 
                   href="#" 
-                  className="text-lg transition-colors duration-300 hover:text-indigo-600"
+                  className="text-lg transition-colors duration-300 hover:text-[#E8C547]"
                   style={{ color: 'var(--foreground-secondary)' }}
                 >
                   Документация
@@ -139,7 +138,7 @@ export default function Footer() {
               <li>
                 <a 
                   href="#" 
-                  className="text-lg transition-colors duration-300 hover:text-indigo-600"
+                  className="text-lg transition-colors duration-300 hover:text-[#E8C547]"
                   style={{ color: 'var(--foreground-secondary)' }}
                 >
                   FAQ
@@ -148,7 +147,7 @@ export default function Footer() {
               <li>
                 <a 
                   href="#" 
-                  className="text-lg transition-colors duration-300 hover:text-indigo-600"
+                  className="text-lg transition-colors duration-300 hover:text-[#E8C547]"
                   style={{ color: 'var(--foreground-secondary)' }}
                 >
                   Контакты
@@ -157,7 +156,7 @@ export default function Footer() {
               <li>
                 <a 
                   href="#" 
-                  className="text-lg transition-colors duration-300 hover:text-indigo-600"
+                  className="text-lg transition-colors duration-300 hover:text-[#E8C547]"
                   style={{ color: 'var(--foreground-secondary)' }}
                 >
                   Обратная связь
@@ -172,7 +171,7 @@ export default function Footer() {
           style={{ borderTop: '1px solid var(--border)' }}
         >
           <p className="text-lg mb-4 md:mb-0" style={{ color: 'var(--foreground-secondary)' }}>
-            &copy; 2025 MathCalc. Сделано с <Heart className="inline w-4 h-4 text-red-500" /> для факультета журналистики.
+            &copy; 2025 MathCalc. Сделано с <Heart className="inline w-4 h-4 text-[#D4AF37]" /> для факультета журналистики.
           </p>
           
           <button 

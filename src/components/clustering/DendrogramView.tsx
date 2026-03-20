@@ -169,17 +169,17 @@ export const DendrogramView: React.FC<DendrogramViewProps> = ({
   }, [data, width, height]);
 
   return (
-    <div className="bg-white p-6 rounded-lg border-2 border-gray-200 shadow-md">
-      <h3 className="text-xl font-bold text-gray-900 mb-4">Дендрограмма</h3>
+    <div className="p-6 rounded-lg border-2 shadow-md card-midnight" style={{ borderColor: 'var(--border)' }}>
+      <h3 className="text-xl font-bold mb-4" style={{ color: 'var(--foreground)' }}>Дендрограмма</h3>
       <div className="overflow-x-auto">
         <canvas
           ref={canvasRef}
           width={width}
           height={height}
-          className="border border-gray-300 rounded"
+          className="border rounded" style={{ borderColor: 'var(--border)' }}
         />
       </div>
-      <p className="text-sm text-gray-600 mt-3">
+      <p className="text-sm mt-3" style={{ color: 'var(--foreground-secondary)' }}>
         Дендрограмма показывает иерархическую структуру объединения кластеров. 
         Красные числа показывают расстояние на момент объединения.
       </p>

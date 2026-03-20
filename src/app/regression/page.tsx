@@ -131,17 +131,17 @@ function RegressionPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen py-8" style={{ background: 'var(--background)' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="bg-white rounded-xl shadow-lg p-8"
+          className="rounded-xl shadow-lg p-8 card-midnight"
         >
           <div className="mb-8">
             <div className="flex items-center justify-center gap-4 mb-4">
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-3xl font-bold" style={{ color: 'var(--foreground)' }}>
                 Регрессионный анализ
               </h1>
               <StepGuide
@@ -150,7 +150,7 @@ function RegressionPage() {
                 description="Пошаговое руководство по использованию калькулятора регрессии"
               />
             </div>
-            <p className="text-gray-600 text-center">
+            <p className="text-center" style={{ color: 'var(--foreground-secondary)' }}>
               Выполните линейную, полиномиальную или экспоненциальную регрессию
             </p>
           </div>
@@ -165,18 +165,18 @@ function RegressionPage() {
                     content="Введите независимые переменные (X) через запятую или пробел. Это могут быть время, температура, цена и т.д."
                     type="info"
                   >
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium mb-2" style={{ color: 'var(--foreground-secondary)' }}>
                       Значения X (через запятую или пробел)
                     </label>
                   </InteractiveHint>
                   <textarea
                     {...register('x')}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 input-midnight rounded-md"
                     rows={3}
                     placeholder="1, 2, 3, 4, 5"
                   />
                   {errors.x && (
-                    <p className="mt-1 text-sm text-red-600">{errors.x.message}</p>
+                    <p className="mt-1 text-sm text-red-400">{errors.x.message}</p>
                   )}
                 </div>
 
@@ -186,18 +186,18 @@ function RegressionPage() {
                     content="Введите зависимые переменные (Y) через запятую или пробел. Это значения, которые вы хотите предсказать или объяснить."
                     type="info"
                   >
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium mb-2" style={{ color: 'var(--foreground-secondary)' }}>
                       Значения Y (через запятую или пробел)
                     </label>
                   </InteractiveHint>
                   <textarea
                     {...register('y')}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 input-midnight rounded-md"
                     rows={3}
                     placeholder="2.1, 4.3, 6.8, 8.9, 11.2"
                   />
                   {errors.y && (
-                    <p className="mt-1 text-sm text-red-600">{errors.y.message}</p>
+                    <p className="mt-1 text-sm text-red-400">{errors.y.message}</p>
                   )}
                 </div>
 
@@ -207,13 +207,13 @@ function RegressionPage() {
                     content="Выберите тип регрессии в зависимости от характера зависимости между X и Y. Линейная для прямой линии, полиномиальная для кривых, экспоненциальная для экспоненциального роста."
                     type="tip"
                   >
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium mb-2" style={{ color: 'var(--foreground-secondary)' }}>
                       Тип регрессии
                     </label>
                   </InteractiveHint>
                   <select
                     {...register('type')}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 input-midnight rounded-md"
                   >
                     <option value="linear">Линейная</option>
                     <option value="polynomial">Полиномиальная</option>
@@ -223,7 +223,7 @@ function RegressionPage() {
 
                 {watchType === 'polynomial' && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium mb-2" style={{ color: 'var(--foreground-secondary)' }}>
                       Степень полинома
                     </label>
                     <input
@@ -231,11 +231,11 @@ function RegressionPage() {
                       {...register('degree', { valueAsNumber: true })}
                       min="2"
                       max="10"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 input-midnight rounded-md"
                       placeholder=""
                     />
                     {errors.degree && (
-                      <p className="mt-1 text-sm text-red-600">{errors.degree.message}</p>
+                      <p className="mt-1 text-sm text-red-400">{errors.degree.message}</p>
                     )}
                   </div>
                 )}
@@ -261,22 +261,22 @@ function RegressionPage() {
                   
                   <div className="space-y-4">
                     <div>
-                      <span className="font-medium text-gray-700">Уравнение:</span>
-                      <p className="text-lg font-mono bg-white p-2 rounded border">
+                      <span className="font-medium" style={{ color: 'var(--foreground-secondary)' }}>Уравнение:</span>
+                      <p className="text-lg font-mono p-2 rounded border" style={{ background: 'var(--background-tertiary)', borderColor: 'var(--border)' }}>
                         {result.equation}
                       </p>
                     </div>
                     
                     <div>
-                      <span className="font-medium text-gray-700">Коэффициент детерминации (R²):</span>
+                      <span className="font-medium" style={{ color: 'var(--foreground-secondary)' }}>Коэффициент детерминации (R²):</span>
                       <p className="text-lg font-mono">
                         {result.rSquared.toFixed(4)}
                       </p>
                     </div>
                     
                     <div>
-                      <span className="font-medium text-gray-700">Коэффициенты:</span>
-                      <p className="text-sm font-mono bg-white p-2 rounded border">
+                      <span className="font-medium" style={{ color: 'var(--foreground-secondary)' }}>Коэффициенты:</span>
+                      <p className="text-sm font-mono p-2 rounded border" style={{ background: 'var(--background-tertiary)', borderColor: 'var(--border)' }}>
                         [{result.coefficients.map(c => c.toFixed(4)).join(', ')}]
                       </p>
                     </div>

@@ -151,7 +151,7 @@ function StatisticsPage() {
           {/* Заголовок */}
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-3 mb-4">
-              <BarChart3 className="w-12 h-12 text-indigo-600" />
+              <BarChart3 className="w-12 h-12" style={{ color: 'var(--gold)' }} />
               <h1 className="text-4xl md:text-5xl font-bold" style={{ color: 'var(--foreground)' }}>
                 Описательная статистика
               </h1>
@@ -167,7 +167,7 @@ function StatisticsPage() {
               style={{ borderColor: 'var(--border)', background: 'var(--background-secondary)' }}>
               <div className="flex justify-between items-start mb-4">
                 <h2 className="text-xl font-bold flex items-center gap-2" style={{ color: 'var(--foreground)' }}>
-                  <Calculator className="w-5 h-5 text-indigo-600" />
+                  <Calculator className="w-5 h-5" style={{ color: 'var(--gold)' }} />
                   Ввод данных
                 </h2>
                 <StepGuide 
@@ -192,13 +192,13 @@ function StatisticsPage() {
                   <textarea
                     id="data"
                     {...register('data')}
-                    className="w-full px-4 py-3 rounded-lg border-2 text-base transition-all focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                    className="w-full px-4 py-3 rounded-lg border-2 text-base transition-all input-midnight"
                     style={{ borderColor: 'var(--border)', background: 'var(--background)' }}
                     placeholder="12, 15, 18, 20, 22, 25, 28"
                     rows={3}
                   />
                   {errors.data && (
-                    <p className="mt-1 text-sm text-red-600">{errors.data.message}</p>
+                    <p className="mt-1 text-sm text-red-400">{errors.data.message}</p>
                   )}
                 </div>
 
@@ -220,7 +220,7 @@ function StatisticsPage() {
                 {/* Заголовок и описание */}
                 <div className="mb-5">
                   <h3 className="text-xl font-bold mb-2 flex items-center gap-2" style={{ color: 'var(--foreground)' }}>
-                    <PieChart className="w-5 h-5 text-purple-600" />
+                    <PieChart className="w-5 h-5" style={{ color: 'var(--gold)' }} />
                     О статистике
                   </h3>
                   <p className="text-sm leading-relaxed" style={{ color: 'var(--foreground-secondary)' }}>
@@ -231,48 +231,48 @@ function StatisticsPage() {
                 {/* Сетка информационных блоков */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 {/* Меры центральной тенденции */}
-                <div className="p-4 rounded-xl border-2 bg-gradient-to-br from-blue-50 to-blue-100 border-blue-300 shadow-lg hover:shadow-xl transition-shadow">
-                  <h4 className="font-bold text-blue-900 mb-2 text-base flex items-center gap-2">
+                <div className="p-4 rounded-xl border-2 shadow-lg hover:shadow-xl transition-shadow" style={{ background: 'rgba(212,175,55,0.1)', borderColor: 'var(--border)' }}>
+                  <h4 className="font-bold mb-2 text-base flex items-center gap-2" style={{ color: 'var(--foreground)' }}>
                     📊 Меры центральной тенденции
                   </h4>
                   <div className="space-y-2 text-sm">
                   <div>
-                    <strong className="text-blue-800">Среднее (Mean):</strong>
-                    <p className="ml-4 mt-1 text-blue-700">Сумма всех значений, деленная на их количество. Показывает "центр масс" данных. 
+                    <strong style={{ color: 'var(--foreground)' }}>Среднее (Mean):</strong>
+                    <p className="ml-4 mt-1" style={{ color: 'var(--foreground-secondary)' }}>Сумма всех значений, деленная на их количество. Показывает "центр масс" данных. 
                     Чувствительно к выбросам.</p>
                   </div>
                   <div>
-                    <strong className="text-blue-800">Медиана (Median):</strong>
-                    <p className="ml-4 mt-1 text-blue-700">Значение, которое делит упорядоченный набор данных пополам. 
+                    <strong style={{ color: 'var(--foreground)' }}>Медиана (Median):</strong>
+                    <p className="ml-4 mt-1" style={{ color: 'var(--foreground-secondary)' }}>Значение, которое делит упорядоченный набор данных пополам. 
                     Более устойчива к выбросам, чем среднее. Q2 = Медиана.</p>
                   </div>
                   <div>
-                    <strong className="text-blue-800">Мода (Mode):</strong>
-                    <p className="ml-4 mt-1 text-blue-700">Наиболее часто встречающееся значение в данных. 
+                    <strong style={{ color: 'var(--foreground)' }}>Мода (Mode):</strong>
+                    <p className="ml-4 mt-1" style={{ color: 'var(--foreground-secondary)' }}>Наиболее часто встречающееся значение в данных. 
                     Может быть несколько мод (бимодальное, мультимодальное распределение).</p>
                   </div>
                   </div>
                 </div>
 
                 {/* Меры разброса */}
-                <div className="p-4 rounded-xl border-2 bg-gradient-to-br from-green-50 to-green-100 border-green-300 shadow-lg hover:shadow-xl transition-shadow">
-                  <h4 className="font-bold text-green-900 mb-2 text-base flex items-center gap-2">
+                <div className="p-4 rounded-xl border-2 border-green-500/50 bg-green-900/20 shadow-lg hover:shadow-xl transition-shadow">
+                  <h4 className="font-bold text-green-300 mb-2 text-base flex items-center gap-2">
                     📏 Меры разброса (вариации)
                   </h4>
                   <div className="space-y-2 text-sm">
                   <div>
-                    <strong className="text-green-800">Размах (Range):</strong>
-                    <p className="ml-4 mt-1 text-green-700">Разница между максимальным и минимальным значением. 
+                    <strong className="text-green-300">Размах (Range):</strong>
+                    <p className="ml-4 mt-1 text-green-200/90">Разница между максимальным и минимальным значением. 
                     Простейшая мера разброса, но очень чувствительна к выбросам.</p>
                   </div>
                   <div>
-                    <strong className="text-green-800">Дисперсия (Variance):</strong>
-                    <p className="ml-4 mt-1 text-green-700">Среднее квадратов отклонений от среднего значения. 
+                    <strong className="text-green-300">Дисперсия (Variance):</strong>
+                    <p className="ml-4 mt-1 text-green-200/90">Среднее квадратов отклонений от среднего значения. 
                     Показывает, насколько данные "разбросаны" относительно среднего. Измеряется в квадратах единиц.</p>
                   </div>
                   <div>
-                    <strong className="text-green-800">Стандартное отклонение (Std Dev):</strong>
-                    <p className="ml-4 mt-1 text-green-700">Квадратный корень из дисперсии. 
+                    <strong className="text-green-300">Стандартное отклонение (Std Dev):</strong>
+                    <p className="ml-4 mt-1 text-green-200/90">Квадратный корень из дисперсии. 
                     Показывает типичное отклонение от среднего в исходных единицах измерения. 
                     ~68% данных находится в пределах ±1σ от среднего (для нормального распределения).</p>
                   </div>
@@ -280,54 +280,54 @@ function StatisticsPage() {
                 </div>
 
                 {/* Квартили и IQR */}
-                <div className="p-4 rounded-xl border-2 bg-gradient-to-br from-purple-50 to-purple-100 border-purple-300 shadow-lg hover:shadow-xl transition-shadow">
-                  <h4 className="font-bold text-purple-900 mb-2 text-base flex items-center gap-2">
+                <div className="p-4 rounded-xl border-2 shadow-lg hover:shadow-xl transition-shadow" style={{ background: 'rgba(212,175,55,0.08)', borderColor: 'var(--border)' }}>
+                  <h4 className="font-bold mb-2 text-base flex items-center gap-2" style={{ color: 'var(--foreground)' }}>
                     📦 Квартили и межквартильный размах
                   </h4>
                   <div className="space-y-2 text-sm">
                   <div>
-                    <strong className="text-purple-800">Q1 (Первый квартиль):</strong>
-                    <p className="ml-4 mt-1 text-purple-700">Значение, ниже которого находится 25% данных. 
+                    <strong style={{ color: 'var(--foreground)' }}>Q1 (Первый квартиль):</strong>
+                    <p className="ml-4 mt-1" style={{ color: 'var(--foreground-secondary)' }}>Значение, ниже которого находится 25% данных. 
                     Вычисляется как медиана нижней половины данных.</p>
                   </div>
                   <div>
-                    <strong className="text-purple-800">Q2 (Второй квартиль):</strong>
-                    <p className="ml-4 mt-1 text-purple-700">То же самое, что медиана — значение, делящее данные пополам (50-й перцентиль).</p>
+                    <strong style={{ color: 'var(--foreground)' }}>Q2 (Второй квартиль):</strong>
+                    <p className="ml-4 mt-1" style={{ color: 'var(--foreground-secondary)' }}>То же самое, что медиана — значение, делящее данные пополам (50-й перцентиль).</p>
                   </div>
                   <div>
-                    <strong className="text-purple-800">Q3 (Третий квартиль):</strong>
-                    <p className="ml-4 mt-1 text-purple-700">Значение, ниже которого находится 75% данных. 
+                    <strong style={{ color: 'var(--foreground)' }}>Q3 (Третий квартиль):</strong>
+                    <p className="ml-4 mt-1" style={{ color: 'var(--foreground-secondary)' }}>Значение, ниже которого находится 75% данных. 
                     Вычисляется как медиана верхней половины данных.</p>
                   </div>
                   <div>
-                    <strong className="text-purple-800">IQR (Межквартильный размах):</strong>
-                    <p className="ml-4 mt-1 text-purple-700">Разница Q3 - Q1. Содержит средние 50% данных. 
+                    <strong style={{ color: 'var(--foreground)' }}>IQR (Межквартильный размах):</strong>
+                    <p className="ml-4 mt-1" style={{ color: 'var(--foreground-secondary)' }}>Разница Q3 - Q1. Содержит средние 50% данных. 
                     Устойчивая мера разброса, не подверженная влиянию выбросов.</p>
                   </div>
                   </div>
                 </div>
 
                 {/* Границы и выбросы */}
-                <div className="p-4 rounded-xl border-2 bg-gradient-to-br from-orange-50 to-orange-100 border-orange-300 shadow-lg hover:shadow-xl transition-shadow">
-                  <h4 className="font-bold text-orange-900 mb-2 text-base flex items-center gap-2">
+                <div className="p-4 rounded-xl border-2 border-amber-500/50 bg-amber-900/20 shadow-lg hover:shadow-xl transition-shadow">
+                  <h4 className="font-bold text-amber-300 mb-2 text-base flex items-center gap-2">
                     🚨 Границы и выбросы
                   </h4>
                   <div className="space-y-2 text-sm">
                   <div>
-                    <strong className="text-orange-800">Минимум и Максимум:</strong>
-                    <p className="ml-4 mt-1 text-orange-700">Наименьшее и наибольшее значения в наборе данных.</p>
+                    <strong className="text-amber-300">Минимум и Максимум:</strong>
+                    <p className="ml-4 mt-1 text-amber-200/90">Наименьшее и наибольшее значения в наборе данных.</p>
                   </div>
                   <div>
-                    <strong className="text-orange-800">Нижняя граница (Lower Fence):</strong>
-                    <p className="ml-4 mt-1 text-orange-700">Q1 - 1.5·IQR. Значения ниже этой границы считаются выбросами.</p>
+                    <strong className="text-amber-300">Нижняя граница (Lower Fence):</strong>
+                    <p className="ml-4 mt-1 text-amber-200/90">Q1 - 1.5·IQR. Значения ниже этой границы считаются выбросами.</p>
                   </div>
                   <div>
-                    <strong className="text-orange-800">Верхняя граница (Upper Fence):</strong>
-                    <p className="ml-4 mt-1 text-orange-700">Q3 + 1.5·IQR. Значения выше этой границы считаются выбросами.</p>
+                    <strong className="text-amber-300">Верхняя граница (Upper Fence):</strong>
+                    <p className="ml-4 mt-1 text-amber-200/90">Q3 + 1.5·IQR. Значения выше этой границы считаются выбросами.</p>
                   </div>
                   <div>
-                    <strong className="text-orange-800">Выбросы (Outliers):</strong>
-                    <p className="ml-4 mt-1 text-orange-700">Значения, выходящие за пределы границ (метод Тьюки). 
+                    <strong className="text-amber-300">Выбросы (Outliers):</strong>
+                    <p className="ml-4 mt-1 text-amber-200/90">Значения, выходящие за пределы границ (метод Тьюки). 
                     Это нетипичные наблюдения, которые могут быть ошибками измерения или редкими событиями.</p>
                   </div>
                   </div>
@@ -351,8 +351,8 @@ function StatisticsPage() {
                 </div> */}
 
                 {/* Практический совет */}
-                <div className="md:col-span-2 p-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl border-2 border-indigo-200 shadow-md">
-                  <p className="text-sm text-indigo-900">
+                <div className="md:col-span-2 p-4 rounded-xl border-2 shadow-md" style={{ background: 'rgba(212,175,55,0.1)', borderColor: 'var(--border)' }}>
+                  <p className="text-sm" style={{ color: 'var(--foreground)' }}>
                     <strong>💡 Совет:</strong> Используйте несколько показателей вместе для полного понимания данных. 
                     Например, если среднее сильно отличается от медианы — это признак асимметричного распределения или наличия выбросов.
                   </p>
@@ -370,7 +370,7 @@ function StatisticsPage() {
               className="mb-8"
             >
               <h2 className="text-3xl font-bold mb-6 flex items-center gap-3" style={{ color: 'var(--foreground)' }}>
-                <TrendingUp className="w-8 h-8 text-green-600" />
+                <TrendingUp className="w-8 h-8" style={{ color: 'var(--gold)' }} />
                 Результаты анализа
               </h2>
 
@@ -402,7 +402,7 @@ function StatisticsPage() {
                 {/* Разброс данных */}
                 <AnimatedResult type="calculation" title="Разброс данных" delay={0.2}>
                   <div className="p-6 rounded-xl border-2" style={{ borderColor: 'var(--border)', background: 'var(--background-secondary)' }}>
-                    <h3 className="text-lg font-semibold mb-4 text-purple-600">Разброс данных</h3>
+                    <h3 className="text-lg font-semibold mb-4" style={{ color: 'var(--gold)' }}>Разброс данных</h3>
                     <div className="space-y-3">
                       <div>
                         <p className="text-sm" style={{ color: 'var(--foreground-secondary)' }}>Размах</p>
@@ -423,7 +423,7 @@ function StatisticsPage() {
                 {/* Квартили */}
                 <AnimatedResult type="calculation" title="Квартили" delay={0.3}>
                   <div className="p-6 rounded-xl border-2" style={{ borderColor: 'var(--border)', background: 'var(--background-secondary)' }}>
-                    <h3 className="text-lg font-semibold mb-4 text-cyan-600">Квартили</h3>
+                    <h3 className="text-lg font-semibold mb-4" style={{ color: 'var(--gold)' }}>Квартили</h3>
                     <div className="space-y-3">
                       <div>
                         <p className="text-sm" style={{ color: 'var(--foreground-secondary)' }}>Q1 (25%)</p>
@@ -444,7 +444,7 @@ function StatisticsPage() {
                 {/* Границы */}
                 <AnimatedResult type="calculation" title="Границы" delay={0.4}>
                   <div className="p-6 rounded-xl border-2" style={{ borderColor: 'var(--border)', background: 'var(--background-secondary)' }}>
-                    <h3 className="text-lg font-semibold mb-4 text-green-600">Границы</h3>
+                    <h3 className="text-lg font-semibold mb-4" style={{ color: 'var(--gold)' }}>Границы</h3>
                     <div className="space-y-3">
                       <div>
                         <p className="text-sm" style={{ color: 'var(--foreground-secondary)' }}>Минимум</p>
@@ -461,7 +461,7 @@ function StatisticsPage() {
                 {/* Общая информация */}
                 <AnimatedResult type="calculation" title="Общая информация" delay={0.5}>
                   <div className="p-6 rounded-xl border-2" style={{ borderColor: 'var(--border)', background: 'var(--background-secondary)' }}>
-                    <h3 className="text-lg font-semibold mb-4 text-amber-600">Общая информация</h3>
+                    <h3 className="text-lg font-semibold mb-4" style={{ color: 'var(--gold)' }}>Общая информация</h3>
                     <div className="space-y-3">
                       <div>
                         <p className="text-sm" style={{ color: 'var(--foreground-secondary)' }}>Количество</p>

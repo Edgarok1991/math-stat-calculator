@@ -25,9 +25,8 @@ export default function Header() {
 
   return (
     <header 
-      className="sticky top-0 z-50 backdrop-blur-md"
+      className="sticky top-0 z-50 backdrop-blur-md glass"
       style={{ 
-        background: 'rgba(255, 255, 255, 0.8)',
         borderBottom: '1px solid var(--border)',
         boxShadow: 'var(--shadow)'
       }}
@@ -38,9 +37,14 @@ export default function Header() {
             <div className="w-10 h-10 gradient-primary rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
               <Calculator className="w-6 h-6 text-white" />
             </div>
-            <span className="text-2xl font-bold" style={{ color: 'var(--foreground)' }}>
-              MathCalc
-            </span>
+            <div>
+              <span className="text-2xl font-bold block" style={{ color: 'var(--foreground)' }}>
+                MathCalc
+              </span>
+              <span className="text-xs font-medium opacity-80" style={{ color: 'var(--foreground-secondary)' }}>
+                Midnight Blue Edition
+              </span>
+            </div>
           </Link>
 
           <div className="flex items-center space-x-4 ml-8">
@@ -57,8 +61,8 @@ export default function Header() {
                     href={item.href}
                     className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 ${
                       isActive
-                        ? 'gradient-primary text-white shadow-lg'
-                        : 'hover:bg-white/50 text-gray-600 hover:text-gray-900'
+                        ? 'gradient-primary text-[#0a1628] font-bold shadow-lg'
+                        : 'border border-[#D4AF37]/40 text-[#D4AF37] hover:bg-[#D4AF37]/10'
                     }`}
                   >
                     <item.icon className="w-4 h-4" />
@@ -75,10 +79,10 @@ export default function Header() {
               <div className="relative hidden md:block">
                 <button
                   onClick={() => setShowUserMenu(!showUserMenu)}
-                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-50 hover:bg-indigo-100 transition-colors"
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl border border-[#D4AF37]/40 text-[#D4AF37] hover:bg-[#D4AF37]/10 transition-colors"
                 >
-                  <User className="w-4 h-4 text-indigo-600" />
-                  <span className="text-sm font-medium text-indigo-900">
+                  <User className="w-4 h-4" />
+                  <span className="text-sm font-medium">
                     {user?.name || user?.email}
                   </span>
                 </button>
@@ -87,25 +91,25 @@ export default function Header() {
                   <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2"
+                    className="absolute right-0 mt-2 w-48 glass rounded-xl shadow-lg border border-[#D4AF37]/40 py-2"
                   >
                     <Link
                       href="/history"
-                      className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 transition-colors"
+                      className="flex items-center gap-2 px-4 py-2 hover:bg-[#D4AF37]/10 transition-colors text-[#D4AF37]"
                       onClick={() => setShowUserMenu(false)}
                     >
-                      <History className="w-4 h-4 text-gray-600" />
-                      <span className="text-sm text-gray-700">История</span>
+                      <History className="w-4 h-4" />
+                      <span className="text-sm">История</span>
                     </Link>
                     <button
                       onClick={() => {
                         logout();
                         setShowUserMenu(false);
                       }}
-                      className="w-full flex items-center gap-2 px-4 py-2 hover:bg-gray-50 transition-colors"
+                      className="w-full flex items-center gap-2 px-4 py-2 hover:bg-[#D4AF37]/10 transition-colors text-[#D4AF37]"
                     >
-                      <LogOut className="w-4 h-4 text-red-600" />
-                      <span className="text-sm text-red-700">Выйти</span>
+                      <LogOut className="w-4 h-4 text-red-400" />
+                      <span className="text-sm text-red-400">Выйти</span>
                     </button>
                   </motion.div>
                 )}
@@ -113,7 +117,7 @@ export default function Header() {
             ) : (
               <Link
                 href="/auth"
-                className="hidden md:flex items-center gap-2 px-4 py-2 rounded-xl gradient-primary text-white hover:opacity-90 transition-opacity"
+                className="hidden md:flex items-center gap-2 px-4 py-2 rounded-xl gradient-primary text-[#0a1628] font-bold hover:opacity-90 transition-opacity"
               >
                 <User className="w-4 h-4" />
                 <span className="text-sm font-medium">Войти</span>
@@ -124,7 +128,7 @@ export default function Header() {
           <div className="md:hidden">
             <button 
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+              className="p-2 rounded-lg hover:bg-[#D4AF37]/10 transition-colors"
             >
               {isMobileMenuOpen ? (
                 <X className="w-6 h-6" style={{ color: 'var(--foreground)' }} />
@@ -158,8 +162,8 @@ export default function Header() {
                     onClick={() => setIsMobileMenuOpen(false)}
                     className={`flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 ${
                       isActive
-                        ? 'gradient-primary text-white shadow-lg'
-                        : 'hover:bg-gray-100 text-gray-600 hover:text-gray-900'
+                        ? 'gradient-primary text-[#0a1628] font-bold shadow-lg'
+                        : 'border border-[#D4AF37]/40 text-[#D4AF37] hover:bg-[#D4AF37]/10'
                     }`}
                   >
                     <item.icon className="w-5 h-5" />

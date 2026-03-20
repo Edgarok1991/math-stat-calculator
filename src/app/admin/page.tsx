@@ -32,21 +32,21 @@ export default function AdminPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen py-8" style={{ background: 'var(--background)' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-xl shadow-lg p-8"
+          className="rounded-xl shadow-lg p-8 card-midnight"
         >
           {/* Header */}
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-                <Database className="w-8 h-8 text-indigo-600" />
+              <h1 className="text-3xl font-bold flex items-center gap-3" style={{ color: 'var(--foreground)' }}>
+                <Database className="w-8 h-8" style={{ color: 'var(--gold)' }} />
                 Просмотр базы данных
               </h1>
-              <p className="text-gray-600 mt-2">
+              <p className="mt-2" style={{ color: 'var(--foreground-secondary)' }}>
                 Все пользователи и вычисления
               </p>
             </div>
@@ -58,15 +58,15 @@ export default function AdminPage() {
           </div>
 
           {/* Database File Info */}
-          <div className="mb-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-            <h3 className="font-semibold text-blue-900 mb-2">📁 Расположение базы данных:</h3>
-            <code className="text-sm text-blue-800 bg-white px-3 py-1 rounded">
+          <div className="mb-8 p-4 rounded-lg" style={{ background: 'rgba(212,175,55,0.1)', border: '1px solid var(--border)' }}>
+            <h3 className="font-semibold mb-2" style={{ color: 'var(--foreground)' }}>📁 Расположение базы данных:</h3>
+            <code className="text-sm px-3 py-1 rounded" style={{ color: 'var(--foreground)', background: 'var(--background-tertiary)' }}>
               backend/prisma/dev.db
             </code>
             <p className="text-sm text-blue-700 mt-3">
               💡 Вы можете открыть этот файл в любом SQLite клиенте:
             </p>
-            <ul className="text-sm text-blue-700 mt-2 ml-4 list-disc">
+            <ul className="text-sm mt-2 ml-4 list-disc" style={{ color: 'var(--foreground-secondary)' }}>
               <li>DB Browser for SQLite (бесплатно)</li>
               <li>TablePlus (красивый интерфейс)</li>
               <li>VS Code расширение "SQLite Viewer"</li>
@@ -74,46 +74,46 @@ export default function AdminPage() {
           </div>
 
           {/* SQLite Commands */}
-          <div className="mb-8 p-6 bg-gradient-to-r from-purple-50 to-indigo-50 border-2 border-purple-200 rounded-xl">
-            <h3 className="font-semibold text-purple-900 mb-4 flex items-center gap-2">
+          <div className="mb-8 p-6 border-2 rounded-xl" style={{ background: 'rgba(212,175,55,0.1)', borderColor: 'var(--border)' }}>
+            <h3 className="font-semibold mb-4 flex items-center gap-2" style={{ color: 'var(--foreground)' }}>
               <Database className="w-5 h-5" />
               Команды для просмотра через терминал:
             </h3>
             
             <div className="space-y-4">
               <div>
-                <p className="text-sm font-semibold text-purple-800 mb-2">1. Открыть базу данных:</p>
-                <code className="block text-sm bg-purple-900 text-purple-100 px-4 py-3 rounded-lg font-mono">
+                <p className="text-sm font-semibold mb-2" style={{ color: 'var(--foreground-secondary)' }}>1. Открыть базу данных:</p>
+                <code className="block text-sm px-4 py-3 rounded-lg font-mono" style={{ background: 'var(--background-tertiary)', color: 'var(--foreground)' }}>
                   cd backend/prisma<br/>
                   sqlite3 dev.db
                 </code>
               </div>
 
               <div>
-                <p className="text-sm font-semibold text-purple-800 mb-2">2. Показать всех пользователей:</p>
-                <code className="block text-sm bg-purple-900 text-purple-100 px-4 py-3 rounded-lg font-mono">
+                <p className="text-sm font-semibold mb-2" style={{ color: 'var(--foreground-secondary)' }}>2. Показать всех пользователей:</p>
+                <code className="block text-sm px-4 py-3 rounded-lg font-mono" style={{ background: 'var(--background-tertiary)', color: 'var(--foreground)' }}>
                   SELECT id, email, name, createdAt FROM users;
                 </code>
               </div>
 
               <div>
-                <p className="text-sm font-semibold text-purple-800 mb-2">3. Посчитать пользователей:</p>
-                <code className="block text-sm bg-purple-900 text-purple-100 px-4 py-3 rounded-lg font-mono">
+                <p className="text-sm font-semibold mb-2" style={{ color: 'var(--foreground-secondary)' }}>3. Посчитать пользователей:</p>
+                <code className="block text-sm px-4 py-3 rounded-lg font-mono" style={{ background: 'var(--background-tertiary)', color: 'var(--foreground)' }}>
                   SELECT COUNT(*) as total FROM users;
                 </code>
               </div>
 
               <div>
-                <p className="text-sm font-semibold text-purple-800 mb-2">4. Показать последние вычисления:</p>
-                <code className="block text-sm bg-purple-900 text-purple-100 px-4 py-3 rounded-lg font-mono">
+                <p className="text-sm font-semibold mb-2" style={{ color: 'var(--foreground-secondary)' }}>4. Показать последние вычисления:</p>
+                <code className="block text-sm px-4 py-3 rounded-lg font-mono" style={{ background: 'var(--background-tertiary)', color: 'var(--foreground)' }}>
                   SELECT type, userId, createdAt FROM calculations<br/>
                   ORDER BY createdAt DESC LIMIT 10;
                 </code>
               </div>
 
               <div>
-                <p className="text-sm font-semibold text-purple-800 mb-2">5. Выход:</p>
-                <code className="block text-sm bg-purple-900 text-purple-100 px-4 py-3 rounded-lg font-mono">
+                <p className="text-sm font-semibold mb-2" style={{ color: 'var(--foreground-secondary)' }}>5. Выход:</p>
+                <code className="block text-sm px-4 py-3 rounded-lg font-mono" style={{ background: 'var(--background-tertiary)', color: 'var(--foreground)' }}>
                   .quit
                 </code>
               </div>
@@ -121,53 +121,53 @@ export default function AdminPage() {
           </div>
 
           {/* Download Links */}
-          <div className="p-6 bg-green-50 border-2 border-green-200 rounded-xl">
-            <h3 className="font-semibold text-green-900 mb-4">💡 Рекомендуемые инструменты для просмотра:</h3>
+          <div className="p-6 border-2 border-green-500/50 rounded-xl bg-green-900/20">
+            <h3 className="font-semibold text-green-300 mb-4">💡 Рекомендуемые инструменты для просмотра:</h3>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <a
                 href="https://sqlitebrowser.org/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block p-4 bg-white border border-green-300 rounded-lg hover:shadow-md transition-shadow"
+                className="block p-4 border border-green-500/50 rounded-lg hover:shadow-md transition-shadow"
               >
-                <h4 className="font-semibold text-gray-900 mb-1">DB Browser for SQLite</h4>
-                <p className="text-sm text-gray-600">Бесплатно, простой интерфейс</p>
-                <p className="text-xs text-indigo-600 mt-2">sqlitebrowser.org →</p>
+                <h4 className="font-semibold mb-1" style={{ color: 'var(--foreground)' }}>DB Browser for SQLite</h4>
+                <p className="text-sm" style={{ color: 'var(--foreground-secondary)' }}>Бесплатно, простой интерфейс</p>
+                <p className="text-xs mt-2" style={{ color: 'var(--gold)' }}>sqlitebrowser.org →</p>
               </a>
 
               <a
                 href="https://tableplus.com/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block p-4 bg-white border border-green-300 rounded-lg hover:shadow-md transition-shadow"
+                className="block p-4 border border-green-500/50 rounded-lg hover:shadow-md transition-shadow"
               >
-                <h4 className="font-semibold text-gray-900 mb-1">TablePlus</h4>
-                <p className="text-sm text-gray-600">Красивый, платный</p>
-                <p className="text-xs text-indigo-600 mt-2">tableplus.com →</p>
+                <h4 className="font-semibold mb-1" style={{ color: 'var(--foreground)' }}>TablePlus</h4>
+                <p className="text-sm" style={{ color: 'var(--foreground-secondary)' }}>Красивый, платный</p>
+                <p className="text-xs mt-2" style={{ color: 'var(--gold)' }}>tableplus.com →</p>
               </a>
 
               <a
                 href="https://dbeaver.io/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block p-4 bg-white border border-green-300 rounded-lg hover:shadow-md transition-shadow"
+                className="block p-4 border border-green-500/50 rounded-lg hover:shadow-md transition-shadow"
               >
-                <h4 className="font-semibold text-gray-900 mb-1">DBeaver</h4>
-                <p className="text-sm text-gray-600">Мощный, бесплатный</p>
-                <p className="text-xs text-indigo-600 mt-2">dbeaver.io →</p>
+                <h4 className="font-semibold mb-1" style={{ color: 'var(--foreground)' }}>DBeaver</h4>
+                <p className="text-sm" style={{ color: 'var(--foreground-secondary)' }}>Мощный, бесплатный</p>
+                <p className="text-xs mt-2" style={{ color: 'var(--gold)' }}>dbeaver.io →</p>
               </a>
             </div>
           </div>
 
           {/* Direct File Access */}
-          <div className="mt-8 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-            <h3 className="font-semibold text-yellow-900 mb-2">🔍 Прямой доступ к файлу:</h3>
-            <p className="text-sm text-yellow-800 mb-3">
+          <div className="mt-8 p-4 rounded-lg border border-amber-500/50 bg-amber-900/20">
+            <h3 className="font-semibold text-amber-300 mb-2">🔍 Прямой доступ к файлу:</h3>
+            <p className="text-sm text-amber-200/90 mb-3">
               Файл базы данных можно открыть напрямую любым инструментом:
             </p>
-            <div className="bg-white p-3 rounded border border-yellow-300">
-              <code className="text-sm font-mono text-gray-800">
+            <div className="p-3 rounded border" style={{ background: 'var(--background-tertiary)', borderColor: 'var(--border)' }}>
+              <code className="text-sm font-mono" style={{ color: 'var(--foreground)' }}>
                 /Users/edgar/Desktop/Project/math-stat-calculator/calculator/backend/prisma/dev.db
               </code>
             </div>

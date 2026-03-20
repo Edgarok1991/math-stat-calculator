@@ -10,8 +10,8 @@ import { AuthProvider } from '@/contexts/AuthContext';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'MathCalc - Математический и Статистический Калькулятор',
-  description: 'Современное приложение для математических и статистических расчетов',
+  title: 'MathCalc: Midnight Blue Edition - Математический и Статистический Калькулятор',
+  description: 'Премиальное приложение для математических и статистических расчетов',
   keywords: 'математика, статистика, калькулятор, регрессия, кластеризация, ANOVA, матрицы, производные, интегралы',
 };
 
@@ -35,7 +35,7 @@ export default function RootLayout({
         <ThemeProvider>
           <AuthProvider>
             <MobXProvider>
-              <div className="min-h-screen flex flex-col">
+              <div className="min-h-screen flex flex-col relative z-10">
                 <Header />
                 <main className="flex-1">
                   {children}

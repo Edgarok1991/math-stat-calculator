@@ -16,10 +16,10 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const baseClasses = 'inline-flex items-center justify-center rounded-xl font-semibold transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none transform hover:scale-105 active:scale-95';
     
     const variants = {
-      primary: 'gradient-primary text-white shadow-lg hover:shadow-xl focus:ring-indigo-500',
-      secondary: 'gradient-secondary text-white shadow-lg hover:shadow-xl focus:ring-pink-500',
-      outline: 'border-2 border-indigo-200 text-indigo-600 hover:bg-indigo-50 hover:border-indigo-300 focus:ring-indigo-500',
-      ghost: 'hover:bg-white/50 focus:ring-indigo-500',
+      primary: 'gradient-primary text-[#0a1628] font-bold shadow-lg hover:shadow-xl focus:ring-2 focus:ring-[#D4AF37] focus:ring-offset-2 focus:ring-offset-[#050b14]',
+      secondary: 'border border-[#D4AF37] text-[#D4AF37] hover:bg-[#D4AF37]/10 focus:ring-2 focus:ring-[#D4AF37] focus:ring-offset-2 focus:ring-offset-[#050b14]',
+      outline: 'border border-[#D4AF37] text-[#D4AF37] hover:bg-[#D4AF37]/10 focus:ring-2 focus:ring-[#D4AF37] focus:ring-offset-2 focus:ring-offset-[#050b14]',
+      ghost: 'text-[#D4AF37] hover:bg-[#D4AF37]/10 focus:ring-2 focus:ring-[#D4AF37]',
     };
     
     const sizes = {

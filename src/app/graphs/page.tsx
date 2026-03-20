@@ -17,8 +17,8 @@ const Plot = dynamic(() => import('react-plotly.js'), {
   loading: () => (
     <div className="flex items-center justify-center h-96">
       <div className="text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-        <p className="text-gray-600">Загрузка графика...</p>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 mx-auto mb-4" style={{ borderColor: 'var(--gold)' }}></div>
+        <p className="text-sm" style={{ color: 'var(--foreground-secondary)' }}>Загрузка графика...</p>
       </div>
     </div>
   )
@@ -241,20 +241,20 @@ function GraphsPage() {
     if (selectedType === 'function2d' && result2D) {
       return (
         <AnimatedResult type="success" title="2D График функции">
-          <div className="p-6 rounded-xl border-2 bg-white" style={{ borderColor: 'var(--border)' }}>
-            <h3 className="text-2xl font-bold mb-4 text-indigo-600">График y = f(x)</h3>
+          <div className="p-6 rounded-xl border-2 card-midnight" style={{ borderColor: 'var(--border)' }}>
+            <h3 className="text-2xl font-bold mb-4" style={{ color: 'var(--gold)' }}>График y = f(x)</h3>
             
             {/* Описание графика */}
-            <div className="mb-6 p-4 bg-indigo-50 rounded-lg border-l-4 border-indigo-500">
-              <h4 className="font-bold text-indigo-900 mb-2"> Что это за график?</h4>
-              <p className="text-sm text-indigo-800 mb-3">
+            <div className="mb-6 p-4 rounded-lg border-l-4" style={{ background: 'rgba(212,175,55,0.1)', borderColor: 'var(--gold)' }}>
+              <h4 className="font-bold mb-2" style={{ color: 'var(--foreground)' }}> Что это за график?</h4>
+              <p className="text-sm mb-3" style={{ color: 'var(--foreground-secondary)' }}>
                 <strong>2D График функции</strong> — это классическое представление функции одной переменной y = f(x) 
                 в декартовой системе координат. График строится путём вычисления значений функции для множества точек x 
                 и соединения их плавной линией. Это фундаментальный инструмент математического анализа.
               </p>
               
-              <h4 className="font-bold text-indigo-900 mb-2"> Для чего нужен?</h4>
-              <ul className="text-sm text-indigo-800 space-y-1 mb-3 list-disc list-inside">
+              <h4 className="font-bold mb-2" style={{ color: 'var(--foreground)' }}> Для чего нужен?</h4>
+              <ul className="text-sm space-y-1 mb-3 list-disc list-inside" style={{ color: 'var(--foreground-secondary)' }}>
                 <li><strong>Визуализация функций:</strong> Понять поведение функции на интервале</li>
                 <li><strong>Поиск экстремумов:</strong> Найти максимумы и минимумы (вершины, впадины)</li>
                 <li><strong>Анализ роста/убывания:</strong> Увидеть, где функция растёт или убывает</li>
@@ -263,8 +263,8 @@ function GraphsPage() {
                 <li><strong>Решение уравнений:</strong> Графический метод поиска корней</li>
               </ul>
               
-              <h4 className="font-bold text-indigo-900 mb-2"> Как интерпретировать?</h4>
-              <ul className="text-sm text-indigo-800 space-y-1 list-disc list-inside">
+              <h4 className="font-bold mb-2" style={{ color: 'var(--foreground)' }}> Как интерпретировать?</h4>
+              <ul className="text-sm space-y-1 list-disc list-inside" style={{ color: 'var(--foreground-secondary)' }}>
                 <li><strong>Ось X:</strong> Независимая переменная (аргумент функции)</li>
                 <li><strong>Ось Y:</strong> Зависимая переменная (значение функции)</li>
                 <li><strong>Линия идёт вверх:</strong> Функция возрастает</li>
@@ -325,9 +325,9 @@ function GraphsPage() {
               style={{ width: '100%' }}
             />
             
-            <div className="mt-4 p-4 bg-indigo-50 rounded-lg">
-              <p className="text-sm font-semibold text-indigo-900 mb-2">Возможности:</p>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-xs text-indigo-700">
+            <div className="mt-4 p-4 rounded-lg" style={{ background: 'rgba(212,175,55,0.1)' }}>
+              <p className="text-sm font-semibold mb-2" style={{ color: 'var(--foreground)' }}>Возможности:</p>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-xs" style={{ color: 'var(--foreground-secondary)' }}>
                 <p> Приближение области</p>
                 <p> Панорамирование</p>
                 <p> Сброс вида</p>
@@ -344,20 +344,20 @@ function GraphsPage() {
     if (selectedType === 'function3d' && result3D) {
       return (
         <AnimatedResult type="success" title="3D График функции">
-          <div className="p-6 rounded-xl border-2 bg-white" style={{ borderColor: 'var(--border)' }}>
-            <h3 className="text-2xl font-bold mb-4 text-purple-600">График z = f(x, y)</h3>
+          <div className="p-6 rounded-xl border-2 card-midnight" style={{ borderColor: 'var(--border)' }}>
+            <h3 className="text-2xl font-bold mb-4 ">График z = f(x, y)</h3>
             
             {/* Описание графика */}
-            <div className="mb-6 p-4 bg-purple-50 rounded-lg border-l-4 border-purple-500">
-              <h4 className="font-bold text-purple-900 mb-2"> Что это за график?</h4>
-              <p className="text-sm text-purple-800 mb-3">
+            <div className="mb-6 p-4 rounded-lg border-l-4" style={{ background: 'rgba(212,175,55,0.1)', borderColor: 'var(--gold)' }}>
+              <h4 className="font-bold mb-2" style={{ color: 'var(--foreground)' }}> Что это за график?</h4>
+              <p className="text-sm mb-3" style={{ color: 'var(--foreground-secondary)' }}>
                 <strong>3D График функции</strong> — это трёхмерная визуализация функции двух переменных z = f(x,y). 
                 График представляет собой поверхность в трёхмерном пространстве, где каждая точка (x,y) имеет соответствующую 
                 высоту z. Цветовая шкала (Viridis) помогает визуально различать высоты поверхности.
               </p>
               
-              <h4 className="font-bold text-purple-900 mb-2"> Для чего нужен?</h4>
-              <ul className="text-sm text-purple-800 space-y-1 mb-3 list-disc list-inside">
+              <h4 className="font-bold mb-2" style={{ color: 'var(--foreground)' }}> Для чего нужен?</h4>
+              <ul className="text-sm space-y-1 mb-3 list-disc list-inside" style={{ color: 'var(--foreground-secondary)' }}>
                 <li><strong>Визуализация поверхностей:</strong> Понять форму функции двух переменных</li>
                 <li><strong>Поиск экстремумов:</strong> Найти максимумы и минимумы функции (пики и впадины)</li>
                 <li><strong>Седловые точки:</strong> Обнаружить точки, которые не являются ни максимумом, ни минимумом</li>
@@ -366,8 +366,8 @@ function GraphsPage() {
                 <li><strong>Физика:</strong> Визуализация потенциалов, температурных полей</li>
               </ul>
               
-              <h4 className="font-bold text-purple-900 mb-2"> Как интерпретировать?</h4>
-              <ul className="text-sm text-purple-800 space-y-1 list-disc list-inside">
+              <h4 className="font-bold mb-2" style={{ color: 'var(--foreground)' }}> Как интерпретировать?</h4>
+              <ul className="text-sm space-y-1 list-disc list-inside" style={{ color: 'var(--foreground-secondary)' }}>
                 <li><strong>Оси X и Y:</strong> Независимые переменные (аргументы функции)</li>
                 <li><strong>Ось Z:</strong> Зависимая переменная (значение функции)</li>
                 <li><strong>Цвет точек:</strong> Темнее = меньшее значение z, Светлее = большее z</li>
@@ -431,17 +431,17 @@ function GraphsPage() {
             />
 
             <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="p-4 bg-purple-50 rounded-lg border border-purple-200">
-                <p className="text-sm font-semibold text-purple-900 mb-2"> Вращение</p>
-                <p className="text-xs text-purple-700">Зажмите и перетаскивайте мышью для вращения в любом направлении</p>
+              <div className="p-4 rounded-lg border" style={{ background: 'rgba(212,175,55,0.1)', borderColor: 'var(--border)' }}>
+                <p className="text-sm font-semibold mb-2" style={{ color: 'var(--foreground)' }}> Вращение</p>
+                <p className="text-xs" style={{ color: 'var(--foreground-secondary)' }}>Зажмите и перетаскивайте мышью для вращения в любом направлении</p>
               </div>
-              <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-                <p className="text-sm font-semibold text-blue-900 mb-1"> Масштаб</p>
-                <p className="text-xs text-blue-700">Колесо мыши для масштабирования</p>
+              <div className="p-4 rounded-lg border" style={{ background: 'rgba(212,175,55,0.1)', borderColor: 'var(--border)' }}>
+                <p className="text-sm font-semibold mb-1" style={{ color: 'var(--foreground)' }}> Масштаб</p>
+                <p className="text-xs" style={{ color: 'var(--foreground-secondary)' }}>Колесо мыши для масштабирования</p>
               </div>
-              <div className="p-4 bg-green-50 rounded-lg border border-green-200">
-                <p className="text-sm font-semibold text-green-900 mb-1"> Экспорт</p>
-                <p className="text-xs text-green-700">Кнопка камеры для сохранения как PNG</p>
+              <div className="p-4 rounded-lg border border-[#D4AF37]/50 bg-green-900/20">
+                <p className="text-sm font-semibold text-green-300 mb-1"> Экспорт</p>
+                <p className="text-xs ">Кнопка камеры для сохранения как PNG</p>
               </div>
             </div>
           </div>
@@ -453,28 +453,28 @@ function GraphsPage() {
     if (selectedType === 'contour' && result3D) {
       return (
         <AnimatedResult type="success" title="Contour Plot (Контурный график)">
-          <div className="p-6 rounded-xl border-2 bg-white" style={{ borderColor: 'var(--border)' }}>
-            <h3 className="text-2xl font-bold mb-4 text-emerald-600"> Contour Plot (Линии уровня)</h3>
+          <div className="p-6 rounded-xl border-2 card-midnight" style={{ borderColor: 'var(--border)' }}>
+            <h3 className="text-2xl font-bold mb-4 "> Contour Plot (Линии уровня)</h3>
             
             {/* Описание графика */}
-            <div className="mb-6 p-4 bg-emerald-50 rounded-lg border-l-4 border-emerald-500">
-              <h4 className="font-bold text-emerald-900 mb-2"> Что это за график?</h4>
-              <p className="text-sm text-emerald-800 mb-3">
+            <div className="mb-6 p-4 rounded-lg border-l-4" style={{ background: 'rgba(212,175,55,0.1)', borderColor: 'var(--gold)' }}>
+              <h4 className="font-bold  mb-2"> Что это за график?</h4>
+              <p className="text-sm  mb-3">
                 <strong>Контурный график (Contour Plot)</strong> — это 2D представление 3D функции z = f(x,y), 
                 где линии (контуры) соединяют точки с одинаковым значением z. Похоже на топографическую карту местности, 
                 где линии показывают одинаковую высоту.
               </p>
               
-              <h4 className="font-bold text-emerald-900 mb-2"> Для чего нужен?</h4>
-              <ul className="text-sm text-emerald-800 space-y-1 mb-3 list-disc list-inside">
+              <h4 className="font-bold  mb-2"> Для чего нужен?</h4>
+              <ul className="text-sm  space-y-1 mb-3 list-disc list-inside">
                 <li><strong>Поиск экстремумов:</strong> Легко находить максимумы и минимумы функции</li>
                 <li><strong>Градиенты:</strong> Плотные линии = крутой склон (большой градиент)</li>
                 <li><strong>Оптимизация:</strong> Визуализация функций потерь в машинном обучении</li>
                 <li><strong>Физика/инженерия:</strong> Тепловые карты, потенциальные поля, аэродинамика</li>
               </ul>
               
-              <h4 className="font-bold text-emerald-900 mb-2"> Как читать график?</h4>
-              <ul className="text-sm text-emerald-800 space-y-1 list-disc list-inside">
+              <h4 className="font-bold  mb-2"> Как читать график?</h4>
+              <ul className="text-sm  space-y-1 list-disc list-inside">
                 <li><strong>Каждая линия:</strong> Точки с одинаковым значением z</li>
                 <li><strong>Цвет:</strong> Показывает величину z (темнее/светлее)</li>
                 <li><strong>Близкие линии:</strong> Быстрое изменение функции</li>
@@ -539,17 +539,17 @@ function GraphsPage() {
             />
             
             {/* Применение */}
-            <div className="mt-6 p-4 bg-gradient-to-r from-emerald-50 to-teal-50 rounded-lg border border-emerald-200">
-              <h4 className="font-bold text-emerald-900 mb-2"> Практическое применение:</h4>
-              <div className="grid md:grid-cols-3 gap-3 text-sm text-emerald-800">
+            <div className="mt-6 p-4 bg-gradient-to-r  rounded-lg border ">
+              <h4 className="font-bold  mb-2"> Практическое применение:</h4>
+              <div className="grid md:grid-cols-3 gap-3 text-sm ">
                 <div>
-                  <p><strong className="text-blue-600"> ML/AI:</strong> Визуализация функции потерь, градиентный спуск</p>
+                  <p><strong className=""> ML/AI:</strong> Визуализация функции потерь, градиентный спуск</p>
                 </div>
                 <div>
                   <p><strong className="text-orange-600"> Физика:</strong> Температурные поля, электрические потенциалы</p>
                 </div>
                 <div>
-                  <p><strong className="text-purple-600"> Математика:</strong> Поиск седловых точек, анализ функций</p>
+                  <p><strong className=""> Математика:</strong> Поиск седловых точек, анализ функций</p>
                 </div>
               </div>
             </div>
@@ -570,18 +570,18 @@ function GraphsPage() {
       
       return (
         <AnimatedResult type="success" title="Polar Plot (Полярный график)">
-          <div className="p-6 rounded-xl border-2 bg-white" style={{ borderColor: 'var(--border)' }}>
+          <div className="p-6 rounded-xl border-2 card-midnight" style={{ borderColor: 'var(--border)' }}>
             <h3 className="text-2xl font-bold mb-4 text-sky-600"> Polar Plot (График в полярных координатах)</h3>
             
             {/* Описание графика */}
-            <div className="mb-6 p-4 bg-sky-50 rounded-lg border-l-4 border-sky-500">
-              <h4 className="font-bold text-sky-900 mb-2"> Что это за график?</h4>
+            <div className="mb-6 p-4 rounded-lg border-l-4" style={{ background: 'rgba(212,175,55,0.1)', borderColor: 'var(--gold)' }}>
+              <h4 className="font-bold  mb-2"> Что это за график?</h4>
               <p className="text-sm text-sky-800 mb-3">
                 <strong>Полярный график (Polar Plot)</strong> — это способ представления функции в полярных координатах r = f(θ), 
                 где r — расстояние от центра, θ — угол. Используется для функций с круговой симметрией.
               </p>
               
-              <h4 className="font-bold text-sky-900 mb-2"> Для чего нужен?</h4>
+              <h4 className="font-bold  mb-2"> Для чего нужен?</h4>
               <ul className="text-sm text-sky-800 space-y-1 mb-3 list-disc list-inside">
                 <li><strong>Периодические функции:</strong> sin, cos и их комбинации красиво отображаются</li>
                 <li><strong>Розы и спирали:</strong> r = sin(nθ), r = aθ создают красивые узоры</li>
@@ -589,7 +589,7 @@ function GraphsPage() {
                 <li><strong>Навигация:</strong> Компасные розы, радары</li>
               </ul>
               
-              <h4 className="font-bold text-sky-900 mb-2"> Примеры функций:</h4>
+              <h4 className="font-bold  mb-2"> Примеры функций:</h4>
               <ul className="text-sm text-sky-800 space-y-1 list-disc list-inside">
                 <li><strong>r = sin(3θ):</strong> Роза с 3 лепестками</li>
                 <li><strong>r = 1 + cos(θ):</strong> Кардиоида (форма сердца)</li>
@@ -651,8 +651,8 @@ function GraphsPage() {
             />
             
             {/* Примеры */}
-            <div className="mt-6 p-4 bg-gradient-to-r from-sky-50 to-blue-50 rounded-lg border border-sky-200">
-              <h4 className="font-bold text-sky-900 mb-2"> Попробуйте эти функции:</h4>
+            <div className="mt-6 p-4 bg-gradient-to-r  rounded-lg border ">
+              <h4 className="font-bold  mb-2"> Попробуйте эти функции:</h4>
               <div className="grid md:grid-cols-2 gap-3 text-sm text-sky-800">
                 <div className="space-y-1">
                   <p><code className="bg-sky-100 px-2 py-1 rounded">sin(3*x)</code> - Роза с 3 лепестками</p>
@@ -676,23 +676,23 @@ function GraphsPage() {
     if (selectedType === 'boxplot') {
       return (
         <AnimatedResult type="info" title="Box Plot (Ящик с усами)">
-          <div className="p-6 rounded-xl border-2 bg-white" style={{ borderColor: 'var(--border)' }}>
-            <h3 className="text-2xl font-bold mb-4 text-indigo-600 flex items-center gap-2">
+          <div className="p-6 rounded-xl border-2 card-midnight" style={{ borderColor: 'var(--border)' }}>
+            <h3 className="text-2xl font-bold mb-4  flex items-center gap-2">
               <BarChart3 className="w-6 h-6" />
               Диаграмма размаха (Box Plot)
             </h3>
             
             {/* Описание графика */}
-            <div className="mb-6 p-4 bg-indigo-50 rounded-lg border-l-4 border-indigo-500">
-              <h4 className="font-bold text-indigo-900 mb-2"> Что это за график?</h4>
-              <p className="text-sm text-indigo-800 mb-3">
+            <div className="mb-6 p-4 rounded-lg border-l-4" style={{ background: 'rgba(212,175,55,0.1)', borderColor: 'var(--gold)' }}>
+              <h4 className="font-bold mb-2" style={{ color: 'var(--foreground)' }}> Что это за график?</h4>
+              <p className="text-sm mb-3" style={{ color: 'var(--foreground-secondary)' }}>
                 <strong>Box Plot (Диаграмма размаха)</strong> — это стандартизированный способ отображения распределения данных 
                 на основе пяти ключевых показателей: минимум, первый квартиль (Q1), медиана, третий квартиль (Q3) и максимум. 
                 "Ящик" показывает средние 50% данных (от Q1 до Q3), а "усы" простираются до минимума и максимума.
               </p>
               
-              <h4 className="font-bold text-indigo-900 mb-2"> Для чего нужен?</h4>
-              <ul className="text-sm text-indigo-800 space-y-1 mb-3 list-disc list-inside">
+              <h4 className="font-bold mb-2" style={{ color: 'var(--foreground)' }}> Для чего нужен?</h4>
+              <ul className="text-sm space-y-1 mb-3 list-disc list-inside" style={{ color: 'var(--foreground-secondary)' }}>
                 <li><strong>Визуализация разброса:</strong> Быстро оценить, как распределены данные</li>
                 <li><strong>Обнаружение выбросов:</strong> Точки за пределами усов — это выбросы</li>
                 <li><strong>Сравнение групп:</strong> Можно разместить несколько box plot рядом для сравнения</li>
@@ -700,8 +700,8 @@ function GraphsPage() {
                 <li><strong>Проверка данных:</strong> Перед статистическими тестами (t-test, ANOVA)</li>
               </ul>
               
-              <h4 className="font-bold text-indigo-900 mb-2"> Как интерпретировать?</h4>
-              <ul className="text-sm text-indigo-800 space-y-1 list-disc list-inside">
+              <h4 className="font-bold mb-2" style={{ color: 'var(--foreground)' }}> Как интерпретировать?</h4>
+              <ul className="text-sm space-y-1 list-disc list-inside" style={{ color: 'var(--foreground-secondary)' }}>
                 <li><strong>Ящик (IQR):</strong> В нём находится 50% всех данных (от 25% до 75%)</li>
                 <li><strong>Линия внутри ящика:</strong> Медиана (50-й процентиль)</li>
                 <li><strong>Усы:</strong> Простираются до min/max или до 1.5×IQR от квартилей</li>
@@ -890,66 +890,66 @@ function GraphsPage() {
             />
 
             {/* Легенда элементов */}
-            <div className="mt-8 p-5 bg-gradient-to-br from-indigo-50 to-blue-50 rounded-xl border-2 border-indigo-200">
-              <h4 className="text-lg font-bold text-indigo-900 mb-4"> Элементы диаграммы:</h4>
+            <div className="mt-8 p-5 rounded-xl border-2" style={{ background: 'rgba(212,175,55,0.1)', borderColor: 'var(--border)' }}>
+              <h4 className="text-lg font-bold  mb-4"> Элементы диаграммы:</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-                <div className="flex items-center gap-3 p-2 bg-white rounded-lg">
-                  <div className="w-12 h-0.5 bg-green-500"></div>
-                  <span><strong className="text-green-600">Усы (Whiskers):</strong> от Min до Max</span>
+                <div className="flex items-center gap-3 p-2 card-midnight rounded-lg">
+                  <div className="w-12 h-0.5 0"></div>
+                  <span><strong className="">Усы (Whiskers):</strong> от Min до Max</span>
                 </div>
-                <div className="flex items-center gap-3 p-2 bg-white rounded-lg">
-                  <div className="w-12 h-8 bg-indigo-200 border-2 border-indigo-500"></div>
-                  <span><strong className="text-indigo-600">Ящик (Box):</strong> от Q1 до Q3 (IQR)</span>
+                <div className="flex items-center gap-3 p-2 card-midnight rounded-lg">
+                  <div className="w-12 h-8  border-2 border-[#D4AF37]"></div>
+                  <span><strong className="">Ящик (Box):</strong> от Q1 до Q3 (IQR)</span>
                 </div>
-                <div className="flex items-center gap-3 p-2 bg-white rounded-lg">
+                <div className="flex items-center gap-3 p-2 card-midnight rounded-lg">
                   <div className="w-12 h-0.5 bg-blue-600"></div>
-                  <span><strong className="text-blue-600">Медиана:</strong> центральное значение</span>
+                  <span><strong className="">Медиана:</strong> центральное значение</span>
                 </div>
-                <div className="flex items-center gap-3 p-2 bg-white rounded-lg">
-                  <div className="w-3 h-3 rounded-full bg-indigo-500"></div>
-                  <span><strong className="text-indigo-600">Точки:</strong> все значения данных</span>
+                <div className="flex items-center gap-3 p-2 card-midnight rounded-lg">
+                  <div className="w-3 h-3 rounded-full 0"></div>
+                  <span><strong className="">Точки:</strong> все значения данных</span>
                 </div>
               </div>
             </div>
 
             {/* Статистические показатели */}
             <div className="mt-6 grid grid-cols-2 md:grid-cols-5 gap-3">
-              <div className="p-3 rounded-lg bg-green-50 border-2 border-green-300">
-                <p className="text-xs text-green-700 font-semibold">Минимум</p>
-                <p className="text-lg font-bold text-green-900">{dataResult.min.toFixed(2)}</p>
+              <div className="p-3 rounded-lg  border-2 ">
+                <p className="text-xs  font-semibold">Минимум</p>
+                <p className="text-lg font-bold ">{dataResult.min.toFixed(2)}</p>
               </div>
-              <div className="p-3 rounded-lg bg-indigo-50 border-2 border-indigo-300">
-                <p className="text-xs text-indigo-700 font-semibold">Q1 (25%)</p>
-                <p className="text-lg font-bold text-indigo-900">{dataResult.q1.toFixed(2)}</p>
+              <div className="p-3 rounded-lg  border-2 ">
+                <p className="text-xs  font-semibold">Q1 (25%)</p>
+                <p className="text-lg font-bold ">{dataResult.q1.toFixed(2)}</p>
               </div>
-              <div className="p-3 rounded-lg bg-blue-50 border-2 border-blue-300">
-                <p className="text-xs text-blue-700 font-semibold">Медиана (50%)</p>
-                <p className="text-lg font-bold text-blue-900">{dataResult.median.toFixed(2)}</p>
+              <div className="p-3 rounded-lg  border-2 ">
+                <p className="text-xs  font-semibold">Медиана (50%)</p>
+                <p className="text-lg font-bold ">{dataResult.median.toFixed(2)}</p>
               </div>
-              <div className="p-3 rounded-lg bg-indigo-50 border-2 border-indigo-300">
-                <p className="text-xs text-indigo-700 font-semibold">Q3 (75%)</p>
-                <p className="text-lg font-bold text-indigo-900">{dataResult.q3.toFixed(2)}</p>
+              <div className="p-3 rounded-lg  border-2 ">
+                <p className="text-xs  font-semibold">Q3 (75%)</p>
+                <p className="text-lg font-bold ">{dataResult.q3.toFixed(2)}</p>
               </div>
-              <div className="p-3 rounded-lg bg-green-50 border-2 border-green-300">
-                <p className="text-xs text-green-700 font-semibold">Максимум</p>
-                <p className="text-lg font-bold text-green-900">{dataResult.max.toFixed(2)}</p>
+              <div className="p-3 rounded-lg  border-2 ">
+                <p className="text-xs  font-semibold">Максимум</p>
+                <p className="text-lg font-bold ">{dataResult.max.toFixed(2)}</p>
               </div>
             </div>
 
             {dataResult.outliers.length > 0 && (
-              <div className="mt-4 p-4 bg-red-50 rounded-lg border-2 border-red-300">
-                <h4 className="text-sm font-semibold text-red-800 mb-2 flex items-center gap-2">
+              <div className="mt-4 p-4  rounded-lg border-2 ">
+                <h4 className="text-sm font-semibold  mb-2 flex items-center gap-2">
                   <span className="text-lg">⚠️</span>
                   Выбросы (Outliers): {dataResult.outliers.length}
                 </h4>
                 <div className="flex flex-wrap gap-2 mb-2">
                   {dataResult.outliers.map((outlier, i) => (
-                    <span key={i} className="px-3 py-1 bg-red-200 text-red-800 rounded-full text-sm font-medium border border-red-400">
+                    <span key={i} className="px-3 py-1   rounded-full text-sm font-medium border ">
                       {outlier.toFixed(3)}
                     </span>
                   ))}
                 </div>
-                <p className="text-xs text-red-700 bg-red-100 p-2 rounded">
+                <p className="text-xs   p-2 rounded">
                   <strong>Границы выбросов:</strong> Нижняя: {dataResult.lowerFence.toFixed(2)} | Верхняя: {dataResult.upperFence.toFixed(2)}
                 </p>
               </div>
@@ -963,20 +963,20 @@ function GraphsPage() {
     if (selectedType === 'histogram') {
       return (
         <AnimatedResult type="info" title="Гистограмма распределения">
-          <div className="p-6 rounded-xl border-2 bg-white" style={{ borderColor: 'var(--border)' }}>
-            <h3 className="text-xl font-bold mb-4 text-purple-600"> Гистограмма частот</h3>
+          <div className="p-6 rounded-xl border-2 card-midnight" style={{ borderColor: 'var(--border)' }}>
+            <h3 className="text-xl font-bold mb-4 "> Гистограмма частот</h3>
             
             {/* Описание графика */}
-            <div className="mb-6 p-4 bg-purple-50 rounded-lg border-l-4 border-purple-500">
-              <h4 className="font-bold text-purple-900 mb-2"> Что это за график?</h4>
-              <p className="text-sm text-purple-800 mb-3">
+            <div className="mb-6 p-4 rounded-lg border-l-4" style={{ background: 'rgba(212,175,55,0.1)', borderColor: 'var(--gold)' }}>
+              <h4 className="font-bold mb-2" style={{ color: 'var(--foreground)' }}> Что это за график?</h4>
+              <p className="text-sm mb-3" style={{ color: 'var(--foreground-secondary)' }}>
                 <strong>Гистограмма</strong> — это столбчатая диаграмма, показывающая распределение частот количественных данных. 
                 Ось X разбита на интервалы (bins), а высота столбца показывает, сколько значений попало в каждый интервал. 
                 В отличие от обычной столбчатой диаграммы, столбцы гистограммы обычно примыкают друг к другу без зазоров.
               </p>
               
-              <h4 className="font-bold text-purple-900 mb-2"> Для чего нужен?</h4>
-              <ul className="text-sm text-purple-800 space-y-1 mb-3 list-disc list-inside">
+              <h4 className="font-bold mb-2" style={{ color: 'var(--foreground)' }}> Для чего нужен?</h4>
+              <ul className="text-sm space-y-1 mb-3 list-disc list-inside" style={{ color: 'var(--foreground-secondary)' }}>
                 <li><strong>Визуализация распределения:</strong> Понять, как распределены данные (нормальное, скошенное, равномерное)</li>
                 <li><strong>Поиск центра:</strong> Увидеть, где находится "пик" данных (мода)</li>
                 <li><strong>Оценка разброса:</strong> Понять, насколько данные разбросаны</li>
@@ -984,8 +984,8 @@ function GraphsPage() {
                 <li><strong>Проверка перед анализом:</strong> Перед применением параметрических тестов</li>
               </ul>
               
-              <h4 className="font-bold text-purple-900 mb-2"> Как интерпретировать?</h4>
-              <ul className="text-sm text-purple-800 space-y-1 list-disc list-inside">
+              <h4 className="font-bold mb-2" style={{ color: 'var(--foreground)' }}> Как интерпретировать?</h4>
+              <ul className="text-sm space-y-1 list-disc list-inside" style={{ color: 'var(--foreground-secondary)' }}>
                 <li><strong>Высокие столбцы:</strong> В этом диапазоне много значений</li>
                 <li><strong>Низкие столбцы:</strong> Мало значений в этом диапазоне</li>
                 <li><strong>Симметричная форма:</strong> Может указывать на нормальное распределение</li>
@@ -1048,19 +1048,19 @@ function GraphsPage() {
     if (selectedType === 'scatter') {
       return (
         <AnimatedResult type="info" title="Точечный график">
-          <div className="p-6 rounded-xl border-2 bg-white" style={{ borderColor: 'var(--border)' }}>
+          <div className="p-6 rounded-xl border-2 card-midnight" style={{ borderColor: 'var(--border)' }}>
             <h3 className="text-xl font-bold mb-4 text-cyan-600"> Точечная диаграмма</h3>
             
             {/* Описание графика */}
-            <div className="mb-6 p-4 bg-cyan-50 rounded-lg border-l-4 border-cyan-500">
-              <h4 className="font-bold text-cyan-900 mb-2"> Что это за график?</h4>
+            <div className="mb-6 p-4 rounded-lg border-l-4" style={{ background: 'rgba(212,175,55,0.1)', borderColor: 'var(--gold)' }}>
+              <h4 className="font-bold  mb-2"> Что это за график?</h4>
               <p className="text-sm text-cyan-800 mb-3">
                 <strong>Точечная диаграмма (Scatter Plot)</strong> — это график, где каждое наблюдение представлено отдельной точкой. 
                 Для одномерных данных по оси X обычно показывают порядковый номер (индекс) или ранг значения, а по оси Y — само значение. 
                 Этот график помогает увидеть каждое значение и его положение относительно центральных тенденций.
               </p>
               
-              <h4 className="font-bold text-cyan-900 mb-2"> Для чего нужен?</h4>
+              <h4 className="font-bold  mb-2"> Для чего нужен?</h4>
               <ul className="text-sm text-cyan-800 space-y-1 mb-3 list-disc list-inside">
                 <li><strong>Визуализация всех точек:</strong> Каждое значение видно на графике</li>
                 <li><strong>Обнаружение выбросов:</strong> Точки, далекие от основной группы, легко заметить</li>
@@ -1069,7 +1069,7 @@ function GraphsPage() {
                 <li><strong>Малые выборки:</strong> Когда важно видеть каждое значение (n &lt; 30)</li>
               </ul>
               
-              <h4 className="font-bold text-cyan-900 mb-2"> Как интерпретировать?</h4>
+              <h4 className="font-bold  mb-2"> Как интерпретировать?</h4>
               <ul className="text-sm text-cyan-800 space-y-1 list-disc list-inside">
                 <li><strong>Циан точки:</strong> Обычные данные (в пределах нормы)</li>
                 <li><strong>Красные крестики:</strong> Выбросы (за пределами 1.5×IQR)</li>
@@ -1179,19 +1179,19 @@ function GraphsPage() {
 
       return (
         <AnimatedResult type="info" title="Интервальный график">
-          <div className="p-6 rounded-xl border-2 bg-white" style={{ borderColor: 'var(--border)' }}>
-            <h3 className="text-xl font-bold mb-4 text-green-600"> Диапазон данных</h3>
+          <div className="p-6 rounded-xl border-2 card-midnight" style={{ borderColor: 'var(--border)' }}>
+            <h3 className="text-xl font-bold mb-4 "> Диапазон данных</h3>
             
             {/* Описание графика */}
-            <div className="mb-6 p-4 bg-green-50 rounded-lg border-l-4 border-green-500">
-              <h4 className="font-bold text-green-900 mb-2"> Что это за график?</h4>
+            <div className="mb-6 p-4 rounded-lg border-l-4" style={{ background: 'rgba(212,175,55,0.1)', borderColor: 'var(--gold)' }}>
+              <h4 className="font-bold  mb-2"> Что это за график?</h4>
               <p className="text-sm text-green-800 mb-3">
                 <strong>Интервальный график</strong> — это вертикальная визуализация диапазонов данных с использованием наложенных столбцов. 
                 Внешний (зелёный) столбец показывает полный размах от минимума до максимума, а внутренний (синий) — межквартильный размах (IQR) 
                 от Q1 до Q3. Горизонтальные линии отмечают медиану и среднее значение.
               </p>
               
-              <h4 className="font-bold text-green-900 mb-2"> Для чего нужен?</h4>
+              <h4 className="font-bold  mb-2"> Для чего нужен?</h4>
               <ul className="text-sm text-green-800 space-y-1 mb-3 list-disc list-inside">
                 <li><strong>Визуализация диапазона:</strong> Наглядно показать размах данных от min до max</li>
                 <li><strong>Центр распределения:</strong> Медиана и среднее видны как горизонтальные линии</li>
@@ -1200,7 +1200,7 @@ function GraphsPage() {
                 <li><strong>Простота восприятия:</strong> Интуитивно понятная визуализация для презентаций</li>
               </ul>
               
-              <h4 className="font-bold text-green-900 mb-2"> Как интерпретировать?</h4>
+              <h4 className="font-bold  mb-2"> Как интерпретировать?</h4>
               <ul className="text-sm text-green-800 space-y-1 list-disc list-inside">
                 <li><strong>Зелёный столбец:</strong> Полный размах от минимума до максимума</li>
                 <li><strong>Синий столбец:</strong> Межквартильный размах (IQR) — средние 50% данных</li>
@@ -1346,21 +1346,21 @@ function GraphsPage() {
 
             {/* Легенда */}
             <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-3">
-              <div className="p-3 rounded-lg bg-green-50 border border-green-200">
-                <p className="text-xs text-green-600 font-semibold">Минимум</p>
-                <p className="text-lg font-bold text-green-900">{dataResult.min.toFixed(2)}</p>
+              <div className="p-3 rounded-lg  border border-green-200">
+                <p className="text-xs  font-semibold">Минимум</p>
+                <p className="text-lg font-bold ">{dataResult.min.toFixed(2)}</p>
               </div>
-              <div className="p-3 rounded-lg bg-indigo-50 border border-indigo-200">
-                <p className="text-xs text-indigo-600 font-semibold">Q1</p>
-                <p className="text-lg font-bold text-indigo-900">{dataResult.q1.toFixed(2)}</p>
+              <div className="p-3 rounded-lg  border border-indigo-200">
+                <p className="text-xs  font-semibold">Q1</p>
+                <p className="text-lg font-bold ">{dataResult.q1.toFixed(2)}</p>
               </div>
-              <div className="p-3 rounded-lg bg-indigo-50 border border-indigo-200">
-                <p className="text-xs text-indigo-600 font-semibold">Q3</p>
-                <p className="text-lg font-bold text-indigo-900">{dataResult.q3.toFixed(2)}</p>
+              <div className="p-3 rounded-lg  border border-indigo-200">
+                <p className="text-xs  font-semibold">Q3</p>
+                <p className="text-lg font-bold ">{dataResult.q3.toFixed(2)}</p>
               </div>
-              <div className="p-3 rounded-lg bg-green-50 border border-green-200">
-                <p className="text-xs text-green-600 font-semibold">Максимум</p>
-                <p className="text-lg font-bold text-green-900">{dataResult.max.toFixed(2)}</p>
+              <div className="p-3 rounded-lg  border border-green-200">
+                <p className="text-xs  font-semibold">Максимум</p>
+                <p className="text-lg font-bold ">{dataResult.max.toFixed(2)}</p>
               </div>
             </div>
           </div>
@@ -1439,28 +1439,28 @@ function GraphsPage() {
       
       return (
         <AnimatedResult type="info" title="Q-Q Plot (Квантиль-Квантильная диаграмма)">
-          <div className="p-6 rounded-xl border-2 bg-white" style={{ borderColor: 'var(--border)' }}>
-            <h3 className="text-2xl font-bold mb-4 text-purple-600">📐 Q-Q Plot (Quantile-Quantile Plot)</h3>
+          <div className="p-6 rounded-xl border-2 card-midnight" style={{ borderColor: 'var(--border)' }}>
+            <h3 className="text-2xl font-bold mb-4 ">📐 Q-Q Plot (Quantile-Quantile Plot)</h3>
             
             {/* Описание графика */}
-            <div className="mb-6 p-4 bg-purple-50 rounded-lg border-l-4 border-purple-500">
-              <h4 className="font-bold text-purple-900 mb-2"> Что это за график?</h4>
-              <p className="text-sm text-purple-800 mb-3">
+            <div className="mb-6 p-4 rounded-lg border-l-4" style={{ background: 'rgba(212,175,55,0.1)', borderColor: 'var(--gold)' }}>
+              <h4 className="font-bold mb-2" style={{ color: 'var(--foreground)' }}> Что это за график?</h4>
+              <p className="text-sm mb-3" style={{ color: 'var(--foreground-secondary)' }}>
                 <strong>Q-Q Plot (Квантиль-Квантильная диаграмма)</strong> — это статистический инструмент для проверки, 
                 насколько распределение ваших данных соответствует теоретическому нормальному распределению (распределению Гаусса).
               </p>
               
-              <h4 className="font-bold text-purple-900 mb-2"> Для чего нужен?</h4>
-              <ul className="text-sm text-purple-800 space-y-1 mb-3 list-disc list-inside">
+              <h4 className="font-bold mb-2" style={{ color: 'var(--foreground)' }}> Для чего нужен?</h4>
+              <ul className="text-sm space-y-1 mb-3 list-disc list-inside" style={{ color: 'var(--foreground-secondary)' }}>
                 <li><strong>Проверка нормальности:</strong> Визуально оценить, являются ли данные нормально распределёнными</li>
                 <li><strong>Выявление отклонений:</strong> Обнаружить асимметрию, тяжёлые хвосты или выбросы</li>
                 <li><strong>Предпосылка для тестов:</strong> Многие статистические тесты требуют нормальности данных (t-test, ANOVA)</li>
                 <li><strong>Выбор метода:</strong> Решить, использовать параметрические или непараметрические методы</li>
               </ul>
               
-              <h4 className="font-bold text-purple-900 mb-2"> Как интерпретировать?</h4>
-              <ul className="text-sm text-purple-800 space-y-1 list-disc list-inside">
-                <li><strong className="text-green-600">Точки на прямой:</strong> Данные нормально распределены </li>
+              <h4 className="font-bold mb-2" style={{ color: 'var(--foreground)' }}> Как интерпретировать?</h4>
+              <ul className="text-sm space-y-1 list-disc list-inside" style={{ color: 'var(--foreground-secondary)' }}>
+                <li><strong className="">Точки на прямой:</strong> Данные нормально распределены </li>
                 <li><strong className="text-orange-600">S-образная кривая:</strong> Асимметричное распределение (скошенность)</li>
                 <li><strong className="text-red-600">Точки выше линии справа:</strong> Тяжёлый правый хвост (выбросы вправо)</li>
                 <li><strong className="text-red-600">Точки ниже линии слева:</strong> Тяжёлый левый хвост (выбросы влево)</li>
@@ -1546,9 +1546,9 @@ function GraphsPage() {
             />
             
             {/* Выводы */}
-            <div className="mt-6 p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg border border-purple-200">
-              <h4 className="font-bold text-purple-900 mb-2">💡 Рекомендации по использованию:</h4>
-              <div className="text-sm text-purple-800 space-y-2">
+            <div className="mt-6 p-4 bg-gradient-to-r  rounded-lg border ">
+              <h4 className="font-bold  mb-2">💡 Рекомендации по использованию:</h4>
+              <div className="text-sm  space-y-2">
                 <p><strong> Подходит для:</strong> Любых количественных данных (непрерывных и дискретных)</p>
                 <p><strong> Размер выборки:</strong> Эффективен при n ≥ 20 (чем больше, тем точнее)</p>
                 <p><strong> Важно:</strong> Небольшие отклонения на концах графика допустимы</p>
@@ -1564,18 +1564,18 @@ function GraphsPage() {
     if (selectedType === 'violin') {
       return (
         <AnimatedResult type="info" title="Violin Plot (Скрипичная диаграмма)">
-          <div className="p-6 rounded-xl border-2 bg-white" style={{ borderColor: 'var(--border)' }}>
+          <div className="p-6 rounded-xl border-2 card-midnight" style={{ borderColor: 'var(--border)' }}>
             <h3 className="text-2xl font-bold mb-4 text-pink-600">🎻 Violin Plot (Скрипичная диаграмма)</h3>
             
             {/* Описание графика */}
-            <div className="mb-6 p-4 bg-pink-50 rounded-lg border-l-4 border-pink-500">
-              <h4 className="font-bold text-pink-900 mb-2"> Что это за график?</h4>
+            <div className="mb-6 p-4 rounded-lg border-l-4" style={{ background: 'rgba(212,175,55,0.1)', borderColor: 'var(--gold)' }}>
+              <h4 className="font-bold  mb-2"> Что это за график?</h4>
               <p className="text-sm text-pink-800 mb-3">
                 <strong>Violin Plot</strong> — это гибридная визуализация, объединяющая <strong>Box Plot</strong> и <strong>Kernel Density Plot</strong>. 
                 Форма "скрипки" показывает плотность распределения данных, а внутри отображаются квартили.
               </p>
               
-              <h4 className="font-bold text-pink-900 mb-2"> Для чего нужен?</h4>
+              <h4 className="font-bold  mb-2"> Для чего нужен?</h4>
               <ul className="text-sm text-pink-800 space-y-1 mb-3 list-disc list-inside">
                 <li><strong>Визуализация распределения:</strong> Показывает не только медиану и квартили, но и форму распределения</li>
                 <li><strong>Сравнение групп:</strong> Удобен для сравнения нескольких распределений одновременно</li>
@@ -1583,7 +1583,7 @@ function GraphsPage() {
                 <li><strong>Плотность данных:</strong> Широкие части "скрипки" = больше данных в этом диапазоне</li>
               </ul>
               
-              <h4 className="font-bold text-pink-900 mb-2"> Как интерпретировать?</h4>
+              <h4 className="font-bold  mb-2"> Как интерпретировать?</h4>
               <ul className="text-sm text-pink-800 space-y-1 list-disc list-inside">
                 <li><strong>Ширина скрипки:</strong> Показывает плотность (концентрацию) данных на каждом уровне</li>
                 <li><strong>Симметричность:</strong> Симметричная скрипка ≈ нормальное распределение</li>
@@ -1662,34 +1662,34 @@ function GraphsPage() {
             
             {/* Статистика */}
             <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-3">
-              <div className="p-3 rounded-lg bg-pink-50 border-2 border-pink-300">
+              <div className="p-3 rounded-lg  border-2 border-pink-300">
                 <p className="text-xs text-pink-700 font-semibold">Медиана</p>
-                <p className="text-lg font-bold text-pink-900">{dataResult.median.toFixed(2)}</p>
+                <p className="text-lg font-bold ">{dataResult.median.toFixed(2)}</p>
               </div>
-              <div className="p-3 rounded-lg bg-purple-50 border-2 border-purple-300">
-                <p className="text-xs text-purple-700 font-semibold">Среднее</p>
-                <p className="text-lg font-bold text-purple-900">{dataResult.mean.toFixed(2)}</p>
+              <div className="p-3 rounded-lg  border-2 ">
+                <p className="text-xs  font-semibold">Среднее</p>
+                <p className="text-lg font-bold ">{dataResult.mean.toFixed(2)}</p>
               </div>
-              <div className="p-3 rounded-lg bg-indigo-50 border-2 border-indigo-300">
-                <p className="text-xs text-indigo-700 font-semibold">IQR</p>
-                <p className="text-lg font-bold text-indigo-900">{dataResult.iqr.toFixed(2)}</p>
+              <div className="p-3 rounded-lg  border-2 ">
+                <p className="text-xs  font-semibold">IQR</p>
+                <p className="text-lg font-bold ">{dataResult.iqr.toFixed(2)}</p>
               </div>
-              <div className="p-3 rounded-lg bg-blue-50 border-2 border-blue-300">
-                <p className="text-xs text-blue-700 font-semibold">Ст. откл.</p>
-                <p className="text-lg font-bold text-blue-900">{dataResult.stdDev.toFixed(2)}</p>
+              <div className="p-3 rounded-lg  border-2 ">
+                <p className="text-xs  font-semibold">Ст. откл.</p>
+                <p className="text-lg font-bold ">{dataResult.stdDev.toFixed(2)}</p>
               </div>
             </div>
             
             {/* Преимущества */}
-            <div className="mt-6 p-4 bg-gradient-to-r from-pink-50 to-purple-50 rounded-lg border border-pink-200">
-              <h4 className="font-bold text-pink-900 mb-2">✨ Преимущества Violin Plot:</h4>
+            <div className="mt-6 p-4 bg-gradient-to-r  rounded-lg border ">
+              <h4 className="font-bold  mb-2">✨ Преимущества Violin Plot:</h4>
               <div className="grid md:grid-cols-2 gap-3 text-sm text-pink-800">
                 <div>
-                  <p><strong className="text-green-600"> Больше информации:</strong> Показывает и квартили, и плотность</p>
-                  <p><strong className="text-green-600"> Видны пики:</strong> Обнаруживает мультимодальность</p>
+                  <p><strong className=""> Больше информации:</strong> Показывает и квартили, и плотность</p>
+                  <p><strong className=""> Видны пики:</strong> Обнаруживает мультимодальность</p>
                 </div>
                 <div>
-                  <p><strong className="text-blue-600"> Применение:</strong> Биостатистика, машинное обучение, A/B тесты</p>
+                  <p><strong className=""> Применение:</strong> Биостатистика, машинное обучение, A/B тесты</p>
                   <p><strong className="text-orange-600"> Требует:</strong> Достаточно данных (n ≥ 30 для плавной кривой)</p>
                 </div>
               </div>
@@ -1708,19 +1708,19 @@ function GraphsPage() {
       
       return (
         <AnimatedResult type="info" title="Cumulative Distribution (Кумулятивная функция распределения)">
-          <div className="p-6 rounded-xl border-2 bg-white" style={{ borderColor: 'var(--border)' }}>
+          <div className="p-6 rounded-xl border-2 card-midnight" style={{ borderColor: 'var(--border)' }}>
             <h3 className="text-2xl font-bold mb-4 text-teal-600"> Cumulative Distribution Function (CDF)</h3>
             
             {/* Описание графика */}
-            <div className="mb-6 p-4 bg-teal-50 rounded-lg border-l-4 border-teal-500">
-              <h4 className="font-bold text-teal-900 mb-2"> Что это за график?</h4>
+            <div className="mb-6 p-4 rounded-lg border-l-4" style={{ background: 'rgba(212,175,55,0.1)', borderColor: 'var(--gold)' }}>
+              <h4 className="font-bold  mb-2"> Что это за график?</h4>
               <p className="text-sm text-teal-800 mb-3">
                 <strong>Кумулятивная функция распределения (CDF)</strong> — это график, показывающий накопленную вероятность 
                 или процент данных, которые меньше или равны определённому значению. График имеет характерную S-образную форму, 
                 начинается с 0% и заканчивается на 100%.
               </p>
               
-              <h4 className="font-bold text-teal-900 mb-2"> Для чего нужен?</h4>
+              <h4 className="font-bold  mb-2"> Для чего нужен?</h4>
               <ul className="text-sm text-teal-800 space-y-1 mb-3 list-disc list-inside">
                 <li><strong>Процентили и квантили:</strong> Легко найти, какой % данных ниже заданного значения</li>
                 <li><strong>Сравнение распределений:</strong> Удобно сравнивать разные наборы данных</li>
@@ -1728,7 +1728,7 @@ function GraphsPage() {
                 <li><strong>Диапазоны:</strong> Можно увидеть, в каком диапазоне сконцентрировано большинство данных</li>
               </ul>
               
-              <h4 className="font-bold text-teal-900 mb-2"> Как читать график?</h4>
+              <h4 className="font-bold  mb-2"> Как читать график?</h4>
               <ul className="text-sm text-teal-800 space-y-1 list-disc list-inside">
                 <li><strong>Ось X:</strong> Значения данных (от минимума до максимума)</li>
                 <li><strong>Ось Y:</strong> Кумулятивный процент (от 0% до 100%)</li>
@@ -1870,38 +1870,38 @@ function GraphsPage() {
             
             {/* Ключевые проценти */}
             <div className="mt-6 grid grid-cols-2 md:grid-cols-5 gap-3">
-              <div className="p-3 rounded-lg bg-teal-50 border-2 border-teal-300">
+              <div className="p-3 rounded-lg  border-2 border-teal-300">
                 <p className="text-xs text-teal-700 font-semibold">0% (Min)</p>
-                <p className="text-lg font-bold text-teal-900">{dataResult.min.toFixed(2)}</p>
+                <p className="text-lg font-bold ">{dataResult.min.toFixed(2)}</p>
               </div>
-              <div className="p-3 rounded-lg bg-indigo-50 border-2 border-indigo-300">
-                <p className="text-xs text-indigo-700 font-semibold">25% (Q1)</p>
-                <p className="text-lg font-bold text-indigo-900">{dataResult.q1.toFixed(2)}</p>
+              <div className="p-3 rounded-lg  border-2 ">
+                <p className="text-xs  font-semibold">25% (Q1)</p>
+                <p className="text-lg font-bold ">{dataResult.q1.toFixed(2)}</p>
               </div>
-              <div className="p-3 rounded-lg bg-red-50 border-2 border-red-300">
-                <p className="text-xs text-red-700 font-semibold">50% (Медиана)</p>
+              <div className="p-3 rounded-lg  border-2 ">
+                <p className="text-xs  font-semibold">50% (Медиана)</p>
                 <p className="text-lg font-bold text-red-900">{dataResult.median.toFixed(2)}</p>
               </div>
-              <div className="p-3 rounded-lg bg-indigo-50 border-2 border-indigo-300">
-                <p className="text-xs text-indigo-700 font-semibold">75% (Q3)</p>
-                <p className="text-lg font-bold text-indigo-900">{dataResult.q3.toFixed(2)}</p>
+              <div className="p-3 rounded-lg  border-2 ">
+                <p className="text-xs  font-semibold">75% (Q3)</p>
+                <p className="text-lg font-bold ">{dataResult.q3.toFixed(2)}</p>
               </div>
-              <div className="p-3 rounded-lg bg-teal-50 border-2 border-teal-300">
+              <div className="p-3 rounded-lg  border-2 border-teal-300">
                 <p className="text-xs text-teal-700 font-semibold">100% (Max)</p>
-                <p className="text-lg font-bold text-teal-900">{dataResult.max.toFixed(2)}</p>
+                <p className="text-lg font-bold ">{dataResult.max.toFixed(2)}</p>
               </div>
             </div>
             
             {/* Применение */}
-            <div className="mt-6 p-4 bg-gradient-to-r from-teal-50 to-cyan-50 rounded-lg border border-teal-200">
-              <h4 className="font-bold text-teal-900 mb-2"> Практическое применение:</h4>
+            <div className="mt-6 p-4 bg-gradient-to-r  rounded-lg border ">
+              <h4 className="font-bold  mb-2"> Практическое применение:</h4>
               <div className="grid md:grid-cols-2 gap-3 text-sm text-teal-800">
                 <div>
-                  <p><strong className="text-blue-600"> Бизнес:</strong> Анализ продаж (какой % клиентов купил меньше X)</p>
-                  <p><strong className="text-green-600"> Образование:</strong> Распределение оценок (сколько студентов ниже порога)</p>
+                  <p><strong className=""> Бизнес:</strong> Анализ продаж (какой % клиентов купил меньше X)</p>
+                  <p><strong className=""> Образование:</strong> Распределение оценок (сколько студентов ниже порога)</p>
                 </div>
                 <div>
-                  <p><strong className="text-purple-600"> Финансы:</strong> Риск-менеджмент (вероятность убытков)</p>
+                  <p><strong className=""> Финансы:</strong> Риск-менеджмент (вероятность убытков)</p>
                   <p><strong className="text-orange-600"> Производство:</strong> Контроль качества (% брака)</p>
                 </div>
               </div>
@@ -1922,19 +1922,19 @@ function GraphsPage() {
       
       return (
         <AnimatedResult type="info" title="Density Plot (График плотности вероятности)">
-          <div className="p-6 rounded-xl border-2 bg-white" style={{ borderColor: 'var(--border)' }}>
+          <div className="p-6 rounded-xl border-2 card-midnight" style={{ borderColor: 'var(--border)' }}>
             <h3 className="text-2xl font-bold mb-4 text-amber-600"> Density Plot (КПВ - Кривая плотности вероятности)</h3>
             
             {/* Описание графика */}
-            <div className="mb-6 p-4 bg-amber-50 rounded-lg border-l-4 border-amber-500">
-              <h4 className="font-bold text-amber-900 mb-2"> Что это за график?</h4>
+            <div className="mb-6 p-4 rounded-lg border-l-4" style={{ background: 'rgba(212,175,55,0.1)', borderColor: 'var(--gold)' }}>
+              <h4 className="font-bold  mb-2"> Что это за график?</h4>
               <p className="text-sm text-amber-800 mb-3">
                 <strong>График плотности (Density Plot)</strong> — это сглаженная версия гистограммы, показывающая непрерывную 
                 кривую распределения вероятности. Использует метод <strong>Kernel Density Estimation (KDE)</strong> для создания 
                 плавной кривой через точки данных.
               </p>
               
-              <h4 className="font-bold text-amber-900 mb-2">🎯 Для чего нужен?</h4>
+              <h4 className="font-bold  mb-2">🎯 Для чего нужен?</h4>
               <ul className="text-sm text-amber-800 space-y-1 mb-3 list-disc list-inside">
                 <li><strong>Форма распределения:</strong> Визуализирует, как распределены данные (нормальное, скошенное, бимодальное)</li>
                 <li><strong>Сглаживание:</strong> Убирает "шум" гистограммы, показывая общий тренд</li>
@@ -1942,7 +1942,7 @@ function GraphsPage() {
                 <li><strong>Поиск пиков:</strong> Легко находить моды (наиболее частые значения)</li>
               </ul>
               
-              <h4 className="font-bold text-amber-900 mb-2"> Как интерпретировать?</h4>
+              <h4 className="font-bold  mb-2"> Как интерпретировать?</h4>
               <ul className="text-sm text-amber-800 space-y-1 list-disc list-inside">
                 <li><strong>Пики (моды):</strong> Самые частые значения (вершины кривой)</li>
                 <li><strong>Один пик:</strong> Унимодальное распределение</li>
@@ -2027,11 +2027,11 @@ function GraphsPage() {
             />
             
             {/* Сравнение с гистограммой */}
-            <div className="mt-6 p-4 bg-gradient-to-r from-amber-50 to-orange-50 rounded-lg border border-amber-200">
-              <h4 className="font-bold text-amber-900 mb-2"> Density Plot vs Гистограмма:</h4>
+            <div className="mt-6 p-4 bg-gradient-to-r  rounded-lg border ">
+              <h4 className="font-bold  mb-2"> Density Plot vs Гистограмма:</h4>
               <div className="grid md:grid-cols-2 gap-3 text-sm text-amber-800">
                 <div>
-                  <p><strong className="text-green-600"> Преимущества Density:</strong></p>
+                  <p><strong className=""> Преимущества Density:</strong></p>
                   <ul className="list-disc list-inside mt-1">
                     <li>Плавная кривая (легче читать)</li>
                     <li>Не зависит от ширины бинов</li>
@@ -2077,18 +2077,18 @@ function GraphsPage() {
       
       return (
         <AnimatedResult type="info" title="Heatmap (Тепловая карта)">
-          <div className="p-6 rounded-xl border-2 bg-white" style={{ borderColor: 'var(--border)' }}>
+          <div className="p-6 rounded-xl border-2 card-midnight" style={{ borderColor: 'var(--border)' }}>
             <h3 className="text-2xl font-bold mb-4 text-rose-600"> Heatmap (Тепловая карта частот)</h3>
             
             {/* Описание графика */}
-            <div className="mb-6 p-4 bg-rose-50 rounded-lg border-l-4 border-rose-500">
-              <h4 className="font-bold text-rose-900 mb-2"> Что это за график?</h4>
+            <div className="mb-6 p-4 rounded-lg border-l-4" style={{ background: 'rgba(212,175,55,0.1)', borderColor: 'var(--gold)' }}>
+              <h4 className="font-bold  mb-2"> Что это за график?</h4>
               <p className="text-sm text-rose-800 mb-3">
                 <strong>Heatmap (Тепловая карта)</strong> — это визуализация данных в виде матрицы, где значения представлены цветом. 
                 Обычно используется для корреляционных матриц, но здесь показывает распределение частот данных по интервалам.
               </p>
               
-              <h4 className="font-bold text-rose-900 mb-2">🎯 Для чего нужен?</h4>
+              <h4 className="font-bold  mb-2">🎯 Для чего нужен?</h4>
               <ul className="text-sm text-rose-800 space-y-1 mb-3 list-disc list-inside">
                 <li><strong>Корреляции:</strong> Находить взаимосвязи между переменными</li>
                 <li><strong>Паттерны:</strong> Обнаруживать скрытые закономерности в данных</li>
@@ -2096,10 +2096,10 @@ function GraphsPage() {
                 <li><strong>Аномалии:</strong> Быстро находить выбросы (яркие пятна)</li>
               </ul>
               
-              <h4 className="font-bold text-rose-900 mb-2"> Как читать график?</h4>
+              <h4 className="font-bold  mb-2"> Как читать график?</h4>
               <ul className="text-sm text-rose-800 space-y-1 list-disc list-inside">
                 <li><strong className="text-red-600">Красный/Горячий:</strong> Высокие значения (много данных)</li>
-                <li><strong className="text-blue-600">Синий/Холодный:</strong> Низкие значения (мало данных)</li>
+                <li><strong className="">Синий/Холодный:</strong> Низкие значения (мало данных)</li>
                 <li><strong>Диагональ:</strong> В корреляции показывает связь переменной с собой (=1)</li>
                 <li><strong>Симметрия:</strong> Корреляционная матрица всегда симметрична</li>
               </ul>
@@ -2158,17 +2158,17 @@ function GraphsPage() {
             />
             
             {/* Применение */}
-            <div className="mt-6 p-4 bg-gradient-to-r from-rose-50 to-red-50 rounded-lg border border-rose-200">
-              <h4 className="font-bold text-rose-900 mb-2"> Практическое применение:</h4>
+            <div className="mt-6 p-4 bg-gradient-to-r  rounded-lg border ">
+              <h4 className="font-bold  mb-2"> Практическое применение:</h4>
               <div className="grid md:grid-cols-3 gap-3 text-sm text-rose-800">
                 <div>
-                  <p><strong className="text-purple-600"> Биоинформатика:</strong> Экспрессия генов</p>
+                  <p><strong className=""> Биоинформатика:</strong> Экспрессия генов</p>
                 </div>
                 <div>
-                  <p><strong className="text-blue-600"> Финансы:</strong> Корреляция активов</p>
+                  <p><strong className=""> Финансы:</strong> Корреляция активов</p>
                 </div>
                 <div>
-                  <p><strong className="text-green-600"> ML:</strong> Матрица ошибок (confusion matrix)</p>
+                  <p><strong className=""> ML:</strong> Матрица ошибок (confusion matrix)</p>
                 </div>
               </div>
             </div>
@@ -2198,18 +2198,18 @@ function GraphsPage() {
       
       return (
         <AnimatedResult type="info" title="Radar Chart (Радарная диаграмма)">
-          <div className="p-6 rounded-xl border-2 bg-white" style={{ borderColor: 'var(--border)' }}>
+          <div className="p-6 rounded-xl border-2 card-midnight" style={{ borderColor: 'var(--border)' }}>
             <h3 className="text-2xl font-bold mb-4 text-violet-600">🕸️ Radar Chart (Многомерное сравнение)</h3>
             
             {/* Описание графика */}
-            <div className="mb-6 p-4 bg-violet-50 rounded-lg border-l-4 border-violet-500">
-              <h4 className="font-bold text-violet-900 mb-2"> Что это за график?</h4>
+            <div className="mb-6 p-4 rounded-lg border-l-4" style={{ background: 'rgba(212,175,55,0.1)', borderColor: 'var(--gold)' }}>
+              <h4 className="font-bold  mb-2"> Что это за график?</h4>
               <p className="text-sm text-violet-800 mb-3">
                 <strong>Radar Chart (Радарная диаграмма)</strong> — это способ отображения многомерных данных на 2D плоскости. 
                 Каждая ось (луч) представляет одну переменную, а значения откладываются от центра. Соединяя точки, получаем многоугольник.
               </p>
               
-              <h4 className="font-bold text-violet-900 mb-2"> Для чего нужен?</h4>
+              <h4 className="font-bold  mb-2"> Для чего нужен?</h4>
               <ul className="text-sm text-violet-800 space-y-1 mb-3 list-disc list-inside">
                 <li><strong>Многомерное сравнение:</strong> Сравнить объекты сразу по нескольким параметрам</li>
                 <li><strong>Профили:</strong> Создать "отпечаток" характеристик (спортсмен, продукт, компания)</li>
@@ -2217,7 +2217,7 @@ function GraphsPage() {
                 <li><strong>Сильные/слабые стороны:</strong> Найти области для улучшения</li>
               </ul>
               
-              <h4 className="font-bold text-violet-900 mb-2"> Как интерпретировать?</h4>
+              <h4 className="font-bold  mb-2"> Как интерпретировать?</h4>
               <ul className="text-sm text-violet-800 space-y-1 list-disc list-inside">
                 <li><strong>Большая область:</strong> Высокие значения по многим параметрам</li>
                 <li><strong>Правильный многоугольник:</strong> Сбалансированные показатели</li>
@@ -2285,22 +2285,22 @@ function GraphsPage() {
             {/* Таблица значений */}
             <div className="mt-6 grid grid-cols-2 md:grid-cols-3 gap-3">
               {stats.map((stat, idx) => (
-                <div key={idx} className="p-3 rounded-lg bg-violet-50 border-2 border-violet-300">
+                <div key={idx} className="p-3 rounded-lg  border-2 border-violet-300">
                   <p className="text-xs text-violet-700 font-semibold">{stat.label}</p>
-                  <p className="text-lg font-bold text-violet-900">{stat.value.toFixed(2)}</p>
+                  <p className="text-lg font-bold ">{stat.value.toFixed(2)}</p>
                 </div>
               ))}
             </div>
             
             {/* Применение */}
-            <div className="mt-6 p-4 bg-gradient-to-r from-violet-50 to-purple-50 rounded-lg border border-violet-200">
-              <h4 className="font-bold text-violet-900 mb-2"> Примеры использования:</h4>
+            <div className="mt-6 p-4 bg-gradient-to-r  rounded-lg border ">
+              <h4 className="font-bold  mb-2"> Примеры использования:</h4>
               <div className="grid md:grid-cols-3 gap-3 text-sm text-violet-800">
                 <div>
-                  <p><strong className="text-blue-600"> Спорт:</strong> Профиль навыков игрока (скорость, сила, техника)</p>
+                  <p><strong className=""> Спорт:</strong> Профиль навыков игрока (скорость, сила, техника)</p>
                 </div>
                 <div>
-                  <p><strong className="text-green-600"> Бизнес:</strong> Сравнение продуктов по характеристикам</p>
+                  <p><strong className=""> Бизнес:</strong> Сравнение продуктов по характеристикам</p>
                 </div>
                 <div>
                   <p><strong className="text-orange-600"> Образование:</strong> Оценка компетенций студента</p>
@@ -2327,7 +2327,7 @@ function GraphsPage() {
           {/* Заголовок */}
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-3 mb-4">
-              <LineChart className="w-12 h-12 text-indigo-600" />
+              <LineChart className="w-12 h-12 " />
               <h1 className="text-4xl md:text-5xl font-bold" style={{ color: 'var(--foreground)' }}>
                 Построение графиков
               </h1>
@@ -2354,8 +2354,8 @@ function GraphsPage() {
                   }}
                   className={`p-4 rounded-xl border-2 text-left transition-all hover:scale-105 hover:shadow-lg ${
                     selectedType === type.value
-                      ? 'border-indigo-500 bg-indigo-50'
-                      : 'border-gray-200 bg-white hover:border-indigo-300'
+                      ? 'border-[#D4AF37] '
+                      : 'border-gray-200 card-midnight hover:'
                   }`}
                 >
                   <div className="text-lg font-bold mb-1">{type.label}</div>
@@ -2376,7 +2376,7 @@ function GraphsPage() {
               <div className="p-6 rounded-2xl border-2 shadow-lg" 
                 style={{ borderColor: 'var(--border)', background: 'var(--background-secondary)' }}>
                 <h2 className="text-2xl font-bold mb-6 flex items-center gap-2" style={{ color: 'var(--foreground)' }}>
-                  <BarChart3 className="w-6 h-6 text-indigo-600" />
+                  <BarChart3 className="w-6 h-6 " />
                   Ввод данных
                 </h2>
 
@@ -2413,7 +2413,7 @@ function GraphsPage() {
               <div className="p-6 rounded-2xl border-2 shadow-lg" 
                 style={{ borderColor: 'var(--border)', background: 'var(--background-secondary)' }}>
                 <h2 className="text-2xl font-bold mb-6 flex items-center gap-2" style={{ color: 'var(--foreground)' }}>
-                  <LineChart className="w-6 h-6 text-indigo-600" />
+                  <LineChart className="w-6 h-6 " />
                   {selectedType === 'polar' ? 'Полярный график r = f(θ)' : '2D График функции'}
                 </h2>
 
@@ -2478,7 +2478,7 @@ function GraphsPage() {
               <div className="p-6 rounded-2xl border-2 shadow-lg" 
                 style={{ borderColor: 'var(--border)', background: 'var(--background-secondary)' }}>
                 <h2 className="text-2xl font-bold mb-6 flex items-center gap-2" style={{ color: 'var(--foreground)' }}>
-                  <Box className="w-6 h-6 text-purple-600" />
+                  <Box className="w-6 h-6 " />
                   {selectedType === 'contour' ? 'Контурный график z = f(x,y)' : '3D График функции'}
                 </h2>
 

@@ -57,22 +57,22 @@ function VerifyEmailContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100 flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center p-4" style={{ background: 'var(--background)' }}>
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         className="w-full max-w-md"
       >
-        <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
+        <div className="rounded-2xl shadow-xl p-8 text-center card-midnight">
           {status === 'loading' && (
             <>
               <div className="w-16 h-16 mx-auto mb-4">
-                <Loader className="w-16 h-16 text-indigo-600 animate-spin" />
+                <Loader className="w-16 h-16 animate-spin" style={{ color: 'var(--gold)' }} />
               </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              <h2 className="text-2xl font-bold mb-2" style={{ color: 'var(--foreground)' }}>
                 Проверка email...
               </h2>
-              <p className="text-gray-600">
+              <p style={{ color: 'var(--foreground-secondary)' }}>
                 Пожалуйста, подождите
               </p>
             </>
@@ -81,22 +81,22 @@ function VerifyEmailContent() {
           {status === 'success' && (
             <>
               <div className="w-16 h-16 mx-auto mb-4">
-                <CheckCircle className="w-16 h-16 text-green-600" />
+                <CheckCircle className="w-16 h-16 text-green-400" />
               </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              <h2 className="text-2xl font-bold mb-2" style={{ color: 'var(--foreground)' }}>
                 Email подтверждён!
               </h2>
-              <p className="text-gray-600 mb-6">
+              <p className="mb-6" style={{ color: 'var(--foreground-secondary)' }}>
                 {message}
               </p>
               
               {userData && (
-                <div className="p-4 bg-green-50 border border-green-200 rounded-lg mb-6">
-                  <p className="text-sm text-green-900">
+                <div className="p-4 rounded-lg mb-6 border border-green-500/50 bg-green-900/20">
+                  <p className="text-sm text-green-300">
                     <strong>Email:</strong> {userData.email}
                   </p>
                   {userData.name && (
-                    <p className="text-sm text-green-900 mt-1">
+                    <p className="text-sm text-green-300 mt-1">
                       <strong>Имя:</strong> {userData.name}
                     </p>
                   )}
@@ -104,12 +104,12 @@ function VerifyEmailContent() {
               )}
 
               <div className="space-y-3">
-                <p className="text-sm text-gray-600">
+                <p className="text-sm" style={{ color: 'var(--foreground-secondary)' }}>
                   Перенаправление на главную страницу через 3 секунды...
                 </p>
                 <Button
                   onClick={() => router.push('/')}
-                  className="w-full gradient-primary text-white"
+                  className="w-full gradient-primary text-[#0a1628] font-bold"
                 >
                   Перейти сейчас
                 </Button>
@@ -120,19 +120,19 @@ function VerifyEmailContent() {
           {status === 'error' && (
             <>
               <div className="w-16 h-16 mx-auto mb-4">
-                <XCircle className="w-16 h-16 text-red-600" />
+                <XCircle className="w-16 h-16 text-red-400" />
               </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              <h2 className="text-2xl font-bold mb-2" style={{ color: 'var(--foreground)' }}>
                 Ошибка верификации
               </h2>
-              <p className="text-gray-600 mb-6">
+              <p className="mb-6" style={{ color: 'var(--foreground-secondary)' }}>
                 {message}
               </p>
               
               <div className="space-y-3">
                 <Button
                   onClick={() => router.push('/auth')}
-                  className="w-full gradient-primary text-white"
+                  className="w-full gradient-primary text-[#0a1628] font-bold"
                 >
                   Вернуться к входу
                 </Button>
@@ -156,8 +156,8 @@ function VerifyEmailContent() {
 export default function VerifyEmailPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100 flex items-center justify-center">
-        <Loader className="w-12 h-12 text-indigo-600 animate-spin" />
+      <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--background)' }}>
+        <Loader className="w-12 h-12 animate-spin" style={{ color: 'var(--gold)' }} />
       </div>
     }>
       <VerifyEmailContent />

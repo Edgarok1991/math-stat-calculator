@@ -18,10 +18,10 @@ const iconMap = {
 };
 
 const colorMap = {
-  success: 'text-green-600 bg-green-50 border-green-200',
-  error: 'text-red-600 bg-red-50 border-red-200',
-  info: 'text-blue-600 bg-blue-50 border-blue-200',
-  calculation: 'text-purple-600 bg-purple-50 border-purple-200',
+  success: 'text-green-400 bg-green-900/30 border-green-500/50',
+  error: 'text-red-400 bg-red-900/30 border-red-500/50',
+  info: 'text-[#D4AF37] bg-[rgba(212,175,55,0.2)] border-[rgba(212,175,55,0.4)]',
+  calculation: 'text-[#E8C547] bg-[rgba(212,175,55,0.2)] border-[rgba(212,175,55,0.4)]',
 };
 
 export const AnimatedResult = ({ 
