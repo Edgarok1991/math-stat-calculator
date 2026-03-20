@@ -7,7 +7,13 @@ async function bootstrap() {
   
   // Включение CORS
   const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
-  const corsOrigins = [frontendUrl, 'http://localhost:3000', 'http://localhost:3003'];
+  const corsOrigins = [
+    frontendUrl,
+    'http://localhost:3000',
+    'http://localhost:3003',
+    'https://math-stat-calculator.vercel.app',
+    'https://www.math-stat-calculator.vercel.app',
+  ];
   app.enableCors({
     origin: corsOrigins,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
