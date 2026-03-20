@@ -1,10 +1,12 @@
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
+import { PrismaExceptionFilter } from './common/filters/prisma-exception.filter';
+import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  
+  app.useGlobalFilters(new PrismaExceptionFilter(), new AllExceptionsFilter());
+
   // CORS: разрешаем все origins (Vercel, Render, localhost)
   app.enableCors({
     origin: true,
