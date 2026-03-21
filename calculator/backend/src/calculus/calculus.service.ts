@@ -763,53 +763,66 @@ export class CalculusService {
         return steps;
       }
 
-      // ∫ x² e^x dx — дважды по частям (как MathDF)
-      if (bp.u === `${v}^2` && bp.dv?.includes(`exp(${v})`)) {
+      // ∫ x² e^x dx — полная иерархия как на MathDF: подзадачи (1), (2), табличный ∫e^x
+      if (this.isByPartsXSquaredExp(bp, v)) {
         steps.push({
-          actionLabel: 'Вычислим',
-          expression: `∫ ${v}^2*e^${v} d${v}`,
+          actionLabel: 'Вычисляем',
+          expression: `∫ ${v}^2·e^${v} d${v}`,
           rule: {
-            name: 'Интегрирование по частям (1-й раз)',
+            name: 'Интегрирование по частям',
             formula: '∫ u·dv = u·v − ∫ v·du',
             substitutions: [
               { symbol: 'u', value: `${v}^2` },
-              { symbol: 'du', value: `2*${v} d${v}` },
               { symbol: 'dv', value: `e^${v} d${v}` },
-              { symbol: 'v', value: `e^${v}` },
+              { symbol: 'du', value: `2·${v} d${v}` },
+              { symbol: 'v', value: `∫ e^${v} d${v} = e^${v}` },
             ],
           },
-          expressionAfter: `${v}^2*e^${v} − ∫ 2*${v}*e^${v} d${v}`,
-        });
-        steps.push({
-          actionLabel: 'Упростите',
-          expression: `∫ 2*${v}*e^${v} d${v} = 2*∫ ${v}*e^${v} d${v}`,
-        });
-        steps.push({
-          actionLabel: 'Вычислим',
-          expression: `∫ ${v}*e^${v} d${v}`,
-          rule: {
-            name: 'Интегрирование по частям (2-й раз)',
-            formula: '∫ u·dv = u·v − ∫ v·du',
-            substitutions: [
-              { symbol: 'u', value: `${v}` },
-              { symbol: 'du', value: `d${v}` },
-              { symbol: 'dv', value: `e^${v} d${v}` },
-              { symbol: 'v', value: `e^${v}` },
-            ],
-          },
-          expressionAfter: `${v}*e^${v} − ∫ e^${v} d${v} = ${v}*e^${v} − e^${v}`,
-        });
-        steps.push({
-          actionLabel: 'Упростите',
-          expression: `∫ e^${v} d${v} = e^${v};  значит  ∫ ${v}*e^${v} d${v} = (${v} − 1)*e^${v}`,
-        });
-        steps.push({
-          actionLabel: 'Подставим',
-          expression: `2*∫ ${v}*e^${v} d${v} = 2*(${v} − 1)*e^${v} = 2*${v}*e^${v} − 2*e^${v}`,
-        });
-        steps.push({
-          actionLabel: 'Соберём ответ',
-          expression: `${v}^2*e^${v} − (2*${v}*e^${v} − 2*e^${v}) = (${v}^2 − 2*${v} + 2)*e^${v}`,
+          expressionAfter: `${v}^2·e^${v} − ∫ 2·${v}·e^${v} d${v} = ${v}^2·e^${v} − (1)`,
+          subSteps: [
+            {
+              actionLabel: 'Упростите',
+              expression: `∫ 2·${v}·e^${v} d${v} = 2·∫ ${v}·e^${v} d${v}`,
+            },
+            {
+              actionLabel: 'Вычисляем',
+              expression: `∫ ${v}·e^${v} d${v}  (1)`,
+              rule: {
+                name: 'Интегрирование по частям',
+                formula: '∫ u·dv = u·v − ∫ v·du',
+                substitutions: [
+                  { symbol: 'u', value: `${v}` },
+                  { symbol: 'dv', value: `e^${v} d${v}` },
+                  { symbol: 'du', value: `d${v}` },
+                  { symbol: 'v', value: `∫ e^${v} d${v} = e^${v}` },
+                ],
+              },
+              expressionAfter: `${v}·e^${v} − ∫ e^${v} d${v} = ${v}·e^${v} − (2)`,
+              subSteps: [
+                {
+                  actionLabel: 'Вычисляем',
+                  expression: `∫ e^${v} d${v}  (2)`,
+                  rule: {
+                    name: 'Табличный интеграл',
+                    formula: `∫ e^${v} d${v} = e^${v}`,
+                  },
+                  expressionAfter: `e^${v}`,
+                },
+              ],
+            },
+            {
+              actionLabel: 'Подставим',
+              expression: `(1): ∫ ${v}·e^${v} d${v} = ${v}·e^${v} − e^${v} = (${v} − 1)·e^${v}`,
+            },
+            {
+              actionLabel: 'Подставим',
+              expression: `2·∫ ${v}·e^${v} d${v} = 2·(${v} − 1)·e^${v} = 2·${v}·e^${v} − 2·e^${v}`,
+            },
+            {
+              actionLabel: 'Соберём ответ',
+              expression: `${v}^2·e^${v} − (2·${v}·e^${v} − 2·e^${v}) = (${v}^2 − 2·${v} + 2)·e^${v}`,
+            },
+          ],
         });
         steps.push({
           actionLabel: 'Интеграл окончен',
@@ -997,6 +1010,18 @@ export class CalculusService {
     byParts?: { u: string; dv: string; du: string; v: string; uv?: string; remainingIntegral?: string };
     tableRule?: string; // конкретная формула из таблицы
   } = { result: '', method: 'table' };
+
+  /** ∫ x²·e^x dx — распознавание для пошагового решения (MathDF) */
+  private isByPartsXSquaredExp(
+    bp: { u: string; dv?: string },
+    variable: string
+  ): boolean {
+    const dvLooksExp =
+      bp.dv?.includes(`exp(${variable})`) ||
+      bp.dv?.includes(`e^${variable}`) ||
+      /\bexp\s*\(/.test(bp.dv || '');
+    return bp.u === `${variable}^2` && !!dvLooksExp;
+  }
 
   private simplifyIntegral(expression: string, variable: string): string {
     const normalizedExpr = this.normalizeExpression(expression);
@@ -1533,15 +1558,17 @@ export class CalculusService {
     } else if (this.integralResult.method === 'by_parts' && this.integralResult.byParts) {
       const bp = this.integralResult.byParts;
       const xv = variable;
-      // ∫ x² e^x — два раза по частям (текстовые шаги для истории / без UI)
-      if (bp.u === `${xv}^2` && bp.dv?.includes(`exp(${xv})`)) {
+      // ∫ x² e^x — два раза по частям + подзадачи (1), (2) (как MathDF)
+      if (this.isByPartsXSquaredExp(bp, xv)) {
         steps.push(`Шаг 2. Первое интегрирование по частям: u = ${xv}^2, dv = e^${xv} d${xv}`);
         steps.push(`   du = 2*${xv} d${xv}, v = e^${xv}`);
-        steps.push(`Шаг 3. Получаем: ${xv}^2·e^${xv} − ∫ 2*${xv}·e^${xv} d${xv}`);
-        steps.push(`Шаг 4. Второе интегрирование по частям для ∫${xv}·e^${xv} d${xv}: u = ${xv}, dv = e^${xv} d${xv}`);
-        steps.push(`   du = d${xv}, v = e^${xv}  ⇒  ∫${xv}·e^${xv} d${xv} = (${xv}−1)·e^${xv}`);
-        steps.push(`Шаг 5. Тогда ∫ 2*${xv}·e^${xv} d${xv} = 2*(${xv}−1)·e^${xv} = 2*${xv}·e^${xv} − 2·e^${xv}`);
-        steps.push(`Шаг 6. Итого: ${xv}^2·e^${xv} − 2*${xv}·e^${xv} + 2·e^${xv} = (${xv}^2 − 2*${xv} + 2)·e^${xv} + C`);
+        steps.push(`Шаг 3. Получаем: ${xv}^2·e^${xv} − ∫ 2*${xv}·e^${xv} d${xv} = ${xv}^2·e^${xv} − (1)`);
+        steps.push(`Шаг 4. Подзадача (1): ∫ 2*${xv}·e^${xv} d${xv} = 2·∫ ${xv}·e^${xv} d${xv}`);
+        steps.push(`Шаг 5. Второе интегрирование по частям для ∫${xv}·e^${xv} d${xv}: u = ${xv}, dv = e^${xv} d${xv}`);
+        steps.push(`   du = d${xv}, v = e^${xv}  ⇒  ${xv}·e^${xv} − ∫ e^${xv} d${xv} = ${xv}·e^${xv} − (2)`);
+        steps.push(`Шаг 6. Подзадача (2): ∫ e^${xv} d${xv} = e^${xv} (табличный интеграл)`);
+        steps.push(`Шаг 7. Тогда (1): 2·((${xv}−1)·e^${xv}) = 2*${xv}·e^${xv} − 2·e^${xv}`);
+        steps.push(`Шаг 8. Итого: ${xv}^2·e^${xv} − 2*${xv}·e^${xv} + 2·e^${xv} = (${xv}^2 − 2*${xv} + 2)·e^${xv} + C`);
         steps.push(`   ${result}`);
         return steps;
       }
