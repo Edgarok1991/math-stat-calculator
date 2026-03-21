@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Calculator, FunctionSquare, Brain, Menu, X, PieChart, LineChart, User, LogOut, History } from 'lucide-react';
+import { Calculator, FunctionSquare, Brain, Menu, X, PieChart, LineChart, User, LogOut, History, FlaskConical } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { ThemeToggle } from '@/components/UI/ThemeToggle';
@@ -10,6 +10,7 @@ import { useAuth } from '@/contexts/AuthContext';
 
 const navigation = [
   { name: 'Главная', href: '/', icon: Calculator },
+  { name: 'Научный калькулятор', href: '/scientific', icon: FlaskConical },
   { name: 'Графики', href: '/graphs', icon: LineChart },
   { name: 'Статистика', href: '/statistics', icon: PieChart },
   { name: 'Математика', href: '/calculus', icon: FunctionSquare },

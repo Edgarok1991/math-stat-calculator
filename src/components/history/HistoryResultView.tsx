@@ -28,6 +28,9 @@ export function HistoryResultView({ calc }: { calc: { type: string; input: any; 
     case 'graph2d':
     case 'graph3d':
       return <GraphView result={result} input={input} type={type} />;
+    case 'scientific':
+    case 'photomath':
+      return <ScientificView result={result} input={input} />;
     default:
       return (
         <pre className="p-2 rounded text-xs overflow-x-auto" style={{ background: 'var(--background-tertiary)' }}>
@@ -312,6 +315,17 @@ function GraphView({ result, input, type }: { result: any; input: any; type: str
       {type === 'graph3d' && result?.points?.length > 0 && (
         <p>Точек: {result.points.length}, x ∈ [{result.xMin}, {result.xMax}], y ∈ [{result.yMin}, {result.yMax}]</p>
       )}
+    </div>
+  );
+}
+
+function ScientificView({ result, input }: { result: any; input: any }) {
+  const expr = input?.expression ?? '—';
+  const value = result?.value ?? '—';
+  return (
+    <div className="space-y-2 text-sm">
+      <p><strong>Выражение:</strong> {expr}</p>
+      <p><strong>Результат:</strong> {value}</p>
     </div>
   );
 }
