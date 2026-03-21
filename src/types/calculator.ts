@@ -82,6 +82,7 @@ export interface AnovaResult {
   significant: boolean;
   groupMeans: number[];
   groupVariances: number[];
+  groupStdDevs?: number[];
   grandMean?: number;
   ssb?: number;
   ssw?: number;
@@ -92,6 +93,8 @@ export interface AnovaResult {
   msb?: number;
   msw?: number;
   groupSizes?: number[];
+  etaSquared?: number;
+  omegaSquared?: number;
   steps?: AnovaStep[];
 }
 

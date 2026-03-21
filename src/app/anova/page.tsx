@@ -13,54 +13,66 @@ import { StepGuide } from '@/components/UI/StepGuide';
 import { FractionDisplay } from '@/components/UI';
 import { MathExpression } from '@/components/UI/MathExpression';
 import { apiService } from '@/services/api';
+import { decimalToFraction } from '@/lib/decimalToFraction';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
+
+const Plot = dynamic(() => import('react-plotly.js'), { ssr: false });
+
+const EXAMPLE_DATASETS: Record<string, string> = {
+  Образование: '70, 72, 68, 75, 71\n78, 82, 80, 79, 81\n85, 88, 90, 87, 86',
+  Медицина: '3.2, 3.5, 3.0, 3.8, 3.4\n4.5, 4.2, 4.8, 4.1, 4.6\n5.2, 5.5, 5.0, 5.8, 5.3',
+  'С/х': '12, 14, 11, 13, 15\n18, 20, 17, 19, 21\n22, 24, 23, 21, 25',
+  Маркетинг: '15, 17, 14, 16, 18\n22, 24, 21, 23, 25\n30, 32, 28, 31, 29',
+};
 
 const anovaSchema = z.object({
   groups: z.string().min(1, 'Введите данные групп'),
   alpha: z.number().min(0.01).max(0.1),
-  type: z.enum(['one-factor', 'multi-factor']),
+  decimals: z.number().min(2).max(9),
 });
 
 type AnovaFormData = z.infer<typeof anovaSchema>;
 
 function AnovaPage() {
   const [result, setResult] = useState<AnovaResult | null>(null);
+  const [groupsData, setGroupsData] = useState<number[][]>([]);
+  const [decimalsPreference, setDecimalsPreference] = useState(4);
   const [isLoading, setIsLoading] = useState(false);
 
   const anovaSteps = [
     {
       id: 'step1',
-      title: 'Подготовка данных групп',
-      description: 'Введите данные для каждой группы.',
+      title: 'Введите данные групп',
+      description: 'Каждая группа на новой строке. Числа через запятую или пробел.',
       content: (
-        <div className="space-y-2">
-          <p>• Формат: каждая группа на новой строке, числа через запятую</p>
+        <div className="space-y-2 text-sm">
           <p>• Минимум 2 группы, в каждой минимум 2 наблюдения</p>
-          <p>• Однофакторный: одна переменная группировки</p>
-          <p>• Многофакторный: расширенный анализ (в разработке)</p>
+          <p>• Используйте примеры: Образование, Медицина, С/х, Маркетинг</p>
         </div>
       ),
     },
     {
       id: 'step2',
-      title: 'Выбор типа ANOVA',
-      description: 'Однофакторный — F-критерий MSb/MSw. Многофакторный — факторные планы.',
+      title: 'Уровень значимости α',
+      description: 'Обычно α = 0.05 (95% доверия).',
       content: (
-        <div className="space-y-2">
-          <p>• <strong>Однофакторный:</strong> одна независимая переменная, F = MSb/MSw</p>
-          <p>• <strong>Многофакторный:</strong> два и более факторов, взаимодействия</p>
+        <div className="space-y-2 text-sm">
+          <p>• 0.01 — строгий (99% доверия)</p>
+          <p>• 0.05 — стандартный (95% доверия)</p>
+          <p>• 0.10 — мягкий (90% доверия)</p>
         </div>
       ),
     },
     {
       id: 'step3',
-      title: 'Уровень значимости α',
-      description: 'Обычно α = 0.05 (5%).',
+      title: 'Интерпретация',
+      description: 'p &lt; α: различия значимы. η²: малый 0.01, средний 0.06, большой 0.14.',
       content: (
-        <div className="space-y-2">
-          <p>• α = 0.01 — строгий</p>
-          <p>• α = 0.05 — стандартный</p>
-          <p>• α = 0.1 — мягкий</p>
+        <div className="space-y-2 text-sm">
+          <p>• Полная таблица ANOVA: SS, df, MS, F</p>
+          <p>• Размер эффекта: η² и ω²</p>
+          <p>• Box plot для визуализации</p>
         </div>
       ),
     },
@@ -69,12 +81,13 @@ function AnovaPage() {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<AnovaFormData>({
     resolver: zodResolver(anovaSchema),
     defaultValues: {
       alpha: 0.05,
-      type: 'one-factor',
+      decimals: 4,
     },
   });
 
@@ -83,7 +96,7 @@ function AnovaPage() {
       .split(/[\n;]+/)
       .map((line) =>
         line
-          .replace(/^[^:]*:\s*/, '') // убираем "Группа1: "
+          .replace(/^[^:]*:\s*/, '')
           .split(/[,\s]+/)
           .map(Number)
           .filter((n) => !isNaN(n)),
@@ -96,24 +109,17 @@ function AnovaPage() {
     setResult(null);
     try {
       const groups = parseGroups(data.groups);
+      if (groups.length < 2) throw new Error('Необходимо минимум 2 группы');
 
-      if (groups.length < 2) {
-        throw new Error('Необходимо минимум 2 группы');
-      }
-
-      const anovaData: AnovaData = {
+      const apiResult = await apiService.calculateAnova({
         groups,
         alpha: data.alpha,
-        type: data.type,
-      };
-
-      const apiResult = await apiService.calculateAnova(anovaData);
-      setResult(apiResult);
-      calculatorStore.addCalculation({
-        type: 'anova',
-        input: anovaData,
-        result: apiResult,
+        type: 'one-factor',
       });
+      setGroupsData(groups);
+      setDecimalsPreference(data.decimals);
+      setResult(apiResult);
+      calculatorStore.addCalculation({ type: 'anova', input: { groups, alpha: data.alpha }, result: apiResult });
     } catch (error) {
       console.error('Ошибка ANOVA:', error);
       alert(error instanceof Error ? error.message : 'Ошибка при расчёте ANOVA');
@@ -122,247 +128,267 @@ function AnovaPage() {
     }
   };
 
-  const renderStepValues = (step: AnovaStep) => {
-    if (!step.values) return null;
-    const entries = Object.entries(step.values).filter(
-      ([k]) => !['formula'].includes(k),
-    );
-    if (entries.length === 0) return null;
-    return (
-      <div className="mt-3 p-3 rounded-lg border" style={{ background: 'var(--background-tertiary)', borderColor: 'var(--border)' }}>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
-          {entries.map(([key, val]) => (
-            <div key={key} className="flex justify-between gap-2">
-              <span style={{ color: 'var(--foreground-secondary)' }}>{key}:</span>
-              <span className="font-mono">
-                {typeof val === 'number' ? (
-                  <FractionDisplay value={val} className="inline" decimals={4} />
-                ) : typeof val === 'boolean' ? (
-                  val ? 'да' : 'нет'
-                ) : (
-                  String(val)
-                )}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
+  const formatVal = (val: number, decimals?: number) =>
+    decimals != null ? val.toFixed(decimals) : decimalToFraction(val, decimalsPreference);
+
+  const getEffectSizeLabel = (eta: number) => {
+    if (eta < 0.01) return 'пренебрежимый';
+    if (eta < 0.06) return 'малый';
+    if (eta < 0.14) return 'средний';
+    return 'большой';
   };
 
   return (
     <div className="min-h-screen py-8" style={{ background: 'var(--background)' }}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-4">
-          <Link
-            href="/data-analysis"
-            className="inline-flex items-center text-sm hover:text-[#E8C547] transition-colors"
-            style={{ color: 'var(--foreground-secondary)' }}
-          >
-            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
+          <Link href="/data-analysis" className="inline-flex items-center text-sm hover:opacity-80 transition-opacity" style={{ color: 'var(--foreground-secondary)' }}>
+            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
             Назад к Анализу данных
           </Link>
         </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="rounded-xl shadow-lg p-8 card-midnight"
-        >
-          <div className="mb-8">
-            <div className="flex items-center justify-center gap-4 mb-4 flex-wrap">
-              <h1 className="text-3xl font-bold" style={{ color: 'var(--foreground)' }}>
-                Дисперсионный анализ (ANOVA)
-              </h1>
-              <StepGuide
-                steps={anovaSteps}
-                title="Инструкция по ANOVA"
-                description="Пошаговое руководство по дисперсионному анализу"
-              />
-            </div>
-            <p className="text-center" style={{ color: 'var(--foreground-secondary)' }}>
-              Сравнение средних через F-критерий: MSb и MSw
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="rounded-xl shadow-lg p-6 sm:p-8 card-midnight">
+          <div className="mb-8 text-center">
+            <h1 className="text-2xl sm:text-3xl font-bold mb-2" style={{ color: 'var(--foreground)' }}>Калькулятор ANOVA</h1>
+            <p className="text-sm sm:text-base" style={{ color: 'var(--foreground-secondary)' }}>
+              Однофакторный дисперсионный анализ — полная таблица ANOVA, размер эффекта, визуализация
             </p>
+            <div className="mt-4 flex justify-center">
+              <StepGuide steps={anovaSteps} title="Как пользоваться" description="Пошаговое руководство" />
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="space-y-6">
+            {/* Примеры */}
             <div>
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                <div>
-                  <label className="block text-sm font-medium mb-2" style={{ color: 'var(--foreground-secondary)' }}>
-                    Тип ANOVA
-                  </label>
-                  <select
-                    {...register('type')}
-                    className="w-full px-3 py-2 input-midnight rounded-md"
+              <p className="text-sm font-medium mb-2" style={{ color: 'var(--foreground-secondary)' }}>Примеры наборов данных:</p>
+              <div className="flex flex-wrap gap-2">
+                {Object.entries(EXAMPLE_DATASETS).map(([name, data]) => (
+                  <button
+                    key={name}
+                    type="button"
+                    onClick={() => setValue('groups', data)}
+                    className="px-3 py-1.5 rounded-lg text-sm font-medium transition-all border"
+                    style={{ borderColor: 'var(--border)', color: 'var(--foreground)', background: 'var(--background-tertiary)' }}
                   >
-                    <option value="one-factor">Однофакторный (одна переменная, F = MSb/MSw)</option>
-                    <option value="multi-factor">Многофакторный (факторные планы)</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-2" style={{ color: 'var(--foreground-secondary)' }}>
-                    Данные групп (каждая группа на новой строке)
-                  </label>
-                  <textarea
-                    {...register('groups')}
-                    className="w-full px-3 py-2 input-midnight rounded-md font-mono text-sm"
-                    rows={6}
-                    placeholder="15, 16, 14, 15, 17&#10;18, 19, 17, 18, 20&#10;22, 21, 23, 22, 24"
-                  />
-                  {errors.groups && (
-                    <p className="mt-1 text-sm text-red-400">{errors.groups.message}</p>
-                  )}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-2" style={{ color: 'var(--foreground-secondary)' }}>
-                    Уровень значимости (α)
-                  </label>
-                  <select
-                    {...register('alpha', { valueAsNumber: true })}
-                    className="w-full px-3 py-2 input-midnight rounded-md"
-                  >
-                    <option value={0.01}>0.01 (1%)</option>
-                    <option value={0.05}>0.05 (5%)</option>
-                    <option value={0.1}>0.1 (10%)</option>
-                  </select>
-                </div>
-
-                <Button type="submit" loading={isLoading} className="w-full">
-                  {isLoading ? 'Вычисляем...' : 'Выполнить ANOVA'}
-                </Button>
-              </form>
+                    {name}
+                  </button>
+                ))}
+              </div>
             </div>
 
-            <div className="space-y-6">
-              {result && (
-                <>
-                  {/* Сводка */}
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.98 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="rounded-lg p-6"
-                    style={{ background: 'var(--background-tertiary)' }}
-                  >
-                    <h3 className="text-lg font-semibold mb-4" style={{ color: 'var(--foreground)' }}>
-                      Результаты {result.type === 'one-factor' ? 'однофакторного' : ''} ANOVA
-                    </h3>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <span className="font-medium" style={{ color: 'var(--foreground-secondary)' }}>F-статистика:</span>
-                        <p className="text-lg font-mono">
-                          <FractionDisplay value={result.fStatistic} />
-                        </p>
-                      </div>
-                      <div>
-                        <span className="font-medium" style={{ color: 'var(--foreground-secondary)' }}>p-значение:</span>
-                        <p className="text-lg font-mono">
-                          <FractionDisplay value={result.pValue} decimals={6} />
-                        </p>
-                      </div>
-                      <div>
-                        <span className="font-medium" style={{ color: 'var(--foreground-secondary)' }}>Fкрит (α):</span>
-                        <p className="text-lg font-mono">
-                          <FractionDisplay value={result.criticalValue} />
-                        </p>
-                      </div>
-                      <div>
-                        <span className="font-medium" style={{ color: 'var(--foreground-secondary)' }}>Вывод:</span>
-                        <p className={`text-lg font-semibold ${result.significant ? 'text-green-400' : 'text-amber-400'}`}>
-                          {result.significant ? 'H₀ отклоняется — различия значимы' : 'H₀ не отклоняется — различия не значимы'}
-                        </p>
-                      </div>
-                    </div>
-                    {result.msb != null && result.msw != null && (
-                      <div className="mt-4 p-3 rounded-lg border" style={{ borderColor: 'var(--gold)', background: 'rgba(212,175,55,0.08)' }}>
-                        <p className="text-sm font-medium">
-                          MSb = <FractionDisplay value={result.msb} className="inline" /> &nbsp;|&nbsp;
-                          MSw = <FractionDisplay value={result.msw} className="inline" /> &nbsp;→&nbsp;
-                          F = MSb/MSw = <FractionDisplay value={result.fStatistic} className="inline" />
-                        </p>
-                      </div>
-                    )}
-                  </motion.div>
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-1" style={{ color: 'var(--foreground-secondary)' }}>
+                  Введите данные групп (каждая группа — новая строка, числа через запятую или пробел)
+                </label>
+                <textarea
+                  {...register('groups')}
+                  className="w-full px-3 py-2 input-midnight rounded-md font-mono text-sm min-h-[120px]"
+                  placeholder="15, 16, 14, 15, 17&#10;18, 19, 17, 18, 20&#10;22, 21, 23, 22, 24"
+                />
+                {errors.groups && <p className="mt-1 text-sm text-red-400">{errors.groups.message}</p>}
+              </div>
 
-                  {/* Пошаговое решение */}
-                  {result.steps && result.steps.length > 0 && (
-                    <div className="space-y-6">
-                      <h3 className="text-xl font-bold" style={{ color: 'var(--gold)' }}>
-                        Пошаговое решение
-                      </h3>
-                      {result.steps.map((step, idx) => (
-                        <motion.div
-                          key={idx}
-                          initial={{ opacity: 0, x: -10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: idx * 0.08 }}
-                          className="rounded-lg border-2 p-4"
-                          style={{ borderColor: 'var(--border)', background: 'var(--background-secondary)' }}
-                        >
-                          <div className="flex items-center gap-3 mb-2">
-                            <span
-                              className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold"
-                              style={{ background: 'var(--gold)', color: '#1c1917' }}
-                            >
-                              {step.step}
-                            </span>
-                            <h4 className="font-semibold" style={{ color: 'var(--foreground)' }}>
-                              {step.title}
-                            </h4>
-                          </div>
-                          {step.formula && (
-                            <p className="text-sm font-mono mb-2" style={{ color: 'var(--foreground-secondary)' }}>
-                              <MathExpression expression={step.formula} className="text-sm" />
-                            </p>
-                          )}
-                          <p className="text-sm leading-relaxed" style={{ color: 'var(--foreground-secondary)' }}>
-                            {step.description}
-                          </p>
-                          {step.value != null && (
-                            <p className="mt-2 font-mono font-semibold">
-                              = <FractionDisplay value={parseFloat(step.value)} />
-                            </p>
-                          )}
-                          {renderStepValues(step)}
-                        </motion.div>
-                      ))}
-                    </div>
-                  )}
+              <div className="flex flex-wrap gap-6">
+                <div>
+                  <label className="block text-sm font-medium mb-1" style={{ color: 'var(--foreground-secondary)' }}>Уровень значимости (α)</label>
+                  <select {...register('alpha', { valueAsNumber: true })} className="px-3 py-2 input-midnight rounded-md">
+                    <option value={0.01}>0.01 (99% доверия)</option>
+                    <option value={0.05}>0.05 (95% доверия)</option>
+                    <option value={0.1}>0.10 (90% доверия)</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1" style={{ color: 'var(--foreground-secondary)' }}>Точность десятичных</label>
+                  <select {...register('decimals', { valueAsNumber: true })} className="px-3 py-2 input-midnight rounded-md">
+                    {[2, 3, 4, 5, 6, 7, 8, 9].map((n) => (
+                      <option key={n} value={n}>{n} знаков</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
 
-                  {/* Средние и дисперсии по группам */}
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.3 }}
-                    className="rounded-lg p-4"
-                    style={{ background: 'var(--background-tertiary)' }}
-                  >
-                    <h4 className="font-semibold mb-3" style={{ color: 'var(--foreground)' }}>
-                      Средние и дисперсии по группам
-                    </h4>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      {result.groupMeans.map((mean, i) => (
-                        <div
-                          key={i}
-                          className="p-2 rounded border text-sm"
-                          style={{ borderColor: 'var(--border)' }}
-                        >
-                          <span className="font-medium">Группа {i + 1}:</span>{' '}
-                          x̄ = <FractionDisplay value={mean} className="inline" />,
-                          s² = <FractionDisplay value={result.groupVariances[i]} className="inline" />
-                        </div>
-                      ))}
-                    </div>
-                  </motion.div>
-                </>
-              )}
-            </div>
+              <Button type="submit" loading={isLoading} className="w-full sm:w-auto min-w-[200px]">
+                {isLoading ? 'Вычисляем...' : 'Рассчитать ANOVA'}
+              </Button>
+            </form>
           </div>
+
+          {result && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-10 space-y-8">
+              {/* Полная таблица ANOVA */}
+              <div className="rounded-lg border-2 overflow-hidden" style={{ borderColor: 'var(--border)' }}>
+                <div className="p-4 font-bold" style={{ background: 'var(--background-tertiary)', color: 'var(--gold)' }}>
+                  Таблица ANOVA
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr style={{ background: 'var(--background-secondary)' }}>
+                        <th className="px-4 py-2 text-left font-semibold" style={{ color: 'var(--foreground)' }}>Источник</th>
+                        <th className="px-4 py-2 text-right font-semibold">SS</th>
+                        <th className="px-4 py-2 text-right font-semibold">df</th>
+                        <th className="px-4 py-2 text-right font-semibold">MS</th>
+                        <th className="px-4 py-2 text-right font-semibold">F</th>
+                        <th className="px-4 py-2 text-right font-semibold">p</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr style={{ borderTop: '1px solid var(--border)' }}>
+                        <td className="px-4 py-2 font-medium">Между группами</td>
+                        <td className="px-4 py-2 text-right font-mono">{result.ssb != null ? formatVal(result.ssb) : '—'}</td>
+                        <td className="px-4 py-2 text-right font-mono">{result.dfBetween ?? '—'}</td>
+                        <td className="px-4 py-2 text-right font-mono">{result.msb != null ? formatVal(result.msb) : '—'}</td>
+                        <td className="px-4 py-2 text-right font-mono font-bold">{formatVal(result.fStatistic)}</td>
+                        <td className="px-4 py-2 text-right font-mono">{formatVal(result.pValue, 6)}</td>
+                      </tr>
+                      <tr style={{ borderTop: '1px solid var(--border)' }}>
+                        <td className="px-4 py-2 font-medium">Внутри групп</td>
+                        <td className="px-4 py-2 text-right font-mono">{result.ssw != null ? formatVal(result.ssw) : '—'}</td>
+                        <td className="px-4 py-2 text-right font-mono">{result.dfWithin ?? '—'}</td>
+                        <td className="px-4 py-2 text-right font-mono">{result.msw != null ? formatVal(result.msw) : '—'}</td>
+                        <td className="px-4 py-2 text-right">—</td>
+                        <td className="px-4 py-2 text-right">—</td>
+                      </tr>
+                      <tr style={{ borderTop: '1px solid var(--border)' }}>
+                        <td className="px-4 py-2 font-medium">Общая</td>
+                        <td className="px-4 py-2 text-right font-mono">{result.sst != null ? formatVal(result.sst) : '—'}</td>
+                        <td className="px-4 py-2 text-right font-mono">{result.dfTotal ?? '—'}</td>
+                        <td className="px-4 py-2 text-right">—</td>
+                        <td className="px-4 py-2 text-right">—</td>
+                        <td className="px-4 py-2 text-right">—</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Размер эффекта */}
+              {result.etaSquared != null && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="p-4 rounded-lg border-2" style={{ borderColor: 'var(--border)', background: 'var(--background-tertiary)' }}>
+                    <h4 className="font-semibold mb-2" style={{ color: 'var(--foreground)' }}>Эта-квадрат (η²)</h4>
+                    <p className="text-2xl font-bold font-mono mb-1"><FractionDisplay value={result.etaSquared} decimals={4} /></p>
+                    <p className="text-sm" style={{ color: 'var(--foreground-secondary)' }}>
+                      Доля дисперсии, объясняемая группой. Размер эффекта: <strong>{getEffectSizeLabel(result.etaSquared)}</strong>
+                    </p>
+                  </div>
+                  {result.omegaSquared != null && (
+                    <div className="p-4 rounded-lg border-2" style={{ borderColor: 'var(--border)', background: 'var(--background-tertiary)' }}>
+                      <h4 className="font-semibold mb-2" style={{ color: 'var(--foreground)' }}>Омега-квадрат (ω²)</h4>
+                      <p className="text-2xl font-bold font-mono mb-1"><FractionDisplay value={result.omegaSquared} decimals={4} /></p>
+                      <p className="text-sm" style={{ color: 'var(--foreground-secondary)' }}>
+                        Смещённая оценка доли дисперсии в генеральной совокупности
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Статистическая значимость */}
+              <div className={`p-4 rounded-lg border-2 ${result.significant ? 'border-green-500/50' : 'border-amber-500/50'}`} style={{ background: result.significant ? 'rgba(34,197,94,0.1)' : 'rgba(245,158,11,0.1)' }}>
+                <h4 className="font-semibold mb-2" style={{ color: 'var(--foreground)' }}>Проверка гипотез</h4>
+                <p className="text-sm" style={{ color: 'var(--foreground-secondary)' }}>
+                  {result.significant ? (
+                    <>p-значение ({formatVal(result.pValue, 6)}) &lt; α. <strong className="text-green-400">Отклонить H₀</strong>. По крайней мере одно среднее существенно отличается.</>
+                  ) : (
+                    <>p-значение ({formatVal(result.pValue, 6)}) ≥ α. <strong className="text-amber-400">Не отклонять H₀</strong>. Недостаточно доказательств различий между группами.</>
+                  )}
+                </p>
+              </div>
+
+              {/* Box Plot */}
+              {result.groupMeans.length > 0 && groupsData.length > 0 && (
+                <div className="rounded-lg border-2 overflow-hidden" style={{ borderColor: 'var(--border)' }}>
+                  <div className="p-4 font-bold" style={{ background: 'var(--background-tertiary)', color: 'var(--gold)' }}>
+                    Визуализация — Box Plot по группам
+                  </div>
+                  <div className="p-4" style={{ background: 'var(--background)' }}>
+                    {/* @ts-ignore */}
+                    <Plot
+                      data={groupsData.map((arr, i) => ({
+                        y: arr,
+                        x: arr.map(() => `Группа ${i + 1}`),
+                        type: 'box' as const,
+                        name: `Группа ${i + 1}`,
+                        boxpoints: 'all' as const,
+                        marker: { color: `hsl(${210 + i * 40}, 70%, 55%)` },
+                        fillcolor: `hsla(${210 + i * 40}, 70%, 55%, 0.2)`,
+                      }))}
+                      layout={{
+                        autosize: true,
+                        height: 400,
+                        yaxis: { title: 'Значения', gridcolor: 'rgba(212,175,55,0.2)' },
+                        xaxis: { title: 'Группа' },
+                        plot_bgcolor: 'transparent',
+                        paper_bgcolor: 'transparent',
+                        font: { color: 'var(--foreground)' },
+                        margin: { t: 20, b: 50, l: 50, r: 20 },
+                        showlegend: false,
+                      }}
+                      config={{ displayModeBar: true, displaylogo: false }}
+                      style={{ width: '100%' }}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Статистика по группам */}
+              <div className="rounded-lg border-2 overflow-hidden" style={{ borderColor: 'var(--border)' }}>
+                <div className="p-4 font-bold" style={{ background: 'var(--background-tertiary)', color: 'var(--gold)' }}>
+                  Статистика групп
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr style={{ background: 'var(--background-secondary)' }}>
+                        <th className="px-4 py-2 text-left font-semibold">Группа</th>
+                        <th className="px-4 py-2 text-right font-semibold">n</th>
+                        <th className="px-4 py-2 text-right font-semibold">Среднее</th>
+                        <th className="px-4 py-2 text-right font-semibold">Стд. откл.</th>
+                        <th className="px-4 py-2 text-right font-semibold">Дисперсия</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {result.groupMeans.map((mean, i) => (
+                        <tr key={i} style={{ borderTop: '1px solid var(--border)' }}>
+                          <td className="px-4 py-2 font-medium">Группа {i + 1}</td>
+                          <td className="px-4 py-2 text-right font-mono">{result.groupSizes?.[i] ?? '—'}</td>
+                          <td className="px-4 py-2 text-right font-mono"><FractionDisplay value={mean} className="inline" /></td>
+                          <td className="px-4 py-2 text-right font-mono">{result.groupStdDevs?.[i] != null ? <FractionDisplay value={result.groupStdDevs![i]} className="inline" /> : '—'}</td>
+                          <td className="px-4 py-2 text-right font-mono"><FractionDisplay value={result.groupVariances[i]} className="inline" /></td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Пошаговое решение (свёрнутое по умолчанию или секция) */}
+              {result.steps && result.steps.length > 0 && (
+                <details className="rounded-lg border-2" style={{ borderColor: 'var(--border)' }}>
+                  <summary className="p-4 font-bold cursor-pointer hover:opacity-90" style={{ background: 'var(--background-tertiary)', color: 'var(--gold)' }}>
+                    Пошаговое решение (нажмите, чтобы раскрыть)
+                  </summary>
+                  <div className="p-4 space-y-4" style={{ background: 'var(--background-secondary)' }}>
+                    {result.steps.map((step, idx) => (
+                      <div key={idx} className="p-4 rounded-lg border" style={{ borderColor: 'var(--border)' }}>
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold" style={{ background: 'var(--gold)', color: '#1c1917' }}>{step.step}</span>
+                          <h4 className="font-semibold">{step.title}</h4>
+                        </div>
+                        {step.formula && <p className="text-sm font-mono mb-1"><MathExpression expression={step.formula} className="text-sm" /></p>}
+                        <p className="text-sm" style={{ color: 'var(--foreground-secondary)' }}>{step.description}</p>
+                        {step.value != null && <p className="mt-1 font-mono"><FractionDisplay value={parseFloat(step.value)} /></p>}
+                      </div>
+                    ))}
+                  </div>
+                </details>
+              )}
+            </motion.div>
+          )}
         </motion.div>
       </div>
     </div>

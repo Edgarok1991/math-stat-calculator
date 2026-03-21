@@ -68,7 +68,7 @@
 
 Или через сайт: [alavps.com](https://alavps.com) → **Get Free VPS Now** / **Claim Your Free VPS**.
 
-### Шаг 2.2. Выбор пакета
+### Шаг 2.2. Выбор пакетаепло
 
 На странице Free VPS Hosting отображается конфигурация:
 

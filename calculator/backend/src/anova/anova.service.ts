@@ -58,6 +58,10 @@ export class AnovaService {
     const pValue = this.calculatePValue(fStatistic, dfBetween, dfWithin);
     const significant = fStatistic > criticalValue;
 
+    const etaSquared = sst > 0 ? ssb / sst : 0;
+    const omegaSquared = sst + msw > 0 ? (ssb - dfBetween * msw) / (sst + msw) : 0;
+    const groupStdDevs = groupVariances.map((v) => Math.sqrt(v));
+
     const steps: AnovaStep[] = [
       {
         step: 1,
@@ -138,6 +142,7 @@ export class AnovaService {
       significant,
       groupMeans,
       groupVariances,
+      groupStdDevs,
       grandMean,
       ssb,
       ssw,
@@ -148,6 +153,8 @@ export class AnovaService {
       msb,
       msw,
       groupSizes,
+      etaSquared,
+      omegaSquared,
       steps,
     };
   }
