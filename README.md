@@ -29,6 +29,25 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
+## История вычислений (локальная настройка)
+
+Для сохранения истории нужны PostgreSQL и бэкенд:
+
+```bash
+# Один раз — полная настройка (Docker, .env, Prisma)
+npm run setup
+
+# Запуск PostgreSQL (если Docker не был запущен)
+cd calculator && docker-compose up -d
+cd backend && npx prisma db push
+
+# Запуск всего проекта
+npm run dev:all
+# Или отдельно: npm run dev:backend (бэкенд) и npm run dev (фронт)
+```
+
+После входа в аккаунт (/auth) расчёты ANOVA и кластеризации сохраняются в историю.
+
 ## Автодеплой в Git
 
 **Post-commit хук** (устанавливается при `npm install`): после каждого `git commit` автоматически выполняется `git push origin main`.

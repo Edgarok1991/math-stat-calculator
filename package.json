@@ -3,7 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "setup": "bash scripts/setup-history.sh",
     "dev": "next dev --turbopack",
+    "dev:backend": "cd calculator/backend && npm run start:dev",
+    "dev:all": "bash scripts/dev-all.sh",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
