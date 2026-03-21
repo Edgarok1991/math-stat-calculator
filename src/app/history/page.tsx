@@ -7,6 +7,7 @@ import { motion } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import { History, Trash2, Calculator, Brain, BarChart2, Grid3X3 } from 'lucide-react';
 import { Button } from '@/components/UI/Button';
+import { HistoryResultView } from '@/components/history/HistoryResultView';
 
 const typeIcons: { [key: string]: any } = {
   clustering: Brain,
@@ -208,21 +209,10 @@ export default function HistoryPage() {
                             </span>
                           </div>
                           
-                          <details className="text-sm group" style={{ color: 'var(--foreground-secondary)' }}>
-                            <summary className="cursor-pointer font-medium" style={{ color: 'var(--gold)' }}>Показать входные данные и решение</summary>
-                            <div className="mt-2 space-y-2">
-                              <div>
-                                <span className="text-xs font-medium" style={{ color: 'var(--foreground-muted)' }}>Вход:</span>
-                                <pre className="p-2 rounded text-xs overflow-x-auto" style={{ background: 'var(--background-tertiary)' }}>
-                                  {JSON.stringify(calc.input, null, 2)}
-                                </pre>
-                              </div>
-                              <div>
-                                <span className="text-xs font-medium" style={{ color: 'var(--foreground-muted)' }}>Решение:</span>
-                                <pre className="p-2 rounded text-xs overflow-x-auto max-h-48 overflow-y-auto" style={{ background: 'var(--background-tertiary)' }}>
-                                  {JSON.stringify(calc.result, null, 2)}
-                                </pre>
-                              </div>
+                          <details className="text-sm" style={{ color: 'var(--foreground-secondary)' }}>
+                            <summary className="cursor-pointer font-medium mb-2" style={{ color: 'var(--gold)' }}>Решение</summary>
+                            <div className="mt-2 p-4 rounded-lg border-2" style={{ borderColor: 'var(--border)', background: 'var(--background-secondary)' }}>
+                              <HistoryResultView calc={calc} />
                             </div>
                           </details>
                         </div>
