@@ -8,8 +8,11 @@ export interface IntegralStepRule {
 /** Структурированный шаг решения в стиле MathDF */
 export interface IntegralStepStructured {
   actionLabel?: string;
-  rule?: IntegralStepRule;
+  /** Строка под бейджем (часто ∫ f(x) dx) */
   expression?: string;
+  rule?: IntegralStepRule;
+  /** После раскрытия карточки правила — результат подстановки */
+  expressionAfter?: string;
   subSteps?: IntegralStepStructured[];
 }
 

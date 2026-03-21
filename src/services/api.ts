@@ -273,6 +273,7 @@ class ApiService {
       actionLabel?: string;
       rule?: { name: string; formula?: string; substitutions?: { symbol: string; value: string }[] };
       expression?: string;
+      expressionAfter?: string;
       subSteps?: Array<{ rule?: { name: string; formula?: string }; expression?: string }>;
     }>;
   }> {
@@ -301,6 +302,7 @@ class ApiService {
         actionLabel?: string;
         rule?: { name: string; formula?: string; substitutions?: { symbol: string; value: string }[] };
         expression?: string;
+        expressionAfter?: string;
         subSteps?: Array<{ rule?: { name: string; formula?: string }; expression?: string }>;
       }>;
     }>('/calculus/integral', {

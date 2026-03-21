@@ -613,7 +613,7 @@ export class CalculusService {
         if (nerdamerResult) {
           integral = nerdamerResult.integral;
           steps = nerdamerResult.steps;
-          stepsStructured = undefined;
+          stepsStructured = nerdamerResult.stepsStructured;
         }
       }
       
@@ -661,7 +661,7 @@ export class CalculusService {
     expression: string,
     variable: string,
     bounds?: { lower: number; upper: number }
-  ): { integral: string; steps: string[] } | null {
+  ): { integral: string; steps: string[]; stepsStructured: IntegralStepStructured[] } | null {
     try {
       const nerdamerExpr = this.toNerdamerExpr(expression);
       let result: any;
@@ -684,10 +684,37 @@ export class CalculusService {
         : this.fromNerdamerResult(resultStr) + ' + C';
 
       const steps = this.getNerdamerIntegralSteps(expression, variable, integral, !!bounds, bounds);
-      return { integral, steps };
+      const stepsStructured = this.getNerdamerIntegralStepsStructured(expression, variable, integral, !!bounds, bounds);
+      return { integral, steps, stepsStructured };
     } catch {
       return null;
     }
+  }
+
+  /** Пошаговое решение для nerdamer в макете MathDF */
+  private getNerdamerIntegralStepsStructured(
+    expression: string,
+    variable: string,
+    result: string,
+    isDefinite: boolean,
+    bounds?: { lower: number; upper: number }
+  ): IntegralStepStructured[] {
+    const steps: IntegralStepStructured[] = [];
+    steps.push({
+      actionLabel: 'Вычислим',
+      expression: isDefinite && bounds
+        ? `∫[${bounds.lower}→${bounds.upper}] (${expression}) d${variable}`
+        : `∫ (${expression}) d${variable}`,
+    });
+    steps.push({
+      actionLabel: 'Применяем символьное интегрирование',
+      rule: {
+        name: 'Методы: замена переменной, по частям, рациональные дроби, табличные интегралы',
+        formula: 'Автоматический поиск первообразной (аналог MathDF)',
+      },
+      expressionAfter: isDefinite && bounds ? `= ${result}` : result,
+    });
+    return steps;
   }
 
   /** Генерирует пошаговое решение в стиле MathDF (с блоками правил, формулами, подстановками) */
@@ -698,6 +725,43 @@ export class CalculusService {
     if (method === 'by_parts' && this.integralResult.byParts) {
       const bp = this.integralResult.byParts;
       const v = variable;
+
+      // ∫ x² ln(x) dx — как на MathDF
+      if (bp.u === `log(${v})` && (bp.dv === `${v}^2 d${v}` || bp.dv?.startsWith(`${v}^2 d`))) {
+        steps.push({
+          actionLabel: 'Вычислим',
+          expression: `∫ ${v}^2*ln(${v}) d${v}`,
+          rule: {
+            name: 'Интегрирование по частям',
+            formula: '∫ u·dv = u·v − ∫ v·du',
+            substitutions: [
+              { symbol: 'u', value: `ln(${v})` },
+              { symbol: 'dv', value: `${v}^2 d${v}` },
+              { symbol: 'du', value: `1/${v} d${v}` },
+              { symbol: 'v', value: `${v}^3/3` },
+            ],
+          },
+          expressionAfter: `${v}^3/3*ln(${v}) − ∫ (${v}^3/3)/${v} d${v} = ${v}^3/3*ln(${v}) − ∫ ${v}^2/3 d${v}`,
+        });
+        steps.push({
+          actionLabel: 'Упростите',
+          expression: `∫ ${v}^2/3 d${v}`,
+        });
+        steps.push({
+          actionLabel: 'Вычислим',
+          rule: {
+            name: 'Интеграл от степенной функции',
+            formula: '∫ x^n dx = x^(n+1)/(n+1)',
+            substitutions: [{ symbol: 'n', value: '2' }],
+          },
+          expression: `${v}^3/9`,
+        });
+        steps.push({
+          actionLabel: 'Интеграл окончен',
+          expression: result,
+        });
+        return steps;
+      }
 
       // ∫(ax²+b)*log(x)dx — полная иерархия как на MathDF
       const ax2bMatch = this.integralResult.byParts.dv?.match(new RegExp(`\\((\\d+)\\*?${v}\\^2\\+(\\d+)\\)`));
@@ -710,7 +774,8 @@ export class CalculusService {
         const gpExpr = `${a}*${v}^2+${b}`;
 
         steps.push({
-          actionLabel: 'Вычислим:',
+          actionLabel: 'Вычислим',
+          expression: `∫ (${a}*${v}^2+${b})*ln(${v}) d${v}`,
           rule: {
             name: 'Интегрирование по частям',
             formula: "∫ f·g' dx = f·g − ∫ f'·g dx",
@@ -721,7 +786,7 @@ export class CalculusService {
               { symbol: 'g', value: gExpr },
             ],
           },
-          expression: `${gExpr}*ln(${v}) − ∫ (${gExpr})/${v} d${v}`,
+          expressionAfter: `${gExpr}*ln(${v}) − ∫ (${gExpr})/${v} d${v}`,
         });
 
         steps.push({
@@ -1161,6 +1226,27 @@ export class CalculusService {
       // ∫x*log(x)dx или ∫x*ln(x)dx — по частям: u=log(x), dv=x dx
       if (cleanExpr === `${variable}*log(${variable})` || cleanExpr === `log(${variable})*${variable}`) {
         this.integralResult = { result: `${variable}^2*log(${variable})/2-${variable}^2/4 + C`, method: 'by_parts', byParts: { u: `log(${variable})`, dv: `${variable} d${variable}`, du: `1/${variable} d${variable}`, v: `${variable}^2/2` } };
+        return this.integralResult.result;
+      }
+
+      // ∫x^2*log(x)dx — по частям: u=log(x), dv=x^2 dx
+      if (
+        cleanExpr === `${variable}^2*log(${variable})` ||
+        cleanExpr === `log(${variable})*${variable}^2`
+      ) {
+        const x = variable;
+        this.integralResult = {
+          result: `${x}^3*log(${x})/3-${x}^3/9 + C`,
+          method: 'by_parts',
+          byParts: {
+            u: `log(${x})`,
+            dv: `${x}^2 d${x}`,
+            du: `1/${x} d${x}`,
+            v: `${x}^3/3`,
+            uv: `${x}^3/3*log(${x})`,
+            remainingIntegral: `∫(${x}^2/3) d${x} = ${x}^3/9`,
+          },
+        };
         return this.integralResult.result;
       }
 

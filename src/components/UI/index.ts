@@ -6,4 +6,4 @@ export { AnimatedResult } from './AnimatedResult';
 export { InteractiveHint } from './InteractiveHint';
 export { StepGuide } from './StepGuide';
 export { ThemeToggle } from './ThemeToggle';
-
+export { IntegralMathDFSteps } from './IntegralMathDFSteps';
