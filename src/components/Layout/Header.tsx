@@ -10,7 +10,7 @@ import { useAuth } from '@/contexts/AuthContext';
 
 const navigation = [
   { name: 'Главная', href: '/', icon: Calculator },
-  { name: 'Научный калькулятор', href: '/scientific', icon: FlaskConical },
+  { name: 'Калькулятор', href: '/scientific', icon: FlaskConical },
   { name: 'Графики', href: '/graphs', icon: LineChart },
   { name: 'Статистика', href: '/statistics', icon: PieChart },
   { name: 'Математика', href: '/calculus', icon: FunctionSquare },

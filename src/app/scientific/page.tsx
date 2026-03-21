@@ -336,10 +336,10 @@ export default function ScientificCalculatorPage() {
           className="mb-8"
         >
           <h1 className="text-4xl font-bold mb-2" style={{ color: 'var(--foreground)' }}>
-            Научный калькулятор
+            Калькулятор
           </h1>
           <p style={{ color: 'var(--foreground-secondary)' }}>
-            Научный, инженерный калькулятор, Photo Math — решение по фото
+            Калькулятор, инженерный режим, Photo Math — решение по фото
           </p>
         </motion.div>
 
