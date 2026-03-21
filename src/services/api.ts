@@ -83,7 +83,8 @@ class ApiService {
   async calculateAnova(data: {
     groups: number[][];
     alpha: number;
-  }) {
+    type?: 'one-factor' | 'multi-factor';
+  }): Promise<import('@/types/calculator').AnovaResult> {
     return this.request('/anova/calculate', {
       method: 'POST',
       body: JSON.stringify(data),
