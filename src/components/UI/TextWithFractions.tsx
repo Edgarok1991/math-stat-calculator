@@ -64,19 +64,22 @@ export const TextWithFractions: React.FC<TextWithFractionsProps> = ({
   let key = 0;
   let lastEnd = 0;
 
-  // Дроби вида (a)/(b) — (4x²+2)/x или (x+1)/(x-1)
-  const parenFrac = /\(([^)]+)\)\/([^/]+?)(?=[+\-\s,]|$)/g;
+  // Дроби (a)/(b): если знаменатель в скобках — берём целиком (x²+1)/(x+3), не обрезая на «+» внутри (x+3)
+  // Иначе (a)/x, (a)/2 — знаменатель без скобок (одно «слагаемое» из букв/цифр/индексов)
+  const parenFrac =
+    /\(([^)]+)\)\s*\/\s*(?:\(([^)]+)\)|([a-zA-Z0-9²³⁴⁵⁶⁷⁸⁹⁰¹]+))/g;
   let m;
   while ((m = parenFrac.exec(text)) !== null) {
     if (m.index > lastEnd) {
       const before = text.substring(lastEnd, m.index);
       result.push(<TextWithFractions key={`b${key++}`} text={before} showMixedNumbers={showMixedNumbers} />);
     }
+    const denRaw = (m[2] ?? m[3] ?? '').trim();
     result.push(
       <FractionLayout
         key={`vf${key++}`}
         num={<TextWithFractions text={m[1]} showMixedNumbers={showMixedNumbers} />}
-        den={<TextWithFractions text={m[2].trim()} showMixedNumbers={showMixedNumbers} />}
+        den={<TextWithFractions text={denRaw} showMixedNumbers={showMixedNumbers} />}
       />
     );
     lastEnd = m.index + m[0].length;
