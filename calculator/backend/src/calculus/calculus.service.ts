@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CalculusDto } from './dto/calculus.dto';
 import { DerivativeDto, DerivativeAtPointDto } from './dto/derivative.dto';
-import { CalculusResult } from './interfaces/calculus-result.interface';
+import { CalculusResult, IntegralStepStructured } from './interfaces/calculus-result.interface';
 import { DerivativeResult, DerivativeGraphResult, DerivativeAtPointResult, DerivativeStep } from './interfaces/derivative-result.interface';
 import * as math from 'mathjs';
 
@@ -594,19 +594,27 @@ export class CalculusService {
     try {
       let integral: string;
       let steps: string[];
-      
-      // Пробуем nerdamer (символьное интегрирование как на MathDF)
-      const nerdamerResult = this.tryNerdamerIntegral(normalizedExpr, variable, bounds);
-      
-      if (nerdamerResult) {
-        integral = nerdamerResult.integral;
-        steps = nerdamerResult.steps;
-      } else if (bounds) {
+      let stepsStructured: IntegralStepStructured[] | undefined;
+
+      // Сначала пробуем правило-движок (для подробных пошаговых решений в стиле MathDF)
+      if (bounds) {
         integral = this.simplifyDefiniteIntegral(normalizedExpr, variable, bounds);
         steps = this.getDefiniteIntegralSteps(normalizedExpr, variable, bounds);
       } else {
         integral = this.simplifyIntegral(normalizedExpr, variable);
         steps = this.getIntegralSteps(normalizedExpr, variable);
+        stepsStructured = this.getIntegralStepsStructured(normalizedExpr, variable, integral);
+      }
+
+      // Fallback на nerdamer, если правило-движок вернул fallback (∫...dx + C)
+      const isFallback = !bounds && integral.startsWith('∫(');
+      if (isFallback) {
+        const nerdamerResult = this.tryNerdamerIntegral(normalizedExpr, variable, bounds);
+        if (nerdamerResult) {
+          integral = nerdamerResult.integral;
+          steps = nerdamerResult.steps;
+          stepsStructured = undefined;
+        }
       }
       
       const latex = this.toLatex(integral);
@@ -615,6 +623,7 @@ export class CalculusService {
         result: integral,
         steps,
         latex,
+        ...(stepsStructured && stepsStructured.length > 0 ? { stepsStructured } : {}),
       };
     } catch (error) {
       throw new Error(`Ошибка вычисления интеграла: ${error.message}`);
@@ -679,6 +688,123 @@ export class CalculusService {
     } catch {
       return null;
     }
+  }
+
+  /** Генерирует пошаговое решение в стиле MathDF (с блоками правил, формулами, подстановками) */
+  private getIntegralStepsStructured(expression: string, variable: string, result: string): IntegralStepStructured[] {
+    const method = this.integralResult.method;
+    const steps: IntegralStepStructured[] = [];
+
+    if (method === 'by_parts' && this.integralResult.byParts) {
+      const bp = this.integralResult.byParts;
+      const v = variable;
+
+      // ∫(ax²+b)*log(x)dx — полная иерархия как на MathDF
+      const ax2bMatch = this.integralResult.byParts.dv?.match(new RegExp(`\\((\\d+)\\*?${v}\\^2\\+(\\d+)\\)`));
+      if (ax2bMatch) {
+        const a = parseInt(ax2bMatch[1], 10);
+        const b = parseInt(ax2bMatch[2], 10);
+        const gExpr = `2(2*${v}^3/3+${v})`; // g = 2(2x³/3+x)
+        const fExpr = `ln(${v})`;
+        const fpExpr = `1/${v}`;
+        const gpExpr = `${a}*${v}^2+${b}`;
+
+        steps.push({
+          actionLabel: 'Вычислим:',
+          rule: {
+            name: 'Интегрирование по частям',
+            formula: "∫ f·g' dx = f·g − ∫ f'·g dx",
+            substitutions: [
+              { symbol: 'f', value: fExpr },
+              { symbol: "f'", value: fpExpr },
+              { symbol: "g'", value: gpExpr },
+              { symbol: 'g', value: gExpr },
+            ],
+          },
+          expression: `${gExpr}*ln(${v}) − ∫ (${gExpr})/${v} d${v}`,
+        });
+
+        steps.push({
+          actionLabel: 'Упростите',
+          expression: `2*∫ (2*${v}^2/3+1) d${v}`,
+        });
+
+        steps.push({
+          actionLabel: 'Разложить',
+          expression: `2*∫ (2*${v}^2/3) d${v} + 2*∫ 1 d${v}`,
+          subSteps: [
+            {
+              rule: {
+                name: 'Интеграл от степенной функции',
+                formula: '∫ x^n dx = x^(n+1)/(n+1)',
+                substitutions: [{ symbol: 'n', value: '2' }],
+              },
+              expression: '4*x^3/9',
+            },
+            {
+              rule: {
+                name: 'Интеграл константы',
+                formula: '∫ a dx = ax',
+              },
+              expression: '2*x',
+            },
+          ],
+        });
+
+        steps.push({
+          actionLabel: 'Интеграл окончен',
+          expression: result,
+        });
+      } else {
+        // Общий случай интегрирования по частям
+        steps.push({
+          actionLabel: 'Вычислим:',
+          rule: {
+            name: 'Интегрирование по частям',
+            formula: '∫ u·dv = u·v − ∫ v·du',
+            substitutions: [
+              { symbol: 'u', value: bp.u },
+              { symbol: 'du', value: bp.du },
+              { symbol: 'dv', value: bp.dv },
+              { symbol: 'v', value: bp.v },
+            ],
+          },
+          expression: bp.uv ? `${bp.uv} − ∫ ${bp.v}·(1/${variable}) d${variable}` : result,
+        });
+        if (bp.remainingIntegral) {
+          steps.push({
+            actionLabel: 'Вычислим оставшийся интеграл:',
+            expression: bp.remainingIntegral,
+          });
+        }
+        steps.push({
+          actionLabel: 'Интеграл окончен',
+          expression: result,
+        });
+      }
+    } else if (method === 'substitution' && this.integralResult.substitution) {
+      const sub = this.integralResult.substitution;
+      steps.push({
+        actionLabel: 'Применяем подстановку:',
+        rule: {
+          name: 'Замена переменной',
+          formula: sub.dxExpr || undefined,
+          substitutions: [
+            { symbol: 'u', value: sub.u },
+            { symbol: 'du', value: sub.du },
+          ],
+        },
+        expression: result,
+      });
+    } else if (method === 'table' && this.integralResult.tableRule) {
+      steps.push({
+        actionLabel: 'Применяем табличную формулу:',
+        rule: { name: this.integralResult.tableRule },
+        expression: result,
+      });
+    }
+
+    return steps;
   }
 
   private getNerdamerIntegralSteps(

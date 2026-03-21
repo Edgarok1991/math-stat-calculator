@@ -52,6 +52,20 @@ const integralSchema = z.object({
 type DerivativeFormData = z.infer<typeof derivativeSchema>;
 type IntegralFormData = z.infer<typeof integralSchema>;
 
+interface IntegralStepStructured {
+  actionLabel?: string;
+  rule?: { name: string; formula?: string; substitutions?: { symbol: string; value: string }[] };
+  expression?: string;
+  subSteps?: Array<{ rule?: { name: string; formula?: string }; expression?: string }>;
+}
+
+interface IntegralResult {
+  result: string;
+  steps: string[];
+  latex: string;
+  stepsStructured?: IntegralStepStructured[];
+}
+
 interface DerivativeResult {
   original: string;
   derivative: string;
@@ -76,7 +90,7 @@ function CalculusPage() {
   const { token } = useAuth();
   const [activeTab, setActiveTab] = useState<'matrices' | 'derivatives' | 'integrals'>('matrices');
   const [derivativeResult, setDerivativeResult] = useState<DerivativeResult | null>(null);
-  const [integralResult, setIntegralResult] = useState<any>(null);
+  const [integralResult, setIntegralResult] = useState<IntegralResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedPoint, setSelectedPoint] = useState<number | null>(null);
   const [pointResult, setPointResult] = useState<any>(null);
@@ -1275,28 +1289,95 @@ function CalculusPage() {
                       </div>
                     </div>
 
-                    {/* Пошаговое решение */}
-                    {integralResult.steps && integralResult.steps.length > 0 && (
+                    {/* Пошаговое решение (стиль MathDF) */}
+                    {(integralResult.stepsStructured?.length > 0 || integralResult.steps?.length > 0) && (
                       <div className="mb-6">
                         <h3 className="text-lg font-semibold mb-4" style={{ color: 'var(--foreground)' }}>
                           Пошаговое решение:
                         </h3>
-                        <div className="space-y-3">
-                          {integralResult.steps.map((step: string, index: number) => (
-                            <motion.div
-                              key={index}
-                              initial={{ opacity: 0, x: -20 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              transition={{ delay: index * 0.1 }}
-                              className="p-4 rounded-lg border-2"
-                              style={{ background: 'var(--background-tertiary)', borderColor: 'var(--border)' }}
-                            >
-                              <p style={{ color: 'var(--foreground-secondary)' }}>
-                                <MathExpression expression={step} />
-                              </p>
-                            </motion.div>
-                          ))}
-                        </div>
+                        {integralResult.stepsStructured && integralResult.stepsStructured.length > 0 ? (
+                          <div className="space-y-4">
+                            {integralResult.stepsStructured.map((step, index) => (
+                              <motion.div
+                                key={index}
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: index * 0.08 }}
+                              >
+                                {step.actionLabel && (
+                                  <p className="text-sm font-semibold mb-2" style={{ color: 'var(--gold)' }}>
+                                    {step.actionLabel}
+                                  </p>
+                                )}
+                                {step.rule && (
+                                  <div
+                                    className="p-4 rounded-lg border-2 mb-3"
+                                    style={{ borderColor: 'var(--gold)', background: 'rgba(212,175,55,0.08)' }}
+                                  >
+                                    <p className="font-semibold mb-2" style={{ color: 'var(--foreground)' }}>{step.rule.name}</p>
+                                    {step.rule.formula && (
+                                      <p className="text-sm mb-2" style={{ color: 'var(--foreground-secondary)' }}>
+                                        <MathExpression expression={step.rule.formula} />
+                                      </p>
+                                    )}
+                                    {step.rule.substitutions && step.rule.substitutions.length > 0 && (
+                                      <div className="space-y-1 text-sm" style={{ color: 'var(--foreground-secondary)' }}>
+                                        {step.rule.substitutions.map((s, i) => (
+                                          <p key={i}>
+                                            <span className="font-medium" style={{ color: 'var(--gold)' }}>{s.symbol}</span>
+                                            <span className="mx-1">=</span>
+                                            <MathExpression expression={s.value} className="inline" />
+                                          </p>
+                                        ))}
+                                      </div>
+                                    )}
+                                  </div>
+                                )}
+                                {step.expression && (
+                                  <div className="py-2 pl-2 border-l-2" style={{ borderColor: 'var(--border)' }}>
+                                    <MathExpression expression={step.expression} className="text-base" />
+                                  </div>
+                                )}
+                                {step.subSteps && step.subSteps.length > 0 && (
+                                  <div className="ml-4 mt-2 space-y-2">
+                                    {step.subSteps.map((sub, j) => (
+                                      <div key={j} className="p-3 rounded-lg" style={{ background: 'var(--background-tertiary)' }}>
+                                        {sub.rule && (
+                                          <p className="text-xs font-semibold mb-1" style={{ color: 'var(--gold)' }}>{sub.rule.name}</p>
+                                        )}
+                                        {sub.rule?.formula && (
+                                          <p className="text-xs mb-1" style={{ color: 'var(--foreground-secondary)' }}>
+                                            <MathExpression expression={sub.rule.formula} className="text-xs" />
+                                          </p>
+                                        )}
+                                        {sub.expression && (
+                                          <MathExpression expression={sub.expression} className="text-sm" />
+                                        )}
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+                              </motion.div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="space-y-3">
+                            {integralResult.steps.map((step: string, index: number) => (
+                              <motion.div
+                                key={index}
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: index * 0.1 }}
+                                className="p-4 rounded-lg border-2"
+                                style={{ background: 'var(--background-tertiary)', borderColor: 'var(--border)' }}
+                              >
+                                <p style={{ color: 'var(--foreground-secondary)' }}>
+                                  <MathExpression expression={step} />
+                                </p>
+                              </motion.div>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     )}
 
