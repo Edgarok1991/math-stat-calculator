@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Calculator, Grid3X3, FunctionSquare, Brain, Menu, X, PieChart, LineChart, User, LogOut, History } from 'lucide-react';
+import { Calculator, FunctionSquare, Brain, Menu, X, PieChart, LineChart, User, LogOut, History } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { ThemeToggle } from '@/components/UI/ThemeToggle';
@@ -14,7 +14,6 @@ const navigation = [
   { name: 'Статистика', href: '/statistics', icon: PieChart },
   { name: 'Математика', href: '/calculus', icon: FunctionSquare },
   { name: 'Анализ данных', href: '/data-analysis', icon: Brain },
-  { name: 'Матрицы', href: '/matrices', icon: Grid3X3 },
 ];
 
 export default function Header() {
@@ -40,9 +39,6 @@ export default function Header() {
             <div>
               <span className="text-2xl font-bold block" style={{ color: 'var(--foreground)' }}>
                 MathCalc
-              </span>
-              <span className="text-xs font-medium opacity-80" style={{ color: 'var(--foreground-secondary)' }}>
-                Luxury Gold Edition
               </span>
             </div>
           </Link>
