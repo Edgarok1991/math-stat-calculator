@@ -1262,21 +1262,11 @@ function CalculusPage() {
 
                     {/* Результат */}
                     <div className="mb-6 p-6 rounded-xl border-2" style={{ background: 'rgba(212,175,55,0.15)', borderColor: 'var(--border)' }}>
-                      <h3 className="text-lg font-semibold mb-3 flex items-center gap-2" style={{ color: 'var(--foreground)' }}>
-                        {integralType === 'indefinite' ? (
-                          <>
-                            <IntegralSymbol type="indefinite" size="medium" />
-                            <span>Первообразная:</span>
-                          </>
-                        ) : (
-                          <>
-                            <IntegralSymbol type="definite" size="medium" />
-                            <span>Численное значение:</span>
-                          </>
-                        )}
+                      <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--foreground)' }}>
+                        {integralType === 'indefinite' ? 'Первообразная:' : 'Численное значение:'}
                       </h3>
-                      <div className="text-3xl font-bold" style={{ color: 'var(--foreground)' }}>
-                        <MathExpression expression={integralResult.result} className="font-mono" />
+                      <div className="text-2xl py-4" style={{ color: 'var(--foreground)' }}>
+                        <MathExpression expression={integralResult.result} />
                       </div>
                     </div>
 

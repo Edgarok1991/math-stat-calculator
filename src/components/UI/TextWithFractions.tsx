@@ -54,22 +54,45 @@ export const TextWithFractions: React.FC<TextWithFractionsProps> = ({
 
   let rest = lastEnd > 0 ? text.substring(lastEnd) : text;
 
-  // Числовые дроби (-?\d+)/(\d+)
-  const numFrac = /(-?\d+)\/(\d+)/g;
-  lastEnd = 0;
-  const restParts: (string | React.ReactElement)[] = [];
-  while ((m = numFrac.exec(rest)) !== null) {
-    if (m.index > lastEnd) {
-      restParts.push(rest.substring(lastEnd, m.index));
+  // Дроби вида expr/число (не чисто числовые) — e⁴·ˣ²⁺²/8, exp(x)/2
+  const exprNumFrac = /(?!\d)[^/]+\/(\d+)(?=[+\-\s,]|$)/g;
+  let restParts: (string | React.ReactElement)[] = [];
+  let restLastEnd = 0;
+  while ((m = exprNumFrac.exec(rest)) !== null) {
+    if (m.index > restLastEnd) {
+      restParts.push(rest.substring(restLastEnd, m.index));
     }
-    restParts.push(
-      <Fraction key={`f${key++}`} value={m[0]} className="mx-0.5" showMixedNumber={showMixedNumbers} />
-    );
-    lastEnd = m.index + m[0].length;
+    const fullMatch = m[0];
+    const numMatch = fullMatch.match(/(.*)\/(\d+)$/);
+    if (numMatch) {
+      restParts.push(
+        <FractionLayout
+          key={`ef${key++}`}
+          num={<TextWithFractions text={numMatch[1]} showMixedNumbers={showMixedNumbers} />}
+          den={<>{numMatch[2]}</>}
+        />
+      );
+    }
+    restLastEnd = m.index + fullMatch.length;
   }
-
-  if (lastEnd < rest.length) {
-    restParts.push(rest.substring(lastEnd));
+  if (restParts.length > 0) {
+    if (restLastEnd < rest.length) restParts.push(rest.substring(restLastEnd));
+  } else {
+    // Числовые дроби (-?\d+)/(\d+)
+    const numFrac = /(-?\d+)\/(\d+)/g;
+    restLastEnd = 0;
+    while ((m = numFrac.exec(rest)) !== null) {
+      if (m.index > restLastEnd) {
+        restParts.push(rest.substring(restLastEnd, m.index));
+      }
+      restParts.push(
+        <Fraction key={`f${key++}`} value={m[0]} className="mx-0.5" showMixedNumber={showMixedNumbers} />
+      );
+      restLastEnd = m.index + m[0].length;
+    }
+    if (restLastEnd < rest.length) {
+      restParts.push(rest.substring(restLastEnd));
+    }
   }
 
   if (result.length > 0) {
