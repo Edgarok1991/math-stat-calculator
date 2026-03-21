@@ -1,14 +1,5 @@
 @import "tailwindcss";
 
-/* Neue Montreal Thin 200 — Pangram Pangram (WOFF2 в public/fonts/, см. public/fonts/README.md) */
-@font-face {
-  font-family: 'Neue Montreal';
-  src: url('/fonts/NeueMontreal-Thin.woff2') format('woff2');
-  font-weight: 200;
-  font-style: normal;
-  font-display: swap;
-}
-
 /* MathCalc — Luxury Gold Edition (#1c1917 + золото + шампань) */
 :root {
   /* Золото */
@@ -67,14 +58,14 @@
   --midnight-card: var(--luxury-surface);
   --midnight-glass: var(--luxury-surface-glass);
 
-  /* Единый шрифт интерфейса */
-  --font-app: 'Neue Montreal', ui-sans-serif, system-ui, sans-serif;
+  /* Единый шрифт интерфейса — DM Sans (next/font, Google Fonts) */
+  --font-app: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: 'Neue Montreal', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace;
 }
 
@@ -119,7 +110,7 @@ body {
   min-height: 100vh;
 }
 
-/* Заголовки — Neue Montreal Thin 200 */
+/* Заголовки — DM Sans ExtraLight 200 */
 h1,
 h2,
 h3,

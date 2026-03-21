@@ -1,21 +1,10 @@
-# Neue Montreal (Pangram Pangram)
+# Шрифты MathCalc
 
-По всему приложению используется **Neue Montreal Thin (200)**.
+Приложение использует **DM Sans** из Google Fonts (через `next/font/google`).
 
-## Файл
+- Подключается на этапе сборки Next.js — шрифты загружаются автоматически
+- Не требует локальных файлов и не вызывает 404
+- Геометрический sans, визуально близок к Neue Montreal
+- Веса: 200 (ExtraLight), 400, 600, 700
 
-Положите в эту папку:
-
-- **`NeueMontreal-Thin.woff2`**
-
-(переименуйте файл из архива Pangram Pangram при необходимости.)
-
-## Где взять
-
-- [Neue Montreal — Pangram Pangram](https://pangrampangram.com/products/neue-montreal) — пробная версия или коммерческая лицензия.
-
-Пока файла нет в репозитории, браузер использует запасные шрифты из стека в `globals.css`.
-
-## Другие начертания
-
-Если понадобятся Medium / Bold для отдельных блоков, добавьте соответствующие WOFF2 и дополнительные блоки `@font-face` в `src/app/globals.css` с нужными `font-weight`.
+Настройка в `src/app/layout.tsx`.
