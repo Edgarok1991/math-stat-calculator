@@ -797,6 +797,45 @@ export class CalculusService {
         return this.integralResult.result;
       }
       
+      // === РАЦИОНАЛЬНЫЕ ФУНКЦИИ (poly)/x ===
+      // (4x^2+2)/x = 4x + 2/x → ∫ = 2x^2 + 2*log(abs(x))
+      const rationalOverXMatch = cleanExpr.match(new RegExp(`^\\(([^)]+)\\)\\/${variable}$`));
+      if (rationalOverXMatch) {
+        const num = rationalOverXMatch[1];
+        // Разбиваем по + и - на слагаемые: 4x^2, 2 или 4x^2, -2
+        const terms = num.split(/(?=[+-])/).map(t => t.trim()).filter(Boolean);
+        const results: string[] = [];
+        for (const term of terms) {
+          if (!term) continue;
+          const coeffX2 = term.match(new RegExp(`^(\\d+)\\*?${variable}\\^2$`));
+          const coeffX = term.match(new RegExp(`^(\\d+)\\*?${variable}$`));
+          const constTerm = term.match(/^([+-]?\d+)$/);
+          if (coeffX2) {
+            const a = parseInt(coeffX2[1]);
+            results.push(`${a}/2*${variable}^2`);
+          } else if (coeffX) {
+            const a = parseInt(coeffX[1]);
+            results.push(`${a}/2*${variable}^2`);
+          } else if (constTerm) {
+            const b = parseInt(constTerm[1], 10);
+            results.push(`${b}*log(abs(${variable}))`);
+          } else {
+            const coeffXn = term.match(new RegExp(`^(\\d+)\\*?${variable}\\^(\\d+)$`));
+            if (coeffXn) {
+              const a = parseInt(coeffXn[1]);
+              const n = parseInt(coeffXn[2]);
+              const newN = n - 1;
+              if (newN === 0) results.push(`${a}*log(abs(${variable}))`);
+              else results.push(`${a}/${newN}*${variable}^${newN}`);
+            }
+          }
+        }
+        if (results.length > 0) {
+          this.integralResult = { result: results.join('+') + ' + C', method: 'substitution', substitution: { u: 'разложение на слагаемые', du: `${variable}` } };
+          return this.integralResult.result;
+        }
+      }
+
       // === ТАБЛИЦА ИЗВЕСТНЫХ ИНТЕГРАЛОВ ===
       
       const integralTable: { [key: string]: string } = {
@@ -823,8 +862,8 @@ export class CalculusService {
         return this.integralResult.result;
       }
 
-      // ∫x^n
-      const powerMatch = cleanExpr.match(new RegExp(`${variable.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\^(\\d+)`));
+      // ∫x^n — только если ВСЁ выражение есть x^n
+      const powerMatch = cleanExpr.match(new RegExp(`^${variable.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\^(\\d+)$`));
       if (powerMatch) {
         const power = parseInt(powerMatch[1]);
         const newPower = power + 1;
@@ -832,8 +871,8 @@ export class CalculusService {
         return this.integralResult.result;
       }
 
-      // ∫a*x^n
-      const coeffPowerMatch = cleanExpr.match(new RegExp(`(\\d+)\\*${variable.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\^(\\d+)`));
+      // ∫a*x^n — только если ВСЁ выражение
+      const coeffPowerMatch = cleanExpr.match(new RegExp(`^(\\d+)\\*${variable.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\^(\\d+)$`));
       if (coeffPowerMatch) {
         const coeff = parseInt(coeffPowerMatch[1]);
         const power = parseInt(coeffPowerMatch[2]);
