@@ -14,6 +14,7 @@ import { MathExpression } from '@/components/UI/MathExpression';
 import { MathFormula, Frac, Pow, Sqrt, Sub } from '@/components/UI/MathFormula';
 import { IntegralSymbol } from '@/components/UI/IntegralSymbol';
 import { IntegralPreview } from '@/components/UI/IntegralPreview';
+import { MathTex } from '@/components/UI/MathTex';
 import { TextWithFractions } from '@/components/UI/TextWithFractions';
 import { FractionDisplay } from '@/components/UI';
 import { decimalToFraction } from '@/lib/decimalToFraction';
@@ -1265,8 +1266,12 @@ function CalculusPage() {
                       <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--foreground)' }}>
                         {integralType === 'indefinite' ? 'Первообразная:' : 'Численное значение:'}
                       </h3>
-                      <div className="text-2xl py-4" style={{ color: 'var(--foreground)' }}>
-                        <MathExpression expression={integralResult.result} />
+                      <div className="text-2xl py-4 [&_.mjx-math]:text-inherit" style={{ color: 'var(--foreground)' }}>
+                        {integralResult.latex ? (
+                          <MathTex latex={integralResult.latex} />
+                        ) : (
+                          <MathExpression expression={integralResult.result} />
+                        )}
                       </div>
                     </div>
 

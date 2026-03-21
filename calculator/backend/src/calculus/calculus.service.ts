@@ -652,8 +652,14 @@ export class CalculusService {
     return cleanExpr || '0';
   }
 
-  /** Результат интегрирования с метаданными о методе */
-  private integralResult: { result: string; method: 'table' | 'substitution' | 'by_parts'; substitution?: { u: string; du: string }; byParts?: { u: string; dv: string; du: string; v: string } } = { result: '', method: 'table' };
+  /** Результат интегрирования с метаданными для пошагового решения */
+  private integralResult: {
+    result: string;
+    method: 'table' | 'substitution' | 'by_parts';
+    substitution?: { u: string; du: string; dxExpr?: string; integrandU?: string; antiderivU?: string };
+    byParts?: { u: string; dv: string; du: string; v: string; uv?: string; remainingIntegral?: string };
+    tableRule?: string; // конкретная формула из таблицы
+  } = { result: '', method: 'table' };
 
   private simplifyIntegral(expression: string, variable: string): string {
     const normalizedExpr = this.normalizeExpression(expression);
@@ -703,7 +709,16 @@ export class CalculusService {
           }
           if (terms.length > 0) {
             const res = terms.join('+').replace(/\+\-/g, '-') + ' + C';
-            this.integralResult = { result: res, method: 'substitution', substitution: { u: 'разложение на слагаемые', du: variable } };
+            this.integralResult = {
+              result: res,
+              method: 'substitution',
+              substitution: {
+                u: `разложение (${numStr})/${variable} на слагаемые`,
+                du: variable,
+                integrandU: 'сумма степеней x и 1/x',
+                antiderivU: 'почленное интегрирование',
+              },
+            };
             return this.integralResult.result;
           }
           // Fallback: ручное разложение (ax^n+...+b)/x
@@ -752,18 +767,39 @@ export class CalculusService {
         const uExpr = b !== 0 ? `${a}*${variable}^2+${b}` : (a !== 1 ? `${a}*${variable}^2` : `${variable}^2`);
         const denom = 2 * a;
         const result = denom > 1 ? `exp(${uExpr})/${denom} + C` : `exp(${uExpr}) + C`;
-        this.integralResult = { result, method: 'substitution', substitution: { u: uExpr, du: `${2 * a}*${variable} d${variable}` } };
+        const coeff = denom > 1 ? `1/${denom}` : '1';
+        this.integralResult = {
+          result,
+          method: 'substitution',
+          substitution: {
+            u: uExpr,
+            du: `${2 * a}*${variable} d${variable}`,
+            dxExpr: `d${variable} = du/(${2 * a}*${variable})`,
+            integrandU: `${coeff}*exp(u)`,
+            antiderivU: `${coeff}*exp(u) + C`,
+          },
+        };
         return this.integralResult.result;
       }
 
-      // ∫x*exp(x^2)dx — подстановка u = x^2, du = 2x dx (частный случай a=1)
+      // ∫x*exp(x^2)dx — подстановка u = x^2, du = 2x dx
       const xExpX2Match = cleanExpr.match(new RegExp(`${variable}\\*exp\\(${variable}\\^2\\)`));
       if (xExpX2Match) {
-        this.integralResult = { result: `exp(${variable}^2)/2 + C`, method: 'substitution', substitution: { u: `${variable}^2`, du: `2${variable} d${variable}` } };
+        this.integralResult = {
+          result: `exp(${variable}^2)/2 + C`,
+          method: 'substitution',
+          substitution: {
+            u: `${variable}^2`,
+            du: `2${variable} d${variable}`,
+            dxExpr: `d${variable} = du/(2${variable})`,
+            integrandU: `(1/2)*exp(u)`,
+            antiderivU: `(1/2)*exp(u) + C`,
+          },
+        };
         return this.integralResult.result;
       }
       
-      // ∫k*x*exp(ax^2+b)dx при k=2a — подстановка u=ax^2+b, du=k*x dx (полная производная)
+      // ∫k*x*exp(ax^2+b)dx при k=2a — подстановка u=ax^2+b, du=k*x dx
       const kxExpAx2bMatch = cleanExpr.match(new RegExp(`(\\d+)\\*?${v}\\*exp\\((\\d*)\\*?${v}\\^2(\\+(\\d+))?\\)`));
       if (kxExpAx2bMatch) {
         const k = parseInt(kxExpAx2bMatch[1], 10);
@@ -771,7 +807,17 @@ export class CalculusService {
         const b = kxExpAx2bMatch[4] != null ? parseInt(kxExpAx2bMatch[4], 10) : 0;
         if (k === 2 * a) {
           const uExpr = b !== 0 ? `${a}*${variable}^2+${b}` : (a !== 1 ? `${a}*${variable}^2` : `${variable}^2`);
-          this.integralResult = { result: `exp(${uExpr}) + C`, method: 'substitution', substitution: { u: uExpr, du: `${k}*${variable} d${variable}` } };
+          this.integralResult = {
+            result: `exp(${uExpr}) + C`,
+            method: 'substitution',
+            substitution: {
+              u: uExpr,
+              du: `${k}*${variable} d${variable}`,
+              dxExpr: `d${variable} = du/(${k}*${variable})`,
+              integrandU: `exp(u)`,
+              antiderivU: `exp(u) + C`,
+            },
+          };
           return this.integralResult.result;
         }
       }
@@ -780,7 +826,17 @@ export class CalculusService {
       const oneOverLinearMatch = cleanExpr.match(new RegExp(`1/\\(${variable}\\+([^)]+)\\)`));
       if (oneOverLinearMatch) {
         const a = oneOverLinearMatch[1];
-        this.integralResult = { result: `log(abs(${variable}+${a})) + C`, method: 'substitution', substitution: { u: `${variable}+${a}`, du: `d${variable}` } };
+        this.integralResult = {
+          result: `log(abs(${variable}+${a})) + C`,
+          method: 'substitution',
+          substitution: {
+            u: `${variable}+${a}`,
+            du: `d${variable}`,
+            dxExpr: `d${variable} = du`,
+            integrandU: `1/u`,
+            antiderivU: `log(abs(u)) + C`,
+          },
+        };
         return this.integralResult.result;
       }
       
@@ -789,21 +845,51 @@ export class CalculusService {
       if (oneOverAxbMatch) {
         const a = parseInt(oneOverAxbMatch[1]);
         const b = oneOverAxbMatch[2];
-        this.integralResult = { result: `log(abs(${a}${variable}+${b}))/${a} + C`, method: 'substitution', substitution: { u: `${a}${variable}+${b}`, du: `${a} d${variable}` } };
+        this.integralResult = {
+          result: `log(abs(${a}${variable}+${b}))/${a} + C`,
+          method: 'substitution',
+          substitution: {
+            u: `${a}${variable}+${b}`,
+            du: `${a} d${variable}`,
+            dxExpr: `d${variable} = du/${a}`,
+            integrandU: `(1/${a})*(1/u)`,
+            antiderivU: `(1/${a})*log(abs(u)) + C`,
+          },
+        };
         return this.integralResult.result;
       }
       
       // ∫2x/(x^2+1)dx — подстановка u = x^2+1
       const twoXOverX2Plus1Match = cleanExpr.match(/2\*?x\*?\/\*?\(x\^2\+1\)/);
       if (twoXOverX2Plus1Match) {
-        this.integralResult = { result: `log(abs(${variable}^2+1)) + C`, method: 'substitution', substitution: { u: `${variable}^2+1`, du: `2${variable} d${variable}` } };
+        this.integralResult = {
+          result: `log(abs(${variable}^2+1)) + C`,
+          method: 'substitution',
+          substitution: {
+            u: `${variable}^2+1`,
+            du: `2${variable} d${variable}`,
+            dxExpr: `d${variable} = du/(2${variable})`,
+            integrandU: `1/u`,
+            antiderivU: `log(abs(u)) + C`,
+          },
+        };
         return this.integralResult.result;
       }
       
       // ∫x/(x^2+1)dx — подстановка u = x^2+1
       const xOverX2Plus1Match = cleanExpr.match(new RegExp(`${variable}/\\s*\\(${variable}\\^2\\+1\\)`));
       if (xOverX2Plus1Match) {
-        this.integralResult = { result: `log(abs(${variable}^2+1))/2 + C`, method: 'substitution', substitution: { u: `${variable}^2+1`, du: `2${variable} d${variable}` } };
+        this.integralResult = {
+          result: `log(abs(${variable}^2+1))/2 + C`,
+          method: 'substitution',
+          substitution: {
+            u: `${variable}^2+1`,
+            du: `2${variable} d${variable}`,
+            dxExpr: `d${variable} = du/(2${variable})`,
+            integrandU: `(1/2)*(1/u)`,
+            antiderivU: `(1/2)*log(abs(u)) + C`,
+          },
+        };
         return this.integralResult.result;
       }
       
@@ -863,7 +949,18 @@ export class CalculusService {
       
       // ∫x*exp(x)dx — по частям: u=x, dv=exp(x)dx
       if (cleanExpr === `${variable}*exp(${variable})` || cleanExpr === `exp(${variable})*${variable}`) {
-        this.integralResult = { result: `(${variable}-1)*exp(${variable}) + C`, method: 'by_parts', byParts: { u: variable, dv: `exp(${variable}) d${variable}`, du: `d${variable}`, v: `exp(${variable})` } };
+        this.integralResult = {
+          result: `(${variable}-1)*exp(${variable}) + C`,
+          method: 'by_parts',
+          byParts: {
+            u: variable,
+            dv: `exp(${variable}) d${variable}`,
+            du: `d${variable}`,
+            v: `exp(${variable})`,
+            uv: `${variable}*exp(${variable})`,
+            remainingIntegral: `∫exp(${variable}) d${variable} = exp(${variable})`,
+          },
+        };
         return this.integralResult.result;
       }
       
@@ -952,7 +1049,12 @@ export class CalculusService {
       };
 
       if (integralTable[cleanExpr]) {
-        this.integralResult = { result: integralTable[cleanExpr] + ' + C', method: 'table' };
+        const formula = integralTable[cleanExpr];
+        this.integralResult = {
+          result: formula + ' + C',
+          method: 'table',
+          tableRule: `формула ∫${cleanExpr} dx = ${formula}`,
+        };
         return this.integralResult.result;
       }
 
@@ -962,22 +1064,30 @@ export class CalculusService {
         return this.integralResult.result;
       }
 
-      // ∫x^n — только если ВСЁ выражение есть x^n
+      // ∫x^n — правило степени
       const powerMatch = cleanExpr.match(new RegExp(`^${variable.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\^(\\d+)$`));
       if (powerMatch) {
         const power = parseInt(powerMatch[1]);
         const newPower = power + 1;
-        this.integralResult = { result: `1/${newPower}*${variable}^${newPower} + C`, method: 'table' };
+        this.integralResult = {
+          result: `1/${newPower}*${variable}^${newPower} + C`,
+          method: 'table',
+          tableRule: `∫x^n dx = x^(n+1)/(n+1) при n = ${power}`,
+        };
         return this.integralResult.result;
       }
 
-      // ∫a*x^n — только если ВСЁ выражение
+      // ∫a*x^n
       const coeffPowerMatch = cleanExpr.match(new RegExp(`^(\\d+)\\*${variable.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\^(\\d+)$`));
       if (coeffPowerMatch) {
         const coeff = parseInt(coeffPowerMatch[1]);
         const power = parseInt(coeffPowerMatch[2]);
         const newPower = power + 1;
-        this.integralResult = { result: `${coeff}/${newPower}*${variable}^${newPower} + C`, method: 'table' };
+        this.integralResult = {
+          result: `${coeff}/${newPower}*${variable}^${newPower} + C`,
+          method: 'table',
+          tableRule: `∫a·x^n dx = a·x^(n+1)/(n+1) при a = ${coeff}, n = ${power}`,
+        };
         return this.integralResult.result;
       }
 
@@ -1020,38 +1130,49 @@ export class CalculusService {
     const result = this.simplifyIntegral(expression, variable);
     const steps: string[] = [];
 
-    // Шаг 1: Исходный интеграл (как на integral-calculator.com)
     steps.push(`Шаг 1. Записываем интеграл: ∫(${expression}) d${variable}`);
 
     if (this.integralResult.method === 'substitution' && this.integralResult.substitution) {
-      const { u, du } = this.integralResult.substitution;
-      steps.push(`Шаг 2. Применяем метод замены переменной (подстановка):`);
-      steps.push(`   Пусть u = ${u}`);
-      steps.push(`   Тогда du = ${du}`);
-      steps.push(`Шаг 3. Выражаем d${variable} через du и подставляем в интеграл`);
-      steps.push(`Шаг 4. Интегрируем по новой переменной u`);
-      steps.push(`Шаг 5. Выполняем обратную подстановку: заменяем u на ${u}`);
-      steps.push(`Результат: ${result}`);
+      const sub = this.integralResult.substitution;
+      steps.push(`Шаг 2. Применяем подстановку (метод замены переменной):`);
+      steps.push(`   Положим u = ${sub.u}`);
+      steps.push(`Шаг 3. Вычисляем дифференциал: du = ${sub.du}`);
+      if (sub.dxExpr) {
+        steps.push(`   Следовательно ${sub.dxExpr}`);
+      }
+      if (sub.integrandU && sub.antiderivU) {
+        steps.push(`Шаг 4. Подставляем в интеграл. Интеграл принимает вид: ∫ ${sub.integrandU} du`);
+        steps.push(`Шаг 5. Вычисляем интеграл по u: ∫ ${sub.integrandU} du = ${sub.antiderivU}`);
+        steps.push(`Шаг 6. Обратная подстановка u = ${sub.u}:`);
+      } else {
+        steps.push(`Шаг 4. Подставляем в интеграл и интегрируем по новой переменной u`);
+        steps.push(`Шаг 5. Обратная подстановка u = ${sub.u}:`);
+      }
+      steps.push(`   ${result}`);
     } else if (this.integralResult.method === 'by_parts' && this.integralResult.byParts) {
-      const { u, dv, du, v } = this.integralResult.byParts;
-      steps.push(`Шаг 2. Интегрирование по частям: ∫u·dv = u·v − ∫v·du`);
-      steps.push(`   Выбираем: u = ${u}, dv = ${dv}`);
-      steps.push(`Шаг 3. Вычисляем: du = ${du}, v = ${v}`);
-      steps.push(`Шаг 4. Подставляем в формулу: ∫(${expression}) d${variable} = u·v − ∫v·du`);
-      steps.push(`Шаг 5. Вычисляем оставшийся интеграл ∫v·du`);
-      steps.push(`Шаг 6. Упрощаем и получаем первообразную`);
-      steps.push(`Результат: ${result}`);
-    } else if (this.integralResult.method === 'table') {
-      steps.push(`Шаг 2. Применяем таблицу интегралов и правила интегрирования:`);
-      steps.push(`   Таблица: ∫x^n dx = x^(n+1)/(n+1), ∫sin(x)dx = -cos(x), ∫cos(x)dx = sin(x)`);
-      steps.push(`   Правила: ∫(f+g)dx = ∫f dx + ∫g dx, ∫(c·f)dx = c·∫f dx`);
-      steps.push(`Результат: ${result}`);
+      const bp = this.integralResult.byParts;
+      steps.push(`Шаг 2. Применяем интегрирование по частям: ∫u·dv = u·v − ∫v·du`);
+      steps.push(`Шаг 3. Выбираем u и dv:`);
+      steps.push(`   u = ${bp.u}  ⇒  du = ${bp.du}`);
+      steps.push(`   dv = ${bp.dv}  ⇒  v = ${bp.v}`);
+      steps.push(`Шаг 4. Подставляем в формулу:`);
+      steps.push(`   ∫(${expression}) d${variable} = u·v − ∫v·du`);
+      if (bp.uv) {
+        steps.push(`   = ${bp.uv} − ∫${bp.v}·${bp.du.replace(/ d\w+$/, '')} d${variable}`);
+      }
+      if (bp.remainingIntegral) {
+        steps.push(`Шаг 5. Вычисляем оставшийся интеграл: ${bp.remainingIntegral}`);
+      }
+      steps.push(`Шаг 6. Упрощаем:`);
+      steps.push(`   ${result}`);
     } else {
-      steps.push(`Шаг 2. Применяем таблицу основных интегралов:`);
-      steps.push(`   • ∫(x^n)dx = x^(n+1)/(n+1) + C`);
+      const rule = this.integralResult.tableRule || 'таблица основных интегралов';
+      steps.push(`Шаг 2. Применяем ${rule}:`);
+      steps.push(`   • ∫x^n dx = x^(n+1)/(n+1) + C`);
       steps.push(`   • ∫sin(x)dx = -cos(x) + C, ∫cos(x)dx = sin(x) + C`);
-      steps.push(`   • ∫exp(x)dx = exp(x) + C, ∫(1/x)dx = ln|x| + C`);
-      steps.push(`Результат: ${result}`);
+      steps.push(`   • ∫e^x dx = e^x + C, ∫(1/x)dx = ln|x| + C`);
+      steps.push(`Шаг 3. Получаем:`);
+      steps.push(`   ${result}`);
     }
 
     return steps;
@@ -1079,11 +1200,17 @@ export class CalculusService {
   }
 
   private toLatex(expression: string): string {
-    // Простое преобразование в LaTeX
-    return expression
-      .replace(/\^/g, '^')
-      .replace(/\*/g, ' \\cdot ')
-      .replace(/\//g, ' \\div ');
+    let s = expression.replace(/ln\(/g, 'log(').replace(/\s/g, '');
+    // exp(expr) → e^{expr}
+    s = s.replace(/exp\(([^)]+)\)/g, (_, inner) => `e^{${inner.replace(/\*/g, '').trim()}}`);
+    s = s.replace(/log\(abs\(([^)]+)\)\)/g, (_, x) => `\\ln|${x}|`);
+    s = s.replace(/\*/g, ' \\cdot ');
+    // expr/num + C → \frac{expr}{num} + C
+    const fracMatch = s.match(/^(.+)\/(\d+)\s*\+\s*C$/);
+    if (fracMatch) {
+      return `\\frac{${fracMatch[1].trim()}}{${fracMatch[2]}} + C`;
+    }
+    return s.replace(/\//g, ' \\div ');
   }
 }
 
