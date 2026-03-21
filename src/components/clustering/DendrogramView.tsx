@@ -2,7 +2,6 @@
 
 import React, { useEffect, useRef } from 'react';
 import { DendrogramNode } from '@/types/calculator';
-import { decimalToFraction } from '@/lib/decimalToFraction';
 
 interface DendrogramViewProps {
   data: DendrogramNode;
@@ -122,7 +121,7 @@ export const DendrogramView: React.FC<DendrogramViewProps> = ({
       if (node.distance !== undefined) {
         ctx.fillStyle = '#dc2626';
         ctx.font = 'bold 11px sans-serif';
-        ctx.fillText(decimalToFraction(node.distance), nodeX + 5, nodeY - 5);
+        ctx.fillText(Number(node.distance).toFixed(2), nodeX + 5, nodeY - 5);
       }
 
       return nodeX;
@@ -159,7 +158,7 @@ export const DendrogramView: React.FC<DendrogramViewProps> = ({
       ctx.fillStyle = '#6b7280';
       ctx.font = '11px sans-serif';
       ctx.textAlign = 'right';
-      ctx.fillText(decimalToFraction(tickValue), margin.left - 10, tickY + 4);
+      ctx.fillText(Number(tickValue).toFixed(2), margin.left - 10, tickY + 4);
     }
     ctx.textAlign = 'left';
 

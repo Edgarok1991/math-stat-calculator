@@ -3,7 +3,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ClusteringStep } from '@/types/calculator';
-import { FractionDisplay } from '@/components/UI';
 
 interface ClusteringStepsViewProps {
   steps: ClusteringStep[];
@@ -47,7 +46,7 @@ export const ClusteringStepsView: React.FC<ClusteringStepsViewProps> = ({ steps,
             <div className="mb-4 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
               <p className="text-sm font-medium ">
                 <span className="font-bold text-yellow-800">Минимальное расстояние:</span>{' '}
-                P<sub>{step.minDistanceIndices[0] + 1},{step.minDistanceIndices[1] + 1}</sub> = <FractionDisplay value={step.minDistance} />
+                P<sub>{step.minDistanceIndices[0] + 1},{step.minDistanceIndices[1] + 1}</sub> = {step.minDistance.toFixed(2)}
               </p>
             </div>
           )}
@@ -107,7 +106,7 @@ export const ClusteringStepsView: React.FC<ClusteringStepsViewProps> = ({ steps,
                                 : ''
                             }`}
                           >
-                            {cell === 0 ? '0' : <FractionDisplay value={cell} />}
+                            {cell === 0 ? '0' : Number(cell).toFixed(2)}
                           </td>
                         );
                       })}
