@@ -321,16 +321,16 @@ function GraphView({ result, input, type }: { result: any; input: any; type: str
 }
 
 function ScientificView({ result, input, type }: { result: any; input: any; type?: string }) {
-  const expr = input?.expression ?? '—';
-  const value = result?.value ?? '—';
   if (type === 'engineering') {
     return (
       <div className="space-y-2 text-sm">
         <p><strong>Операция:</strong> {input?.a ?? '—'} {input?.op ?? '—'} {input?.b ?? '—'}</p>
-        <p><strong>DEC:</strong> {value} <strong>HEX:</strong> {result?.hex ?? '—'} <strong>BIN:</strong> {result?.bin ?? '—'}</p>
+        <p><strong>DEC:</strong> {result?.value ?? '—'} <strong>HEX:</strong> {result?.hex ?? '—'} <strong>BIN:</strong> {result?.bin ?? '—'}</p>
       </div>
     );
   }
+  const expr = input?.expression ?? '—';
+  const value = result?.value ?? result?.derivative ?? result?.simplified ?? result?.result ?? '—';
   return (
     <div className="space-y-2 text-sm">
       <p><strong>Выражение:</strong> {expr}</p>

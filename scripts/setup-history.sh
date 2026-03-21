@@ -38,6 +38,11 @@ DATABASE_URL="postgresql://postgres:postgres@localhost:5434/mathcalc?schema=publ
 DIRECT_URL="postgresql://postgres:postgres@localhost:5434/mathcalc"
 JWT_SECRET="mathcalc-dev-secret-change-in-production"
 PORT=3001
+
+# Photo Math: Mathpix OCR для лучшего распознавания формул (опционально)
+# Получить ключи: https://mathpix.com → Sign up → API
+# MATHPIX_APP_ID=your_app_id
+# MATHPIX_APP_KEY=your_app_key
 ENVFILE
   echo "   Создан $BACKEND_ENV"
 else

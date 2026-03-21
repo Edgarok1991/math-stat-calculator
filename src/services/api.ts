@@ -79,6 +79,13 @@ class ApiService {
     });
   }
 
+  async photomathOcr(imageBase64: string): Promise<{ latex?: string; text?: string; error?: string }> {
+    return this.request('/photomath/ocr', {
+      method: 'POST',
+      body: JSON.stringify({ image: imageBase64 }),
+    });
+  }
+
   // Сохранение в историю (требует авторизации)
   async saveToHistory(
     token: string,

@@ -11,6 +11,7 @@ import { AnovaModule } from './anova/anova.module';
 import { MatricesModule } from './matrices/matrices.module';
 import { CalculusModule } from './calculus/calculus.module';
 import { StatisticsModule } from './statistics/statistics.module';
+import { PhotomathModule } from './photomath/photomath.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { StatisticsModule } from './statistics/statistics.module';
     MatricesModule,
     CalculusModule,
     StatisticsModule,
+    PhotomathModule,
   ],
   controllers: [AppController],
   providers: [AppService],
