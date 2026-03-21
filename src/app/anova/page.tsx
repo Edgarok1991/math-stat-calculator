@@ -10,10 +10,8 @@ import { AnovaData, AnovaResult, AnovaStep } from '@/types/calculator';
 import { calculatorStore } from '@/stores/CalculatorStore';
 import { observer } from 'mobx-react-lite';
 import { StepGuide } from '@/components/UI/StepGuide';
-import { FractionDisplay } from '@/components/UI';
 import { MathExpression } from '@/components/UI/MathExpression';
 import { calculateAnovaClient } from '@/lib/anovaClient';
-import { decimalToFraction } from '@/lib/decimalToFraction';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 
@@ -129,7 +127,7 @@ function AnovaPage() {
   };
 
   const formatVal = (val: number, decimals?: number) =>
-    decimals != null ? val.toFixed(decimals) : decimalToFraction(val, decimalsPreference);
+    val.toFixed(decimals ?? decimalsPreference);
 
   const getEffectSizeLabel = (eta: number) => {
     if (eta < 0.01) return 'пренебрежимый';
@@ -270,7 +268,7 @@ function AnovaPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="p-4 rounded-lg border-2" style={{ borderColor: 'var(--border)', background: 'var(--background-tertiary)' }}>
                     <h4 className="font-semibold mb-2" style={{ color: 'var(--foreground)' }}>Эта-квадрат (η²)</h4>
-                    <p className="text-2xl font-bold font-mono mb-1"><FractionDisplay value={result.etaSquared} decimals={4} /></p>
+                    <p className="text-2xl font-bold font-mono mb-1">{result.etaSquared.toFixed(decimalsPreference)}</p>
                     <p className="text-sm" style={{ color: 'var(--foreground-secondary)' }}>
                       Доля дисперсии, объясняемая группой. Размер эффекта: <strong>{getEffectSizeLabel(result.etaSquared)}</strong>
                     </p>
@@ -278,7 +276,7 @@ function AnovaPage() {
                   {result.omegaSquared != null && (
                     <div className="p-4 rounded-lg border-2" style={{ borderColor: 'var(--border)', background: 'var(--background-tertiary)' }}>
                       <h4 className="font-semibold mb-2" style={{ color: 'var(--foreground)' }}>Омега-квадрат (ω²)</h4>
-                      <p className="text-2xl font-bold font-mono mb-1"><FractionDisplay value={result.omegaSquared} decimals={4} /></p>
+                      <p className="text-2xl font-bold font-mono mb-1">{result.omegaSquared.toFixed(decimalsPreference)}</p>
                       <p className="text-sm" style={{ color: 'var(--foreground-secondary)' }}>
                         Смещённая оценка доли дисперсии в генеральной совокупности
                       </p>
@@ -356,9 +354,9 @@ function AnovaPage() {
                         <tr key={i} style={{ borderTop: '1px solid var(--border)' }}>
                           <td className="px-4 py-2 font-medium">Группа {i + 1}</td>
                           <td className="px-4 py-2 text-right font-mono">{result.groupSizes?.[i] ?? '—'}</td>
-                          <td className="px-4 py-2 text-right font-mono"><FractionDisplay value={mean} className="inline" /></td>
-                          <td className="px-4 py-2 text-right font-mono">{result.groupStdDevs?.[i] != null ? <FractionDisplay value={result.groupStdDevs![i]} className="inline" /> : '—'}</td>
-                          <td className="px-4 py-2 text-right font-mono"><FractionDisplay value={result.groupVariances[i]} className="inline" /></td>
+                          <td className="px-4 py-2 text-right font-mono">{mean.toFixed(decimalsPreference)}</td>
+                          <td className="px-4 py-2 text-right font-mono">{result.groupStdDevs?.[i] != null ? result.groupStdDevs[i].toFixed(decimalsPreference) : '—'}</td>
+                          <td className="px-4 py-2 text-right font-mono">{result.groupVariances[i].toFixed(decimalsPreference)}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -381,7 +379,7 @@ function AnovaPage() {
                         </div>
                         {step.formula && <p className="text-sm font-mono mb-1"><MathExpression expression={step.formula} className="text-sm" /></p>}
                         <p className="text-sm" style={{ color: 'var(--foreground-secondary)' }}>{step.description}</p>
-                        {step.value != null && <p className="mt-1 font-mono"><FractionDisplay value={parseFloat(step.value)} /></p>}
+                        {step.value != null && <p className="mt-1 font-mono">{parseFloat(step.value).toFixed(decimalsPreference)}</p>}
                       </div>
                     ))}
                   </div>
