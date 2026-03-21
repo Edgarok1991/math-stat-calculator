@@ -14,7 +14,8 @@ export interface IntegralStepStructured {
   };
   expression?: string;
   expressionAfter?: string;
-  subSteps?: Array<{ rule?: { name: string; formula?: string }; expression?: string }>;
+  /** Вложенные шаги (полная структура или краткая) */
+  subSteps?: IntegralStepStructured[];
 }
 
 interface IntegralMathDFStepsProps {
@@ -36,8 +37,16 @@ export function IntegralMathDFSteps({ steps }: IntegralMathDFStepsProps) {
   );
 }
 
-function MathDFStepBlock({ step, index }: { step: IntegralStepStructured; index: number }) {
-  const [detailsOpen, setDetailsOpen] = useState(index === 0);
+function MathDFStepBlock({
+  step,
+  index,
+  nested = false,
+}: {
+  step: IntegralStepStructured;
+  index: number;
+  nested?: boolean;
+}) {
+  const [detailsOpen, setDetailsOpen] = useState(nested ? true : index === 0);
 
   const hasRuleCard = Boolean(step.rule?.name);
   const subs = step.rule?.substitutions ?? [];
@@ -55,7 +64,7 @@ function MathDFStepBlock({ step, index }: { step: IntegralStepStructured; index:
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.06 }}
-      className="flex flex-col items-center gap-4 w-full"
+      className={`flex flex-col items-center gap-4 w-full ${nested ? 'items-stretch' : ''}`}
     >
       {step.actionLabel && (
         <span
@@ -163,30 +172,34 @@ function MathDFStepBlock({ step, index }: { step: IntegralStepStructured; index:
       )}
 
       {step.subSteps && step.subSteps.length > 0 && (
-        <div className="w-full pl-3 sm:pl-6 border-l-2 space-y-4" style={{ borderColor: 'var(--gold)' }}>
-          {step.subSteps.map((sub, j) => (
-            <div
-              key={j}
-              className="p-4 rounded-lg border"
-              style={{ borderColor: 'var(--border)', background: 'rgba(212, 175, 55, 0.05)' }}
-            >
-              {sub.rule?.name && (
-                <p className="text-sm font-semibold mb-2" style={{ color: 'var(--gold)' }}>
-                  {sub.rule.name}
-                </p>
-              )}
-              {sub.rule?.formula && (
-                <div className="mb-2 text-sm" style={{ color: 'var(--foreground-secondary)' }}>
-                  <MathExpression expression={sub.rule.formula} />
-                </div>
-              )}
-              {sub.expression && (
-                <div className="text-center sm:text-left">
-                  <MathExpression expression={sub.expression} />
-                </div>
-              )}
-            </div>
-          ))}
+        <div className="w-full pl-3 sm:pl-6 border-l-2 space-y-6" style={{ borderColor: 'var(--gold)' }}>
+          {step.subSteps.map((sub, j) =>
+            sub.actionLabel || sub.expressionAfter || sub.rule?.name ? (
+              <MathDFStepBlock key={j} step={sub} index={j} nested />
+            ) : (
+              <div
+                key={j}
+                className="p-4 rounded-lg border"
+                style={{ borderColor: 'var(--border)', background: 'rgba(212, 175, 55, 0.05)' }}
+              >
+                {sub.rule?.name && (
+                  <p className="text-sm font-semibold mb-2" style={{ color: 'var(--gold)' }}>
+                    {sub.rule.name}
+                  </p>
+                )}
+                {sub.rule?.formula && (
+                  <div className="mb-2 text-sm" style={{ color: 'var(--foreground-secondary)' }}>
+                    <MathExpression expression={sub.rule.formula!} />
+                  </div>
+                )}
+                {sub.expression && (
+                  <div className="text-center sm:text-left">
+                    <MathExpression expression={sub.expression} />
+                  </div>
+                )}
+              </div>
+            )
+          )}
         </div>
       )}
     </motion.div>

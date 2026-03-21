@@ -41,8 +41,14 @@ export const MathExpression: React.FC<MathExpressionProps> = ({ expression, clas
   formatted = formatted.replace(/abs\(([^)]+)\)/g, '|$1|');
   formatted = formatted.replace(/log\(/g, 'ln(');
 
-  // exp(expr) → e^expr
-  formatted = formatted.replace(/exp\(([^)]+)\)/g, (_, inner) => `e^(${inner})`);
+  // exp(expr) → e^x (одна переменная без скобок — без маркеров \uFFFF и «квадратиков»)
+  formatted = formatted.replace(/exp\(([^)]+)\)/g, (_, inner) => {
+    const t = inner.replace(/\s/g, '');
+    if (/^[a-z]$/i.test(t)) return `e^${t.toLowerCase()}`;
+    return `e^(${inner})`;
+  });
+  // e^(x) → e^x для одной буквы (упрощение отображения)
+  formatted = formatted.replace(/e\^\(([a-z])\)/gi, (_, v) => `e^${v.toLowerCase()}`);
 
   // Степени ^n
   formatted = formatted.replace(/\^(\d+)/g, (_, p) => toSup(p));

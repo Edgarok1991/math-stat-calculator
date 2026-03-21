@@ -763,6 +763,61 @@ export class CalculusService {
         return steps;
       }
 
+      // ∫ x² e^x dx — дважды по частям (как MathDF)
+      if (bp.u === `${v}^2` && bp.dv?.includes(`exp(${v})`)) {
+        steps.push({
+          actionLabel: 'Вычислим',
+          expression: `∫ ${v}^2*e^${v} d${v}`,
+          rule: {
+            name: 'Интегрирование по частям (1-й раз)',
+            formula: '∫ u·dv = u·v − ∫ v·du',
+            substitutions: [
+              { symbol: 'u', value: `${v}^2` },
+              { symbol: 'du', value: `2*${v} d${v}` },
+              { symbol: 'dv', value: `e^${v} d${v}` },
+              { symbol: 'v', value: `e^${v}` },
+            ],
+          },
+          expressionAfter: `${v}^2*e^${v} − ∫ 2*${v}*e^${v} d${v}`,
+        });
+        steps.push({
+          actionLabel: 'Упростите',
+          expression: `∫ 2*${v}*e^${v} d${v} = 2*∫ ${v}*e^${v} d${v}`,
+        });
+        steps.push({
+          actionLabel: 'Вычислим',
+          expression: `∫ ${v}*e^${v} d${v}`,
+          rule: {
+            name: 'Интегрирование по частям (2-й раз)',
+            formula: '∫ u·dv = u·v − ∫ v·du',
+            substitutions: [
+              { symbol: 'u', value: `${v}` },
+              { symbol: 'du', value: `d${v}` },
+              { symbol: 'dv', value: `e^${v} d${v}` },
+              { symbol: 'v', value: `e^${v}` },
+            ],
+          },
+          expressionAfter: `${v}*e^${v} − ∫ e^${v} d${v} = ${v}*e^${v} − e^${v}`,
+        });
+        steps.push({
+          actionLabel: 'Упростите',
+          expression: `∫ e^${v} d${v} = e^${v};  значит  ∫ ${v}*e^${v} d${v} = (${v} − 1)*e^${v}`,
+        });
+        steps.push({
+          actionLabel: 'Подставим',
+          expression: `2*∫ ${v}*e^${v} d${v} = 2*(${v} − 1)*e^${v} = 2*${v}*e^${v} − 2*e^${v}`,
+        });
+        steps.push({
+          actionLabel: 'Соберём ответ',
+          expression: `${v}^2*e^${v} − (2*${v}*e^${v} − 2*e^${v}) = (${v}^2 − 2*${v} + 2)*e^${v}`,
+        });
+        steps.push({
+          actionLabel: 'Интеграл окончен',
+          expression: result,
+        });
+        return steps;
+      }
+
       // ∫(ax²+b)*log(x)dx — полная иерархия как на MathDF
       const ax2bMatch = this.integralResult.byParts.dv?.match(new RegExp(`\\((\\d+)\\*?${v}\\^2\\+(\\d+)\\)`));
       if (ax2bMatch) {
@@ -1477,6 +1532,19 @@ export class CalculusService {
       steps.push(`   ${result}`);
     } else if (this.integralResult.method === 'by_parts' && this.integralResult.byParts) {
       const bp = this.integralResult.byParts;
+      const xv = variable;
+      // ∫ x² e^x — два раза по частям (текстовые шаги для истории / без UI)
+      if (bp.u === `${xv}^2` && bp.dv?.includes(`exp(${xv})`)) {
+        steps.push(`Шаг 2. Первое интегрирование по частям: u = ${xv}^2, dv = e^${xv} d${xv}`);
+        steps.push(`   du = 2*${xv} d${xv}, v = e^${xv}`);
+        steps.push(`Шаг 3. Получаем: ${xv}^2·e^${xv} − ∫ 2*${xv}·e^${xv} d${xv}`);
+        steps.push(`Шаг 4. Второе интегрирование по частям для ∫${xv}·e^${xv} d${xv}: u = ${xv}, dv = e^${xv} d${xv}`);
+        steps.push(`   du = d${xv}, v = e^${xv}  ⇒  ∫${xv}·e^${xv} d${xv} = (${xv}−1)·e^${xv}`);
+        steps.push(`Шаг 5. Тогда ∫ 2*${xv}·e^${xv} d${xv} = 2*(${xv}−1)·e^${xv} = 2*${xv}·e^${xv} − 2·e^${xv}`);
+        steps.push(`Шаг 6. Итого: ${xv}^2·e^${xv} − 2*${xv}·e^${xv} + 2·e^${xv} = (${xv}^2 − 2*${xv} + 2)·e^${xv} + C`);
+        steps.push(`   ${result}`);
+        return steps;
+      }
       steps.push(`Шаг 2. Применяем интегрирование по частям: ∫u·dv = u·v − ∫v·du`);
       steps.push(`Шаг 3. Выбираем u и dv:`);
       steps.push(`   u = ${bp.u}  ⇒  du = ${bp.du}`);

@@ -2,6 +2,19 @@ import { API_URL } from '@/config';
 
 const API_BASE_URL = API_URL;
 
+/** Ответ бэкенда для пошагового интеграла (рекурсивные subSteps) */
+export type IntegralStepStructuredApi = {
+  actionLabel?: string;
+  rule?: {
+    name: string;
+    formula?: string;
+    substitutions?: { symbol: string; value: string }[];
+  };
+  expression?: string;
+  expressionAfter?: string;
+  subSteps?: IntegralStepStructuredApi[];
+};
+
 class ApiService {
   private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
     const url = `${API_BASE_URL}${endpoint}`;
@@ -258,7 +271,7 @@ class ApiService {
     });
   }
 
-  // Интеграл
+  // Интеграл (вложенные subSteps совпадают с IntegralStepStructured на фронте)
   async calculateIntegral(data: {
     expression: string;
     variable: string;
@@ -269,13 +282,7 @@ class ApiService {
     result: string;
     steps: string[];
     latex: string;
-    stepsStructured?: Array<{
-      actionLabel?: string;
-      rule?: { name: string; formula?: string; substitutions?: { symbol: string; value: string }[] };
-      expression?: string;
-      expressionAfter?: string;
-      subSteps?: Array<{ rule?: { name: string; formula?: string }; expression?: string }>;
-    }>;
+    stepsStructured?: IntegralStepStructuredApi[];
   }> {
     // Преобразуем формат для backend
     const payload: any = {
@@ -298,13 +305,7 @@ class ApiService {
       result: string;
       steps: string[];
       latex: string;
-      stepsStructured?: Array<{
-        actionLabel?: string;
-        rule?: { name: string; formula?: string; substitutions?: { symbol: string; value: string }[] };
-        expression?: string;
-        expressionAfter?: string;
-        subSteps?: Array<{ rule?: { name: string; formula?: string }; expression?: string }>;
-      }>;
+      stepsStructured?: IntegralStepStructuredApi[];
     }>('/calculus/integral', {
       method: 'POST',
       body: JSON.stringify(payload),
