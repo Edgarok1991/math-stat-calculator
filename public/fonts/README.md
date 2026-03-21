@@ -1,10 +1,9 @@
 # Шрифты MathCalc
 
-Приложение использует **DM Sans** из Google Fonts (через `next/font/google`).
+Приложение использует **Raleway Light 300** из [Google Fonts](https://fonts.google.com/specimen/Raleway) (через `next/font/google`).
 
 - Подключается на этапе сборки Next.js — шрифты загружаются автоматически
-- Не требует локальных файлов и не вызывает 404
-- Геометрический sans, визуально близок к Neue Montreal
-- Веса: 200 (ExtraLight), 400, 600, 700
+- Поддержка кириллицы (subsets: latin, latin-ext, cyrillic)
+- Веса: 300 (Light), 400, 600, 700
 
 Настройка в `src/app/layout.tsx`.

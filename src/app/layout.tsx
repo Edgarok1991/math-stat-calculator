@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { DM_Sans } from 'next/font/google';
+import { Raleway } from 'next/font/google';
 import './globals.css';
 import Header from '@/components/Layout/Header';
 import Footer from '@/components/Layout/Footer';
@@ -7,12 +7,12 @@ import { MobXProvider } from '@/providers/MobXProvider';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import { AuthProvider } from '@/contexts/AuthContext';
 
-/** Типографика: DM Sans (Google Fonts, геометрический sans, похож на Neue Montreal) */
-const dmSans = DM_Sans({
-  weight: ['200', '400', '600', '700'],
-  subsets: ['latin', 'latin-ext'],
+/** Типографика: Raleway Light 300 (Google Fonts) */
+const raleway = Raleway({
+  weight: ['300', '400', '600', '700'],
+  subsets: ['latin', 'latin-ext', 'cyrillic'],
   display: 'swap',
-  variable: '--font-dm-sans',
+  variable: '--font-raleway',
 });
 
 export const metadata: Metadata = {
@@ -27,7 +27,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ru" className={`${dmSans.variable} ${dmSans.className}`}>
+    <html lang="ru" className={`${raleway.variable} ${raleway.className}`}>
       <body>
         <script id="mathjax-config" type="text/x-mathjax-config">
           {`

@@ -58,14 +58,14 @@
   --midnight-card: var(--luxury-surface);
   --midnight-glass: var(--luxury-surface-glass);
 
-  /* Единый шрифт интерфейса — DM Sans (next/font, Google Fonts) */
-  --font-app: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+  /* Единый шрифт интерфейса — Raleway Light 300 (next/font, Google Fonts) */
+  --font-app: var(--font-raleway), ui-sans-serif, system-ui, sans-serif;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-raleway), ui-sans-serif, system-ui, sans-serif;
   --font-mono: ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace;
 }
 
@@ -96,21 +96,21 @@
 
 html {
   font-family: var(--font-app);
-  font-weight: 200;
+  font-weight: 300;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: inherit;
-  font-weight: 200;
+  font-weight: 300;
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
 }
 
-/* Заголовки — DM Sans ExtraLight 200 */
+/* Заголовки — Raleway Light 300 */
 h1,
 h2,
 h3,
@@ -119,7 +119,7 @@ h5,
 h6,
 .font-display {
   font-family: var(--font-app);
-  font-weight: 200;
+  font-weight: 300;
   letter-spacing: 0.02em;
 }
 
