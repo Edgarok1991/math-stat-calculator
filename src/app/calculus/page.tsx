@@ -13,6 +13,7 @@ import { StepGuide } from '@/components/UI/StepGuide';
 import { MathExpression } from '@/components/UI/MathExpression';
 import { MathFormula, Frac, Pow, Sqrt, Sub } from '@/components/UI/MathFormula';
 import { IntegralSymbol } from '@/components/UI/IntegralSymbol';
+import { IntegralPreview } from '@/components/UI/IntegralPreview';
 import { TextWithFractions } from '@/components/UI/TextWithFractions';
 import { FractionDisplay } from '@/components/UI';
 import { decimalToFraction } from '@/lib/decimalToFraction';
@@ -104,6 +105,9 @@ function CalculusPage() {
 
   const watchedDerivativeExpr = derivativeForm.watch('expression');
   const watchedIntegralExpr = integralForm.watch('expression');
+  const watchedIntegralVariable = integralForm.watch('variable');
+  const watchedLowerBound = integralForm.watch('lowerBound');
+  const watchedUpperBound = integralForm.watch('upperBound');
 
   const onSubmitDerivative = async (data: DerivativeFormData) => {
     setIsLoading(true);
@@ -1105,12 +1109,15 @@ function CalculusPage() {
                         style={{ borderColor: 'var(--border)' }}
                         placeholder="x^2"
                       />
-                      {watchedIntegralExpr && (
-                        <div className="mt-2 p-3 rounded-lg min-h-[2.5rem] flex items-center" style={{ background: 'var(--background-secondary)', borderColor: 'var(--border)' }}>
-                          <span className="text-sm mr-2" style={{ color: 'var(--foreground-secondary)' }}>f(x) =</span>
-                          <MathExpression expression={watchedIntegralExpr} className="text-xl" />
-                        </div>
-                      )}
+                      <div className="mt-3">
+                        <IntegralPreview
+                          expression={watchedIntegralExpr ?? ''}
+                          variable={watchedIntegralVariable ?? 'x'}
+                          integralType={integralType}
+                          lowerBound={integralType === 'definite' ? watchedLowerBound : undefined}
+                          upperBound={integralType === 'definite' ? watchedUpperBound : undefined}
+                        />
+                      </div>
                       <div className="mt-3 p-3 rounded-lg" style={{ background: 'rgba(212,175,55,0.1)', border: '1px solid var(--border)' }}>
                         <p className="text-xs font-semibold mb-2" style={{ color: 'var(--foreground)' }}>Быстрый выбор примеров:</p>
                         <div className="flex flex-wrap gap-2">

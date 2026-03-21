@@ -37,15 +37,20 @@ export const MathExpression: React.FC<MathExpressionProps> = ({ expression, clas
 
   formatted = formatted.replace(/\bln\s*([a-z])\b/g, 'ln($1)');
   formatted = formatted.replace(/\blog\s*([a-z])\b/g, 'log($1)');
-  formatted = formatted.replace(/exp\(([a-z])\)/g, 'e^$1');
   formatted = formatted.replace(/\*/g, '·');
   formatted = formatted.replace(/abs\(([^)]+)\)/g, '|$1|');
   formatted = formatted.replace(/log\(/g, 'ln(');
 
+  // exp(expr) → e^expr
+  formatted = formatted.replace(/exp\(([^)]+)\)/g, (_, inner) => `e^(${inner})`);
+
   // Степени ^n
   formatted = formatted.replace(/\^(\d+)/g, (_, p) => toSup(p));
   formatted = formatted.replace(/\^([a-z])/g, (_, v) => SUPERSCRIPT[v] ?? `^${v}`);
-  formatted = formatted.replace(/\^\(([^)]+)\)/g, (_, inner) => toSup(inner));
+  // ^(inner) — рекурсивно обрабатываем inner (4x^2+2 → 4x²+2)
+  const formatInner = (s: string) =>
+    s.replace(/\^(\d+)/g, (_, p) => toSup(p)).replace(/\^([a-z])/g, (_, v) => SUPERSCRIPT[v] ?? v);
+  formatted = formatted.replace(/\^\(([^)]+)\)/g, (_, inner) => toSup(formatInner(inner)));
 
   // Нижние индексы _n, _12, x_i
   formatted = formatted.replace(/([a-zA-Z])_(\d+)/g, (_, base, sub) => `${base}${toSub(sub)}`);
