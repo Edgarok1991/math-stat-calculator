@@ -7,6 +7,7 @@ import { z } from 'zod';
 import { Button } from '@/components/UI/Button';
 import { GaussResult } from '@/types/calculator';
 import { apiService } from '@/services/api';
+import { useAuth } from '@/contexts/AuthContext';
 import { StepGuide } from '@/components/UI/StepGuide';
 import { InteractiveHint } from '@/components/UI/InteractiveHint';
 import { AnimatedResult } from '@/components/UI/AnimatedResult';
@@ -206,6 +207,10 @@ const forceFraction = (num: number): string => {
 };
 
 const MatricesPage = () => {
+  const { token } = useAuth();
+  const saveMatrixHistory = (operation: string, input: object, res: GaussResult) => {
+    if (token) apiService.saveToHistory(token, { type: 'matrix', input: { operation, ...input }, result: res }).catch(() => {});
+  };
   const [activeTab, setActiveTab] = useState<'operations' | 'gauss'>('operations');
   const [result, setResult] = useState<GaussResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -381,14 +386,18 @@ const MatricesPage = () => {
   const onATranspose = async () => {
     const A = getNumericA();
     const res = await apiService.transposeMatrix({ matrix: A });
+    const r = { solution: [], steps: res.steps, determinant: { determinant: 0, rank: 0 }, rank: 0, detailedSteps: res.detailedSteps ?? [] };
     setOpMatrixResult(res.result);
-    setResult({ solution: [], steps: res.steps, determinant: { determinant: 0, rank: 0 }, rank: 0, detailedSteps: res.detailedSteps ?? [] });
+    setResult(r);
+    saveMatrixHistory('transpose', { matrix: A }, r);
   };
   const onAScalar = async () => {
     const A = getNumericA();
     const res = await apiService.scalarMultiply({ matrix: A, k: kValueA });
+    const r = { solution: [], steps: res.steps, determinant: { determinant: 0, rank: 0 }, rank: 0, detailedSteps: res.detailedSteps ?? [] };
     setOpMatrixResult(res.result);
-    setResult({ solution: [], steps: res.steps, determinant: { determinant: 0, rank: 0 }, rank: 0, detailedSteps: res.detailedSteps ?? [] });
+    setResult(r);
+    saveMatrixHistory('scalar', { matrix: A, k: kValueA }, r);
   };
   const onADeterminant = async () => {
     const A = getNumericA();
@@ -413,40 +422,34 @@ const MatricesPage = () => {
     });
     setOpMatrixResult(null);
     const detVal = typeof det.determinant === 'number' ? det.determinant : Number(det.determinant);
-    setResult({ 
-      solution: [], 
-      steps: det.steps ?? [`det(A) = ${decimalToFraction(detVal)}`], 
-      determinant: { determinant: detVal, rank: det.rank }, 
-      rank: det.rank, 
-      detailedSteps: det.detailedSteps ?? [] 
-    });
-    setShowMethodSelect(false); // Скрываем выбор метода после вычисления
+    const r = { solution: [], steps: det.steps ?? [`det(A) = ${decimalToFraction(detVal)}`], determinant: { determinant: detVal, rank: det.rank }, rank: det.rank, detailedSteps: det.detailedSteps ?? [] };
+    setResult(r);
+    saveMatrixHistory('determinant', { matrix: A, method: determinantMethod }, r);
+    setShowMethodSelect(false);
   };
   const onARank = async () => {
     const A = getNumericA();
-    const r = await apiService.matrixRank({ matrix: A });
+    const apiRes = await apiService.matrixRank({ matrix: A });
+    const r = { solution: [], steps: apiRes.steps, determinant: { determinant: 0, rank: apiRes.rank }, rank: apiRes.rank, detailedSteps: [] };
     setOpMatrixResult(null);
-    setResult({ solution: [], steps: r.steps, determinant: { determinant: 0, rank: r.rank }, rank: r.rank, detailedSteps: [] });
+    setResult(r);
+    saveMatrixHistory('rank', { matrix: A }, r);
   };
   const onAInverse = async () => {
     const A = getNumericA();
     const inv = await apiService.calculateInverse({ matrix: A });
-    console.log('Inverse response:', inv);
-    console.log('DetailedSteps:', inv.detailedSteps);
+    const r = { solution: [], steps: inv.steps ?? [], determinant: inv.determinant as any, rank: 0, detailedSteps: inv.detailedSteps ?? [] };
     setOpMatrixResult(inv.inverse);
-    setResult({ 
-      solution: [], 
-      steps: inv.steps ?? [], 
-      determinant: { determinant: 0, rank: 0 }, 
-      rank: 0, 
-      detailedSteps: inv.detailedSteps ?? [] 
-    });
+    setResult(r);
+    saveMatrixHistory('inverse', { matrix: A }, r);
   };
   const onAPower = async () => {
     const A = getNumericA();
     const res = await apiService.matrixPower({ matrix: A, power: pValueA });
+    const r = { solution: [], steps: res.steps, determinant: { determinant: 0, rank: 0 }, rank: 0, detailedSteps: res.detailedSteps ?? [] };
     setOpMatrixResult(res.result);
-    setResult({ solution: [], steps: res.steps, determinant: { determinant: 0, rank: 0 }, rank: 0, detailedSteps: res.detailedSteps ?? [] });
+    setResult(r);
+    saveMatrixHistory('power', { matrix: A, power: pValueA }, r);
   };
 
   // Панель действий для B
@@ -454,15 +457,19 @@ const MatricesPage = () => {
     const B = getNumericB();
     if (!B.length) return;
     const res = await apiService.transposeMatrix({ matrix: B });
+    const r = { solution: [], steps: res.steps, determinant: { determinant: 0, rank: 0 }, rank: 0, detailedSteps: res.detailedSteps ?? [] };
     setOpMatrixResult(res.result);
-    setResult({ solution: [], steps: res.steps, determinant: { determinant: 0, rank: 0 }, rank: 0, detailedSteps: res.detailedSteps ?? [] });
+    setResult(r);
+    saveMatrixHistory('transpose', { matrix: B }, r);
   };
   const onBScalar = async () => {
     const B = getNumericB();
     if (!B.length) return;
     const res = await apiService.scalarMultiply({ matrix: B, k: kValueB });
+    const r = { solution: [], steps: res.steps, determinant: { determinant: 0, rank: 0 }, rank: 0, detailedSteps: res.detailedSteps ?? [] };
     setOpMatrixResult(res.result);
-    setResult({ solution: [], steps: res.steps, determinant: { determinant: 0, rank: 0 }, rank: 0, detailedSteps: res.detailedSteps ?? [] });
+    setResult(r);
+    saveMatrixHistory('scalar', { matrix: B, k: kValueB }, r);
   };
 
   // Центральная панель: A ± B, A × B
@@ -472,8 +479,10 @@ const MatricesPage = () => {
     if (!A.length || !B.length) return alert('Заполните матрицы A и B');
     if (A.length !== B.length || A[0].length !== B[0].length) return alert('Для A±B размеры матриц должны совпадать');
     const res = await apiService.addMatrices({ matrixA: A, matrixB: B });
+    const r = { solution: [], steps: res.steps, determinant: { determinant: 0, rank: 0 }, rank: 0, detailedSteps: res.detailedSteps ?? [] };
     setOpMatrixResult(res.result);
-    setResult({ solution: [], steps: res.steps, determinant: { determinant: 0, rank: 0 }, rank: 0, detailedSteps: res.detailedSteps ?? [] });
+    setResult(r);
+    saveMatrixHistory('add', { matrix: A, matrix2: B }, r);
   };
   const onAminusB = async () => {
     const A = getNumericA();
@@ -481,8 +490,10 @@ const MatricesPage = () => {
     if (!A.length || !B.length) return alert('Заполните матрицы A и B');
     if (A.length !== B.length || A[0].length !== B[0].length) return alert('Для A−B размеры матриц должны совпадать');
     const res = await apiService.subtractMatrices({ matrixA: A, matrixB: B });
+    const r = { solution: [], steps: res.steps, determinant: { determinant: 0, rank: 0 }, rank: 0, detailedSteps: res.detailedSteps ?? [] };
     setOpMatrixResult(res.result);
-    setResult({ solution: [], steps: res.steps, determinant: { determinant: 0, rank: 0 }, rank: 0, detailedSteps: res.detailedSteps ?? [] });
+    setResult(r);
+    saveMatrixHistory('subtract', { matrix: A, matrix2: B }, r);
   };
   const onAmulB = async () => {
     const A = getNumericA();
@@ -490,8 +501,10 @@ const MatricesPage = () => {
     if (!A.length || !B.length) return alert('Заполните матрицы A и B');
     if (A[0].length !== B.length) return alert(`Для A(m×n)·B(n×p) необходимо n(A) = m(B). Текущие: n(A)=${A[0].length}, m(B)=${B.length}`);
     const res = await apiService.multiplyMatrices({ matrixA: A, matrixB: B });
+    const r = { solution: [], steps: res.steps, determinant: { determinant: 0, rank: 0 }, rank: 0, detailedSteps: res.detailedSteps ?? [] };
     setOpMatrixResult(res.result);
-    setResult({ solution: [], steps: res.steps, determinant: { determinant: 0, rank: 0 }, rank: 0, detailedSteps: res.detailedSteps ?? [] });
+    setResult(r);
+    saveMatrixHistory('multiplyMatrices', { matrix: A, matrix2: B }, r);
   };
 
   // Обработка изменения количества переменных
@@ -694,6 +707,7 @@ const MatricesPage = () => {
       }
 
       setResult(result);
+      saveMatrixHistory(data.operation, { matrix: numericMatrix, matrix2: numericMatrix2?.length ? numericMatrix2 : undefined }, result);
     } catch (error) {
       console.error('Ошибка расчета:', error);
       const errorMessage = error instanceof Error ? error.message : 'Ошибка при выполнении операции с матрицей';
@@ -1150,13 +1164,9 @@ const MatricesPage = () => {
                         });
                         setOpMatrixResult(null);
                         const detVal = typeof det.determinant === 'number' ? det.determinant : Number(det.determinant);
-                        setResult({ 
-                          solution: [], 
-                          steps: det.steps ?? [`det(B) = ${decimalToFraction(detVal)}`], 
-                          determinant: { determinant: detVal, rank: det.rank }, 
-                          rank: det.rank, 
-                          detailedSteps: det.detailedSteps ?? [] 
-                        });
+                        const r = { solution: [], steps: det.steps ?? [`det(B) = ${decimalToFraction(detVal)}`], determinant: { determinant: detVal, rank: det.rank }, rank: det.rank, detailedSteps: det.detailedSteps ?? [] };
+                        setResult(r);
+                        saveMatrixHistory('determinant', { matrix: B, method: determinantMethod }, r);
                         setShowMethodSelect(false);
                       }}>
                       Вычислить
@@ -1173,14 +1183,10 @@ const MatricesPage = () => {
                 const B = getNumericB();
                 if (!B.length) return;
                 const inv = await apiService.calculateInverse({ matrix: B });
+                const r = { solution: [], steps: inv.steps ?? [], determinant: inv.determinant as any, rank: 0, detailedSteps: inv.detailedSteps ?? [] };
                 setOpMatrixResult(inv.inverse);
-                setResult({ 
-                  solution: [], 
-                  steps: inv.steps ?? [], 
-                  determinant: { determinant: 0, rank: 0 }, 
-                  rank: 0, 
-                  detailedSteps: inv.detailedSteps ?? [] 
-                });
+                setResult(r);
+                saveMatrixHistory('inverse', { matrix: B }, r);
               }}>
                 Обратная матрица B<sup>-1</sup>
               </button>
@@ -1192,9 +1198,11 @@ const MatricesPage = () => {
                 onClick={async()=>{
                 const B = getNumericB();
                 if (!B.length) return;
-                const r = await apiService.matrixRank({ matrix: B });
+                const apiRes = await apiService.matrixRank({ matrix: B });
+                const r = { solution: [], steps: apiRes.steps, determinant: { determinant: 0, rank: apiRes.rank }, rank: apiRes.rank, detailedSteps: [] };
                 setOpMatrixResult(null);
-                setResult({ solution: [], steps: r.steps, determinant: { determinant: 0, rank: r.rank }, rank: r.rank, detailedSteps: [] });
+                setResult(r);
+                saveMatrixHistory('rank', { matrix: B }, r);
               }}>
                 Найти ранг
               </button>
@@ -1230,8 +1238,10 @@ const MatricesPage = () => {
                   const B = getNumericB();
                   if (!B.length) return;
                   const res = await apiService.matrixPower({ matrix: B, power: pValueB });
+                  const r = { solution: [], steps: res.steps, determinant: { determinant: 0, rank: 0 }, rank: 0, detailedSteps: res.detailedSteps ?? [] };
                   setOpMatrixResult(res.result);
-                  setResult({ solution: [], steps: res.steps, determinant: { determinant: 0, rank: 0 }, rank: 0, detailedSteps: [] });
+                  setResult(r);
+                  saveMatrixHistory('power', { matrix: B, power: pValueB }, r);
                 }}>
                   Возвести в степень
                 </button>

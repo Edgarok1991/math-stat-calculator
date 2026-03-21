@@ -7,8 +7,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Button } from '@/components/UI/Button';
 import { RegressionData, RegressionResult } from '@/types/calculator';
-// import { calculatorStore } from '@/stores/CalculatorStore';
 import { apiService } from '@/services/api';
+import { useAuth } from '@/contexts/AuthContext';
 import { StepGuide } from '@/components/UI/StepGuide';
 import { InteractiveHint } from '@/components/UI/InteractiveHint';
 import { AnimatedResult } from '@/components/UI/AnimatedResult';
@@ -24,6 +24,7 @@ const regressionSchema = z.object({
 type RegressionFormData = z.infer<typeof regressionSchema>;
 
 function RegressionPage() {
+  const { token } = useAuth();
   const [result, setResult] = useState<RegressionResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -116,14 +117,11 @@ function RegressionPage() {
         degree: data.degree,
       };
 
-      // Вызов API
-      const result = await apiService.calculateRegression(regressionData);
-      setResult(result);
-      // calculatorStore.addCalculation({
-      //   type: 'regression',
-      //   input: regressionData,
-      //   result: result,
-      // });
+      const calcResult = await apiService.calculateRegression(regressionData);
+      setResult(calcResult);
+      if (token) {
+        apiService.saveToHistory(token, { type: 'regression', input: regressionData, result: calcResult }).catch(() => {});
+      }
     } catch (error) {
       console.error('Ошибка расчета:', error);
     } finally {

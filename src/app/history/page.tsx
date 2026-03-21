@@ -15,6 +15,9 @@ const typeIcons: { [key: string]: any } = {
   derivative: Calculator,
   integral: Calculator,
   statistics: BarChart2,
+  regression: BarChart2,
+  graph2d: BarChart2,
+  graph3d: BarChart2,
 };
 
 const typeNames: { [key: string]: string } = {
@@ -24,6 +27,9 @@ const typeNames: { [key: string]: string } = {
   derivative: 'Производная',
   integral: 'Интеграл',
   statistics: 'Статистика',
+  regression: 'Регрессия',
+  graph2d: 'График 2D',
+  graph3d: 'График 3D',
 };
 
 export default function HistoryPage() {
@@ -144,7 +150,7 @@ export default function HistoryPage() {
 
           {/* Filters */}
           <div className="flex flex-wrap gap-2 mb-6">
-            {['all', 'clustering', 'anova', 'integral', 'derivative', 'matrix'].map((type) => (
+            {['all', 'clustering', 'anova', 'regression', 'statistics', 'integral', 'derivative', 'matrix', 'graph2d', 'graph3d'].map((type) => (
               <button
                 key={type}
                 onClick={() => setFilter(type)}
@@ -202,11 +208,23 @@ export default function HistoryPage() {
                             </span>
                           </div>
                           
-                          <div className="text-sm" style={{ color: 'var(--foreground-secondary)' }}>
-                            <pre className="p-2 rounded text-xs overflow-x-auto" style={{ background: 'var(--background-tertiary)' }}>
-                              {JSON.stringify(calc.input, null, 2)}
-                            </pre>
-                          </div>
+                          <details className="text-sm group" style={{ color: 'var(--foreground-secondary)' }}>
+                            <summary className="cursor-pointer font-medium" style={{ color: 'var(--gold)' }}>Показать входные данные и решение</summary>
+                            <div className="mt-2 space-y-2">
+                              <div>
+                                <span className="text-xs font-medium" style={{ color: 'var(--foreground-muted)' }}>Вход:</span>
+                                <pre className="p-2 rounded text-xs overflow-x-auto" style={{ background: 'var(--background-tertiary)' }}>
+                                  {JSON.stringify(calc.input, null, 2)}
+                                </pre>
+                              </div>
+                              <div>
+                                <span className="text-xs font-medium" style={{ color: 'var(--foreground-muted)' }}>Решение:</span>
+                                <pre className="p-2 rounded text-xs overflow-x-auto max-h-48 overflow-y-auto" style={{ background: 'var(--background-tertiary)' }}>
+                                  {JSON.stringify(calc.result, null, 2)}
+                                </pre>
+                              </div>
+                            </div>
+                          </details>
                         </div>
                       </div>
 

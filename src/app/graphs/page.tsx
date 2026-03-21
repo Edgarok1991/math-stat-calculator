@@ -7,6 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Button } from '@/components/UI/Button';
 import { apiService } from '@/services/api';
+import { useAuth } from '@/contexts/AuthContext';
 import { AnimatedResult } from '@/components/UI/AnimatedResult';
 import { FractionDisplay } from '@/components/UI';
 import { decimalToFraction } from '@/lib/decimalToFraction';
@@ -112,6 +113,7 @@ const graphTypes = [
 ];
 
 function GraphsPage() {
+  const { token } = useAuth();
   const [selectedType, setSelectedType] = useState<string>('boxplot');
   const [dataResult, setDataResult] = useState<StatisticsResult | null>(null);
   const [result2D, setResult2D] = useState<Graph2DResult | null>(null);
@@ -165,8 +167,11 @@ function GraphsPage() {
         throw new Error('Необходимо минимум 2 значения');
       }
 
-      const response = await apiService.calculateDescriptiveStatistics(numericData);
-      setDataResult(response);
+      const calcResult = await apiService.calculateDescriptiveStatistics(numericData);
+      setDataResult(calcResult);
+      if (token) {
+        apiService.saveToHistory(token, { type: 'statistics', input: { data: numericData, graphType: data.graphType }, result: calcResult }).catch(() => {});
+      }
     } catch (error) {
       console.error('Error:', error);
       alert('Ошибка при обработке данных');
@@ -178,8 +183,11 @@ function GraphsPage() {
   const onSubmit2D = async (data: Function2DFormData) => {
     setIsLoading(true);
     try {
-      const response = await apiService.calculate2DGraph(data);
-      setResult2D(response);
+      const calcResult = await apiService.calculate2DGraph(data);
+      setResult2D(calcResult);
+      if (token) {
+        apiService.saveToHistory(token, { type: 'graph2d', input: data, result: calcResult }).catch(() => {});
+      }
     } catch (error) {
       console.error('Error calculating 2D graph:', error);
       alert('Ошибка при построении 2D графика. Проверьте правильность функции.');
@@ -191,11 +199,13 @@ function GraphsPage() {
   const onSubmit3D = async (data: Function3DFormData) => {
     setIsLoading(true);
     try {
-      const response = await apiService.calculate3DGraph(data);
-      setResult3D(response);
-      // Сброс вращения и масштаба
+      const calcResult = await apiService.calculate3DGraph(data);
+      setResult3D(calcResult);
       setRotation3D({ x: 30, y: 45 });
       setZoom3D(1);
+      if (token) {
+        apiService.saveToHistory(token, { type: 'graph3d', input: data, result: calcResult }).catch(() => {});
+      }
     } catch (error) {
       console.error('Error calculating 3D graph:', error);
       alert('Ошибка при построении 3D графика. Проверьте правильность функции.');

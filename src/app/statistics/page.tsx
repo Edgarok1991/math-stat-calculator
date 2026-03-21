@@ -7,6 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Button } from '@/components/UI/Button';
 import { apiService } from '@/services/api';
+import { useAuth } from '@/contexts/AuthContext';
 import { StepGuide } from '@/components/UI/StepGuide';
 import { InteractiveHint } from '@/components/UI/InteractiveHint';
 import { AnimatedResult, FractionDisplay } from '@/components/UI';
@@ -47,6 +48,7 @@ interface DescriptiveStatisticsResult {
 }
 
 function StatisticsPage() {
+  const { token } = useAuth();
   const [result, setResult] = useState<DescriptiveStatisticsResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -126,8 +128,11 @@ function StatisticsPage() {
         throw new Error('Необходимо минимум 2 значения');
       }
 
-      const response = await apiService.calculateDescriptiveStatistics(numericData);
-      setResult(response);
+      const calcResult = await apiService.calculateDescriptiveStatistics(numericData);
+      setResult(calcResult);
+      if (token) {
+        apiService.saveToHistory(token, { type: 'statistics', input: { data: numericData }, result: calcResult }).catch(() => {});
+      }
     } catch (error) {
       console.error('Error calculating statistics:', error);
       alert('Ошибка при расчете статистики');

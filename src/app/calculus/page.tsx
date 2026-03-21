@@ -7,6 +7,7 @@ import { z } from 'zod';
 import { motion } from 'framer-motion';
 import { Calculator, TrendingUp, Sigma } from 'lucide-react';
 import { apiService } from '@/services/api';
+import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/UI/Button';
 import { StepGuide } from '@/components/UI/StepGuide';
 import { MathExpression } from '@/components/UI/MathExpression';
@@ -69,6 +70,7 @@ interface DerivativeResult {
 }
 
 function CalculusPage() {
+  const { token } = useAuth();
   const [activeTab, setActiveTab] = useState<'derivatives' | 'integrals'>('derivatives');
   const [derivativeResult, setDerivativeResult] = useState<DerivativeResult | null>(null);
   const [integralResult, setIntegralResult] = useState<any>(null);
@@ -117,6 +119,9 @@ function CalculusPage() {
       setSelectedPoint(null);
       setPointResult(null);
       setShowTangent(false);
+      if (token) {
+        apiService.saveToHistory(token, { type: 'derivative', input: data, result: response }).catch(() => {});
+      }
     } catch (error) {
       console.error('Error calculating derivative:', error);
       alert('Ошибка вычисления производной. Проверьте введённую функцию.');
@@ -137,7 +142,9 @@ function CalculusPage() {
       });
       
       setIntegralResult(response);
-      console.log('Integral result:', response);
+      if (token) {
+        apiService.saveToHistory(token, { type: 'integral', input: data, result: response }).catch(() => {});
+      }
     } catch (error) {
       console.error('Error calculating integral:', error);
       alert('Ошибка вычисления интеграла. Проверьте введённую функцию.');
