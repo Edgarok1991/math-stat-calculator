@@ -946,6 +946,29 @@ export class CalculusService {
         this.integralResult = { result: `${variable}^2*log(${variable})/2-${variable}^2/4 + C`, method: 'by_parts', byParts: { u: `log(${variable})`, dv: `${variable} d${variable}`, du: `1/${variable} d${variable}`, v: `${variable}^2/2` } };
         return this.integralResult.result;
       }
+
+      // ∫(ax^2+b)*log(x)dx — по частям: u=log(x), dv=(ax^2+b)dx. Пример: (4x^2+2)*log(x)
+      const ax2bLogMatch = cleanExpr.match(new RegExp(`^\\((\\d+)\\*?${v}\\^2\\+(\\d+)\\)\\*log\\(${v}\\)$`)) || cleanExpr.match(new RegExp(`^log\\(${v}\\)\\*\\((\\d+)\\*?${v}\\^2\\+(\\d+)\\)$`));
+      if (ax2bLogMatch) {
+        const a = parseInt(ax2bLogMatch[1], 10);
+        const b = parseInt(ax2bLogMatch[2], 10);
+        const vStr = `${a}*${variable}^3/3+${b}*${variable}`;
+        const remStr = `${a}*${variable}^3/9+${b}*${variable}`;
+        const result = `(${vStr})*log(${variable})-(${remStr}) + C`;
+        this.integralResult = {
+          result,
+          method: 'by_parts',
+          byParts: {
+            u: `log(${variable})`,
+            dv: `(${a}*${variable}^2+${b}) d${variable}`,
+            du: `1/${variable} d${variable}`,
+            v: vStr,
+            uv: `(${vStr})*log(${variable})`,
+            remainingIntegral: `∫(${a}*${variable}^2/3+${b}) d${variable} = ${remStr}`,
+          },
+        };
+        return this.integralResult.result;
+      }
       
       // ∫x*exp(x)dx — по частям: u=x, dv=exp(x)dx
       if (cleanExpr === `${variable}*exp(${variable})` || cleanExpr === `exp(${variable})*${variable}`) {
@@ -1204,6 +1227,7 @@ export class CalculusService {
     // exp(expr) → e^{expr}
     s = s.replace(/exp\(([^)]+)\)/g, (_, inner) => `e^{${inner.replace(/\*/g, '').trim()}}`);
     s = s.replace(/log\(abs\(([^)]+)\)\)/g, (_, x) => `\\ln|${x}|`);
+    s = s.replace(/log\(([^)]+)\)/g, (_, x) => `\\ln(${x.replace(/\*/g, '')})`);
     s = s.replace(/\*/g, ' \\cdot ');
     // expr/num + C → \frac{expr}{num} + C
     const fracMatch = s.match(/^(.+)\/(\d+)\s*\+\s*C$/);
