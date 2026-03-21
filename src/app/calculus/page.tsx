@@ -1290,7 +1290,7 @@ function CalculusPage() {
                     </div>
 
                     {/* Пошаговое решение (стиль MathDF) */}
-                    {(integralResult.stepsStructured?.length > 0 || integralResult.steps?.length > 0) && (
+                    {((integralResult.stepsStructured?.length ?? 0) > 0 || (integralResult.steps?.length ?? 0) > 0) && (
                       <div className="mb-6">
                         <h3 className="text-lg font-semibold mb-4" style={{ color: 'var(--foreground)' }}>
                           Пошаговое решение:

@@ -265,7 +265,17 @@ class ApiService {
     integralType?: 'indefinite' | 'definite';
     lowerBound?: number;
     upperBound?: number;
-  }) {
+  }): Promise<{
+    result: string;
+    steps: string[];
+    latex: string;
+    stepsStructured?: Array<{
+      actionLabel?: string;
+      rule?: { name: string; formula?: string; substitutions?: { symbol: string; value: string }[] };
+      expression?: string;
+      subSteps?: Array<{ rule?: { name: string; formula?: string }; expression?: string }>;
+    }>;
+  }> {
     // Преобразуем формат для backend
     const payload: any = {
       expression: data.expression,
@@ -283,7 +293,17 @@ class ApiService {
       };
     }
 
-    return this.request('/calculus/integral', {
+    return this.request<{
+      result: string;
+      steps: string[];
+      latex: string;
+      stepsStructured?: Array<{
+        actionLabel?: string;
+        rule?: { name: string; formula?: string; substitutions?: { symbol: string; value: string }[] };
+        expression?: string;
+        subSteps?: Array<{ rule?: { name: string; formula?: string }; expression?: string }>;
+      }>;
+    }>('/calculus/integral', {
       method: 'POST',
       body: JSON.stringify(payload),
     });
