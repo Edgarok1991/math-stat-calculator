@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { motion } from 'framer-motion';
-import { Calculator, TrendingUp, Sigma } from 'lucide-react';
+import { Calculator, TrendingUp, Sigma, Grid3X3 } from 'lucide-react';
 import { apiService } from '@/services/api';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/UI/Button';
@@ -19,6 +19,7 @@ import { decimalToFraction } from '@/lib/decimalToFraction';
 import dynamic from 'next/dynamic';
 
 const Plot = dynamic(() => import('react-plotly.js'), { ssr: false });
+const MatricesContent = dynamic(() => import('@/app/matrices/page').then((mod) => mod.default), { ssr: false });
 
 const derivativeSchema = z.object({
   expression: z.string().min(1, 'Введите функцию'),
@@ -71,7 +72,7 @@ interface DerivativeResult {
 
 function CalculusPage() {
   const { token } = useAuth();
-  const [activeTab, setActiveTab] = useState<'derivatives' | 'integrals'>('derivatives');
+  const [activeTab, setActiveTab] = useState<'matrices' | 'derivatives' | 'integrals'>('matrices');
   const [derivativeResult, setDerivativeResult] = useState<DerivativeResult | null>(null);
   const [integralResult, setIntegralResult] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -189,13 +190,24 @@ function CalculusPage() {
               </h1>
             </div>
             <p className="text-xl" style={{ color: 'var(--foreground-secondary)' }}>
-              Производные и интегралы с пошаговым решением
+              Матрицы, производные и интегралы с пошаговым решением
             </p>
           </div>
 
-          {/* Переключатель вкладок (как в матрицах) */}
+          {/* Переключатель вкладок */}
           <div className="mb-8 flex justify-center">
-            <div className="inline-flex rounded-lg border-2 p-1" style={{ borderColor: 'var(--border)', background: 'var(--background-secondary)' }}>
+            <div className="inline-flex flex-wrap justify-center gap-1 rounded-lg border-2 p-1" style={{ borderColor: 'var(--border)', background: 'var(--background-secondary)' }}>
+              <button
+                type="button"
+                onClick={() => setActiveTab('matrices')}
+                className={`px-6 py-3 rounded-md transition-all font-semibold flex items-center gap-2 ${
+                  activeTab === 'matrices' ? 'gradient-primary text-[#1c1917] shadow-lg' : ''
+                }`}
+                style={activeTab === 'matrices' ? {} : { color: 'var(--foreground-secondary)' }}
+              >
+                <Grid3X3 className="w-5 h-5" />
+                Матрицы
+              </button>
               <button
                 type="button"
                 onClick={() => {
@@ -205,7 +217,7 @@ function CalculusPage() {
                   setPointResult(null);
                   setShowTangent(false);
                 }}
-                className={`px-8 py-3 rounded-md transition-all font-semibold flex items-center gap-2 ${
+                className={`px-6 py-3 rounded-md transition-all font-semibold flex items-center gap-2 ${
                   activeTab === 'derivatives' ? 'gradient-primary text-[#1c1917] shadow-lg' : ''
                 }`}
                 style={activeTab === 'derivatives' ? {} : { color: 'var(--foreground-secondary)' }}
@@ -219,7 +231,7 @@ function CalculusPage() {
                   setActiveTab('integrals');
                   setIntegralResult(null);
                 }}
-                className={`px-8 py-3 rounded-md transition-all font-semibold flex items-center gap-2 ${
+                className={`px-6 py-3 rounded-md transition-all font-semibold flex items-center gap-2 ${
                   activeTab === 'integrals' ? 'gradient-primary text-[#1c1917] shadow-lg' : ''
                 }`}
                 style={activeTab === 'integrals' ? {} : { color: 'var(--foreground-secondary)' }}
@@ -229,6 +241,13 @@ function CalculusPage() {
               </button>
             </div>
           </div>
+
+          {/* Вкладка МАТРИЦЫ */}
+          {activeTab === 'matrices' && (
+            <div className="mt-4">
+              <MatricesContent />
+            </div>
+          )}
 
           {/* Вкладка ПРОИЗВОДНЫЕ */}
           {activeTab === 'derivatives' && (
