@@ -3,10 +3,33 @@
 import React from 'react';
 import { Fraction } from './Fraction';
 
+const SUP_MARKER = '\uFFFF';
+
 interface TextWithFractionsProps {
   text: string;
   className?: string;
   showMixedNumbers?: boolean; // Опция для отображения смешанных чисел
+}
+
+/** Оборачивает содержимое между маркерами степени в <sup> */
+function withSup(text: string, showMixedNumbers: boolean, keyBase: number): React.ReactNode {
+  if (!text.includes(SUP_MARKER)) return null;
+  const parts = text.split(SUP_MARKER);
+  const result: React.ReactNode[] = [];
+  for (let i = 0; i < parts.length; i++) {
+    if (parts[i]) {
+      if (i % 2 === 0) {
+        result.push(<TextWithFractions key={`${keyBase}-${i}`} text={parts[i]} showMixedNumbers={showMixedNumbers} />);
+      } else {
+        result.push(
+          <sup key={`${keyBase}-${i}`} className="align-baseline text-[0.85em]" style={{ verticalAlign: 'super', lineHeight: 0 }}>
+            <TextWithFractions text={parts[i]} showMixedNumbers={showMixedNumbers} />
+          </sup>
+        );
+      }
+    }
+  }
+  return result;
 }
 
 /**
@@ -25,6 +48,13 @@ function FractionLayout({ num, den }: { num: React.ReactNode; den: React.ReactNo
  * Компонент для отображения текста с дробями.
  * Поддерживает: (expr)/(expr) и число/число
  */
+function renderText(text: string, showMixedNumbers: boolean, keyBase: number): React.ReactNode {
+  if (text.includes(SUP_MARKER)) {
+    return withSup(text, showMixedNumbers, keyBase);
+  }
+  return <TextWithFractions text={text} showMixedNumbers={showMixedNumbers} />;
+}
+
 export const TextWithFractions: React.FC<TextWithFractionsProps> = ({ 
   text, 
   className = '', 
@@ -68,7 +98,7 @@ export const TextWithFractions: React.FC<TextWithFractionsProps> = ({
       restParts.push(
         <FractionLayout
           key={`ef${key++}`}
-          num={<TextWithFractions text={numMatch[1]} showMixedNumbers={showMixedNumbers} />}
+          num={renderText(numMatch[1], showMixedNumbers, key)}
           den={<>{numMatch[2]}</>}
         />
       );

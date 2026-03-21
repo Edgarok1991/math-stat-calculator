@@ -47,14 +47,17 @@ export const MathExpression: React.FC<MathExpressionProps> = ({ expression, clas
   // Степени ^n
   formatted = formatted.replace(/\^(\d+)/g, (_, p) => toSup(p));
   formatted = formatted.replace(/\^([a-z])/g, (_, v) => SUPERSCRIPT[v] ?? `^${v}`);
-  // ^(inner) — рекурсивно обрабатываем inner (4x^2+2 → 4x²+2)
+  // ^(inner) — <sup> для целой степени (4x²+2), чтобы всё было в одном блоке
   const formatInner = (s: string) =>
     s.replace(/\^(\d+)/g, (_, p) => toSup(p)).replace(/\^([a-z])/g, (_, v) => SUPERSCRIPT[v] ?? v);
-  formatted = formatted.replace(/\^\(([^)]+)\)/g, (_, inner) => toSup(formatInner(inner)));
+  const supMarker = '\uFFFF';
+  formatted = formatted.replace(/\^\(([^)]+)\)/g, (_, inner) => `${supMarker}${formatInner(inner)}${supMarker}`);
 
   // Нижние индексы _n, _12, x_i
   formatted = formatted.replace(/([a-zA-Z])_(\d+)/g, (_, base, sub) => `${base}${toSub(sub)}`);
   formatted = formatted.replace(/([a-zA-Z])_([a-z])/g, (_, base, sub) => `${base}${SUBSCRIPT[sub] ?? sub}`);
+
+  // Маркер степени — обрабатывается в TextWithFractions для сохранения логики дробей
 
   // sqrt(x) → √ с содержимым
   const sqrtRegex = /sqrt\(([^)]*)\)/g;
