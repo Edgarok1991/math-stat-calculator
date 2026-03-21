@@ -11,6 +11,7 @@ import { calculatorStore } from '@/stores/CalculatorStore';
 import { observer } from 'mobx-react-lite';
 import { StepGuide } from '@/components/UI/StepGuide';
 import { apiService } from '@/services/api';
+import { useAuth } from '@/contexts/AuthContext';
 import { ClusteringStepsView } from '@/components/clustering/ClusteringStepsView';
 import { DendrogramView } from '@/components/clustering/DendrogramView';
 import Link from 'next/link';
@@ -24,6 +25,7 @@ const clusteringSchema = z.object({
 type ClusteringFormData = z.infer<typeof clusteringSchema>;
 
 function ClusteringPage() {
+  const { token } = useAuth();
   const [result, setResult] = useState<ClusteringResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [inputPoints, setInputPoints] = useState<number[][]>([]);
@@ -125,13 +127,16 @@ function ClusteringPage() {
       console.log('Sending clustering data:', clusteringData);
 
       // Вызов API
-      const result = await apiService.calculateClustering(clusteringData);
-      setResult(result);
+      const calcResult = await apiService.calculateClustering(clusteringData);
+      setResult(calcResult);
       calculatorStore.addCalculation({
         type: 'clustering',
         input: clusteringData,
-        result: result,
+        result: calcResult,
       });
+      if (token) {
+        apiService.saveToHistory(token, { type: 'clustering', input: clusteringData, result: calcResult }).catch(() => {});
+      }
     } catch (error) {
       console.error('Ошибка кластеризации:', error);
       alert('Ошибка при выполнении кластеризации: ' + (error as Error).message);

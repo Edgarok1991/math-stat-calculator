@@ -79,6 +79,26 @@ class ApiService {
     });
   }
 
+  // Сохранение в историю (требует авторизации)
+  async saveToHistory(
+    token: string,
+    data: { type: string; input: unknown; result: unknown },
+  ): Promise<{ id: string }> {
+    const response = await fetch(`${API_BASE_URL}/history`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      const text = await response.text();
+      throw new Error(text || `HTTP ${response.status}`);
+    }
+    return response.json();
+  }
+
   // ANOVA
   async calculateAnova(data: {
     groups: number[][];

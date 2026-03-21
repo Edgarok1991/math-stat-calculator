@@ -12,6 +12,8 @@ import { observer } from 'mobx-react-lite';
 import { StepGuide } from '@/components/UI/StepGuide';
 import { MathExpression } from '@/components/UI/MathExpression';
 import { calculateAnovaClient } from '@/lib/anovaClient';
+import { apiService } from '@/services/api';
+import { useAuth } from '@/contexts/AuthContext';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 
@@ -33,6 +35,7 @@ const anovaSchema = z.object({
 type AnovaFormData = z.infer<typeof anovaSchema>;
 
 function AnovaPage() {
+  const { token } = useAuth();
   const [result, setResult] = useState<AnovaResult | null>(null);
   const [groupsData, setGroupsData] = useState<number[][]>([]);
   const [decimalsPreference, setDecimalsPreference] = useState(4);
@@ -115,9 +118,12 @@ function AnovaPage() {
     setDecimalsPreference(data.decimals);
 
     try {
-      const result = calculateAnovaClient(groups, data.alpha);
-      setResult(result);
-      calculatorStore.addCalculation({ type: 'anova', input: { groups, alpha: data.alpha }, result });
+      const calcResult = calculateAnovaClient(groups, data.alpha);
+      setResult(calcResult);
+      calculatorStore.addCalculation({ type: 'anova', input: { groups, alpha: data.alpha }, result: calcResult });
+      if (token) {
+        apiService.saveToHistory(token, { type: 'anova', input: { groups, alpha: data.alpha }, result: calcResult }).catch(() => {});
+      }
     } catch (err) {
       console.error('Ошибка ANOVA:', err);
       alert(err instanceof Error ? err.message : 'Ошибка при расчёте ANOVA');
