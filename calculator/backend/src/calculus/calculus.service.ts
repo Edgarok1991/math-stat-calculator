@@ -1525,23 +1525,135 @@ export class CalculusService {
     return steps;
   }
 
+  /**
+   * LaTeX в стиле MathDF: дроби через \\frac, ln → \\ln, без \\div.
+   */
   private toLatex(expression: string): string {
-    let s = expression.replace(/ln\(/g, 'log(').replace(/\s/g, '');
-    // exp(expr) → e^{expr}
-    s = s.replace(/exp\(([^)]+)\)/g, (_, inner) => `e^{${inner.replace(/\*/g, '').trim()}}`);
-    s = s.replace(/log\(abs\(([^)]+)\)\)/g, (_, x) => `\\ln|${x}|`);
-    s = s.replace(/log\(([^)]+)\)/g, (_, x) => `\\ln(${x.replace(/\*/g, '')})`);
-    s = s.replace(/\barctan\(/g, '\\arctan(');
-    s = s.replace(/\barcsin\(/g, '\\arcsin(');
-    s = s.replace(/\barccos\(/g, '\\arccos(');
-    s = s.replace(/\barcctg\(/g, '\\operatorname{arcctg}(');
-    s = s.replace(/\*/g, ' \\cdot ');
-    // expr/num + C → \frac{expr}{num} + C
-    const fracMatch = s.match(/^(.+)\/(\d+)\s*\+\s*C$/);
+    let prep = expression.replace(/\s/g, '').replace(/ln\(/g, 'log(');
+    try {
+      const node = math.parse(prep);
+      return this.mathNodeToLatex(node);
+    } catch {
+      return this.toLatexFallback(prep);
+    }
+  }
+
+  /** Преобразует AST mathjs в LaTeX (как на MathDF) */
+  private mathNodeToLatex(node: math.MathNode): string {
+    const n = node as any;
+
+    if (node.type === 'ConstantNode') {
+      return String(n.value);
+    }
+
+    if (node.type === 'SymbolNode') {
+      const name = n.name as string;
+      if (name === 'log') return '\\log'; // не должно встречаться как символ
+      return name;
+    }
+
+    if (node.type === 'ParenthesisNode') {
+      return `\\left(${this.mathNodeToLatex(n.content)}\\right)`;
+    }
+
+    if (node.type === 'FunctionNode') {
+      const fnName = n.fn.name as string;
+      const arg = n.args[0];
+      const argL = this.mathNodeToLatex(arg);
+
+      if (fnName === 'log') {
+        if (arg.type === 'SymbolNode') {
+          return `\\ln ${argL}`;
+        }
+        return `\\ln\\left(${argL}\\right)`;
+      }
+      if (fnName === 'exp') {
+        return `e^{${argL}}`;
+      }
+      if (fnName === 'sin' || fnName === 'cos' || fnName === 'tan' || fnName === 'cot') {
+        return `\\${fnName}\\left(${argL}\\right)`;
+      }
+      if (fnName === 'sqrt') {
+        return `\\sqrt{${argL}}`;
+      }
+      if (fnName === 'abs') {
+        return `\\left|${argL}\\right|`;
+      }
+      return `\\operatorname{${fnName}}\\left(${argL}\\right)`;
+    }
+
+    if (node.type === 'OperatorNode') {
+      const op = n.op as string;
+      const fn = n.fn as string;
+      const args = n.args as math.MathNode[];
+
+      if (fn === 'unaryMinus') {
+        const inner = this.mathNodeToLatex(args[0]);
+        const needsParen = args[0].type === 'OperatorNode';
+        return needsParen ? `-\\left(${inner}\\right)` : `-${inner}`;
+      }
+
+      if (op === '/' && fn === 'divide') {
+        const num = this.mathNodeToLatex(args[0]);
+        const den = this.mathNodeToLatex(args[1]);
+        return `\\frac{${num}}{${den}}`;
+      }
+
+      if (op === '^') {
+        const base = args[0];
+        const exp = args[1];
+        const baseL = this.mathNodeToLatex(base);
+        const expL = this.mathNodeToLatex(exp);
+        const baseNeedsParen =
+          base.type === 'OperatorNode' &&
+          (base as any).fn !== 'divide' &&
+          ['add', 'subtract', 'multiply'].includes((base as any).fn);
+        const baseStr = baseNeedsParen ? `\\left(${baseL}\\right)` : baseL;
+        return `${baseStr}^{${expL}}`;
+      }
+
+      if (op === '*' && fn === 'multiply') {
+        const a = args[0];
+        const b = args[1];
+        const leftL = this.mathNodeToLatex(a);
+        const rightL = this.mathNodeToLatex(b);
+        // Как на MathDF: 4x³, 2x без лишних \cdot
+        if (a.type === 'ConstantNode' && b.type === 'SymbolNode') {
+          return `${leftL}\\,${rightL}`;
+        }
+        if (a.type === 'ConstantNode' && b.type === 'OperatorNode' && (b as any).op === '^') {
+          return `${leftL}\\,${rightL}`;
+        }
+        return `${leftL} \\cdot ${rightL}`;
+      }
+
+      if (op === '+' && fn === 'add') {
+        return `${this.mathNodeToLatex(args[0])} + ${this.mathNodeToLatex(args[1])}`;
+      }
+
+      if (op === '-' && fn === 'subtract') {
+        return `${this.mathNodeToLatex(args[0])} - ${this.mathNodeToLatex(args[1])}`;
+      }
+    }
+
+    return this.toLatexFallback(node.toString());
+  }
+
+  private toLatexFallback(s: string): string {
+    let r = s.replace(/ln\(/g, 'log(').replace(/\s/g, '');
+    r = r.replace(/exp\(([^)]+)\)/g, (_, inner) => `e^{${inner.replace(/\*/g, '').trim()}}`);
+    r = r.replace(/log\(abs\(([^)]+)\)\)/g, (_, x) => `\\ln|${x}|`);
+    r = r.replace(/log\(([^)]+)\)/g, (_, x) => `\\ln(${x.replace(/\*/g, '')})`);
+    r = r.replace(/\barctan\(/g, '\\arctan(');
+    r = r.replace(/\barcsin\(/g, '\\arcsin(');
+    r = r.replace(/\barccos\(/g, '\\arccos(');
+    r = r.replace(/\barcctg\(/g, '\\operatorname{arcctg}(');
+    r = r.replace(/\*/g, ' \\cdot ');
+    const fracMatch = r.match(/^(.+)\/(\d+)\s*\+\s*C$/);
     if (fracMatch) {
       return `\\frac{${fracMatch[1].trim()}}{${fracMatch[2]}} + C`;
     }
-    return s.replace(/\//g, ' \\div ');
+    return r.replace(/\//g, ' \\div ');
   }
 }
 
