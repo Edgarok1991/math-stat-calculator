@@ -13,6 +13,7 @@ import { StepGuide } from '@/components/UI/StepGuide';
 import { FractionDisplay } from '@/components/UI';
 import { MathExpression } from '@/components/UI/MathExpression';
 import { apiService } from '@/services/api';
+import { calculateAnovaClient } from '@/lib/anovaClient';
 import { decimalToFraction } from '@/lib/decimalToFraction';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
@@ -107,22 +108,33 @@ function AnovaPage() {
   const onSubmit = async (data: AnovaFormData) => {
     setIsLoading(true);
     setResult(null);
-    try {
-      const groups = parseGroups(data.groups);
-      if (groups.length < 2) throw new Error('Необходимо минимум 2 группы');
+    const groups = parseGroups(data.groups);
+    if (groups.length < 2) {
+      setIsLoading(false);
+      alert('Необходимо минимум 2 группы');
+      return;
+    }
+    setGroupsData(groups);
+    setDecimalsPreference(data.decimals);
 
+    try {
       const apiResult = await apiService.calculateAnova({
         groups,
         alpha: data.alpha,
         type: 'one-factor',
       });
-      setGroupsData(groups);
-      setDecimalsPreference(data.decimals);
       setResult(apiResult);
       calculatorStore.addCalculation({ type: 'anova', input: { groups, alpha: data.alpha }, result: apiResult });
-    } catch (error) {
-      console.error('Ошибка ANOVA:', error);
-      alert(error instanceof Error ? error.message : 'Ошибка при расчёте ANOVA');
+    } catch (apiError) {
+      console.warn('ANOVA API недоступен, используем расчёт в браузере:', apiError);
+      try {
+        const localResult = calculateAnovaClient(groups, data.alpha);
+        setResult(localResult);
+        calculatorStore.addCalculation({ type: 'anova', input: { groups, alpha: data.alpha }, result: localResult });
+      } catch (err) {
+        console.error('Ошибка ANOVA:', err);
+        alert(err instanceof Error ? err.message : 'Ошибка при расчёте ANOVA');
+      }
     } finally {
       setIsLoading(false);
     }
