@@ -656,10 +656,89 @@ export class CalculusService {
   private integralResult: { result: string; method: 'table' | 'substitution' | 'by_parts'; substitution?: { u: string; du: string }; byParts?: { u: string; dv: string; du: string; v: string } } = { result: '', method: 'table' };
 
   private simplifyIntegral(expression: string, variable: string): string {
-    const cleanExpr = expression.replace(/\s/g, '').replace(/ln\(/g, 'log(');
+    const normalizedExpr = this.normalizeExpression(expression);
+    const cleanExpr = normalizedExpr.replace(/\s/g, '').replace(/ln\(/g, 'log(');
     this.integralResult = { result: '', method: 'table' };
     
     try {
+      // === (poly)/x через mathjs — разложение (4x²+2)/x = 4x + 2/x ===
+      const rationalMatch = cleanExpr.match(new RegExp(`^\\(([^)]+)\\)\\/${variable}$`));
+      if (rationalMatch) {
+        try {
+          const numStr = rationalMatch[1];
+          const v = variable.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+          const divNode = math.parse(`(${numStr})/${variable}`);
+          const expanded = math.simplify(divNode);
+          const expStr = expanded.toString().replace(/\s/g, '');
+          const terms: string[] = [];
+          const parts = expStr.split(/(?=[+-])/).filter((s: string) => s && s !== '+');
+          for (const p of parts) {
+            const trimmed = p.trim();
+            // x^n (n > 0)
+            const powMatch = trimmed.match(new RegExp(`^([+-]?)(\\d*)\\*?${v}\\^(-?\\d+)$`));
+            // x без степени (линейный член)
+            const linMatch = trimmed.match(new RegExp(`^([+-]?)(\\d*)\\*?${v}$`));
+            // x^(-1) или x^-1 или k/x
+            const overMatch = trimmed.match(new RegExp(`^([+-]?)(\\d*)\\*?${v}\\^\\(?-1\\)?$`));
+            const overMatch2 = trimmed.match(new RegExp(`^([+-]?)(\\d*)\\*?/${v}$`));
+            if (powMatch) {
+              const n = parseInt(powMatch[3], 10);
+              if (n === -1) {
+                const b = parseFloat(powMatch[2] || '1') * (powMatch[1] === '-' ? -1 : 1);
+                terms.push(`${b}*log(abs(${variable}))`);
+              } else {
+                const a = parseFloat(powMatch[2] || '1') * (powMatch[1] === '-' ? -1 : 1);
+                terms.push(`${a}/${n + 1}*${variable}^${n + 1}`);
+              }
+            } else if (linMatch) {
+              const a = parseFloat(linMatch[2] || '1') * (linMatch[1] === '-' ? -1 : 1);
+              terms.push(`${a}/2*${variable}^2`);
+            } else if (overMatch || overMatch2) {
+              const m = overMatch || overMatch2;
+              const b = parseFloat(m![2] || '1') * (m![1] === '-' ? -1 : 1);
+              terms.push(`${b}*log(abs(${variable}))`);
+            }
+          }
+          if (terms.length > 0) {
+            const res = terms.join('+').replace(/\+\-/g, '-') + ' + C';
+            this.integralResult = { result: res, method: 'substitution', substitution: { u: 'разложение на слагаемые', du: variable } };
+            return this.integralResult.result;
+          }
+          // Fallback: ручное разложение (ax^n+...+b)/x
+          const numTerms = numStr.split(/(?=[+-])/).filter(Boolean);
+          const byPower: Record<number, number> = {};
+          for (const t of numTerms) {
+            const m = t.trim().match(new RegExp(`^([+-]?)(\\d*)\\*?${v}\\^(\\d+)$`));
+            const linear = t.trim().match(new RegExp(`^([+-]?)(\\d*)\\*?${v}$`));
+            const constant = t.trim().match(/^([+-]?)(\d+)$/);
+            if (m) {
+              const c = parseFloat(m[2] || '1') * (m[1] === '-' ? -1 : 1);
+              const p = parseInt(m[3], 10);
+              byPower[p] = (byPower[p] || 0) + c;
+            } else if (linear) {
+              const c = parseFloat(linear[2] || '1') * (linear[1] === '-' ? -1 : 1);
+              byPower[1] = (byPower[1] || 0) + c;
+            } else if (constant) {
+              const c = parseFloat(constant[2]) * (constant[1] === '-' ? -1 : 1);
+              byPower[0] = (byPower[0] || 0) + c;
+            }
+          }
+          const manualTerms: string[] = [];
+          for (const [pow, coeff] of Object.entries(byPower).map(([p, c]) => [parseInt(p, 10), c as number])) {
+            if (coeff === 0) continue;
+            // (coeff*x^p)/x = coeff*x^(p-1); ∫coeff*x^(p-1)dx = coeff*x^p/p при p>0, и coeff*log|x| при p=0
+            if (pow === 0) manualTerms.push(`${coeff}*log(abs(${variable}))`);
+            else if (pow === 1) manualTerms.push(`${coeff}*${variable}`);
+            else manualTerms.push(`${coeff}/${pow}*${variable}^${pow}`);
+          }
+          if (manualTerms.length > 0) {
+            const res = manualTerms.join('+').replace(/\+\-/g, '-') + ' + C';
+            this.integralResult = { result: res, method: 'substitution', substitution: { u: 'разложение на слагаемые', du: variable } };
+            return this.integralResult.result;
+          }
+        } catch {}
+      }
+
       // === МЕТОД ПОДСТАНОВКИ (замена переменной) ===
       
       // ∫x*exp(x^2)dx — подстановка u = x^2, du = 2x dx
