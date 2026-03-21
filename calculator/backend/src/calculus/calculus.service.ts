@@ -5,6 +5,11 @@ import { CalculusResult } from './interfaces/calculus-result.interface';
 import { DerivativeResult, DerivativeGraphResult, DerivativeAtPointResult, DerivativeStep } from './interfaces/derivative-result.interface';
 import * as math from 'mathjs';
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const nerdamer = require('nerdamer');
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+require('nerdamer/Calculus.js');
+
 @Injectable()
 export class CalculusService {
   // Новый метод для вычисления производной с пошаговым решением
@@ -590,12 +595,16 @@ export class CalculusService {
       let integral: string;
       let steps: string[];
       
-      if (bounds) {
-        // Определенный интеграл
+      // Пробуем nerdamer (символьное интегрирование как на MathDF)
+      const nerdamerResult = this.tryNerdamerIntegral(normalizedExpr, variable, bounds);
+      
+      if (nerdamerResult) {
+        integral = nerdamerResult.integral;
+        steps = nerdamerResult.steps;
+      } else if (bounds) {
         integral = this.simplifyDefiniteIntegral(normalizedExpr, variable, bounds);
         steps = this.getDefiniteIntegralSteps(normalizedExpr, variable, bounds);
       } else {
-        // Неопределенный интеграл
         integral = this.simplifyIntegral(normalizedExpr, variable);
         steps = this.getIntegralSteps(normalizedExpr, variable);
       }
@@ -610,6 +619,88 @@ export class CalculusService {
     } catch (error) {
       throw new Error(`Ошибка вычисления интеграла: ${error.message}`);
     }
+  }
+
+  /** Преобразует выражение в формат nerdamer (ln→log, tg→tan, exp(x)→e^x) */
+  private toNerdamerExpr(expr: string): string {
+    return expr
+      .replace(/\s/g, '')
+      .replace(/ln\(/g, 'log(')
+      .replace(/tg\(/g, 'tan(')
+      .replace(/ctg\(/g, 'cot(')
+      .replace(/arctg\(/g, 'atan(')
+      .replace(/arcsin\(/g, 'asin(')
+      .replace(/arccos\(/g, 'acos(')
+      .replace(/arcctg\(/g, 'acot(')
+      .replace(/exp\(([^)]+)\)/g, 'e^($1)');
+  }
+
+  /** Преобразует результат nerdamer в наш формат (e^→exp, atan→arctan) */
+  private fromNerdamerResult(s: string): string {
+    let r = s
+      .replace(/e\^\(([^)]+)\)/g, 'exp($1)')
+      .replace(/\be\^([a-zA-Z])/g, 'exp($1)')
+      .replace(/\batan\(/g, 'arctan(')
+      .replace(/\basin\(/g, 'arcsin(')
+      .replace(/\bacos\(/g, 'arccos(')
+      .replace(/\bacot\(/g, 'arcctg(');
+    return r;
+  }
+
+  /** Пробует вычислить интеграл через nerdamer (как MathDF). Возвращает null при неудаче. */
+  private tryNerdamerIntegral(
+    expression: string,
+    variable: string,
+    bounds?: { lower: number; upper: number }
+  ): { integral: string; steps: string[] } | null {
+    try {
+      const nerdamerExpr = this.toNerdamerExpr(expression);
+      let result: any;
+
+      if (bounds !== undefined) {
+        const { lower, upper } = bounds;
+        result = nerdamer(`defint(${nerdamerExpr}, ${lower}, ${upper}, ${variable})`);
+      } else {
+        result = nerdamer(`integrate(${nerdamerExpr}, ${variable})`);
+      }
+
+      const hasIntegral = result.hasIntegral && typeof result.hasIntegral === 'function' && result.hasIntegral();
+      if (hasIntegral) return null; // не полностью проинтегрировано
+
+      let resultStr = result.toString();
+      if (!resultStr || resultStr.includes('integrate(')) return null;
+
+      const integral = bounds
+        ? this.fromNerdamerResult(resultStr)
+        : this.fromNerdamerResult(resultStr) + ' + C';
+
+      const steps = this.getNerdamerIntegralSteps(expression, variable, integral, !!bounds, bounds);
+      return { integral, steps };
+    } catch {
+      return null;
+    }
+  }
+
+  private getNerdamerIntegralSteps(
+    expression: string,
+    variable: string,
+    result: string,
+    isDefinite: boolean,
+    bounds?: { lower: number; upper: number }
+  ): string[] {
+    const steps: string[] = [];
+    steps.push(`Шаг 1. Записываем интеграл: ∫(${expression}) d${variable}`);
+    steps.push(
+      `Шаг 2. Применяем символьное интегрирование (методы: замена переменной, по частям, рациональные дроби, табличные интегралы):`
+    );
+    if (isDefinite && bounds) {
+      steps.push(`Шаг 3. Применяем формулу Ньютона—Лейбница: ∫[a→b] f(x)dx = F(b) − F(a)`);
+      steps.push(`   Результат: ${result}`);
+    } else {
+      steps.push(`Шаг 3. Получаем:`);
+      steps.push(`   ${result}`);
+    }
+    return steps;
   }
 
   private simplifyDerivative(expression: string, variable: string): string {
@@ -1228,6 +1319,10 @@ export class CalculusService {
     s = s.replace(/exp\(([^)]+)\)/g, (_, inner) => `e^{${inner.replace(/\*/g, '').trim()}}`);
     s = s.replace(/log\(abs\(([^)]+)\)\)/g, (_, x) => `\\ln|${x}|`);
     s = s.replace(/log\(([^)]+)\)/g, (_, x) => `\\ln(${x.replace(/\*/g, '')})`);
+    s = s.replace(/\barctan\(/g, '\\arctan(');
+    s = s.replace(/\barcsin\(/g, '\\arcsin(');
+    s = s.replace(/\barccos\(/g, '\\arccos(');
+    s = s.replace(/\barcctg\(/g, '\\operatorname{arcctg}(');
     s = s.replace(/\*/g, ' \\cdot ');
     // expr/num + C → \frac{expr}{num} + C
     const fracMatch = s.match(/^(.+)\/(\d+)\s*\+\s*C$/);
