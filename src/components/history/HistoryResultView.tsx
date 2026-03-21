@@ -30,7 +30,8 @@ export function HistoryResultView({ calc }: { calc: { type: string; input: any; 
       return <GraphView result={result} input={input} type={type} />;
     case 'scientific':
     case 'photomath':
-      return <ScientificView result={result} input={input} />;
+    case 'engineering':
+      return <ScientificView result={result} input={input} type={type} />;
     default:
       return (
         <pre className="p-2 rounded text-xs overflow-x-auto" style={{ background: 'var(--background-tertiary)' }}>
@@ -319,9 +320,17 @@ function GraphView({ result, input, type }: { result: any; input: any; type: str
   );
 }
 
-function ScientificView({ result, input }: { result: any; input: any }) {
+function ScientificView({ result, input, type }: { result: any; input: any; type?: string }) {
   const expr = input?.expression ?? '—';
   const value = result?.value ?? '—';
+  if (type === 'engineering') {
+    return (
+      <div className="space-y-2 text-sm">
+        <p><strong>Операция:</strong> {input?.a ?? '—'} {input?.op ?? '—'} {input?.b ?? '—'}</p>
+        <p><strong>DEC:</strong> {value} <strong>HEX:</strong> {result?.hex ?? '—'} <strong>BIN:</strong> {result?.bin ?? '—'}</p>
+      </div>
+    );
+  }
   return (
     <div className="space-y-2 text-sm">
       <p><strong>Выражение:</strong> {expr}</p>

@@ -3,13 +3,14 @@
 import React, { useState, useCallback, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { evaluate } from 'mathjs';
-import { FlaskConical, Camera, Upload, X } from 'lucide-react';
+import { FlaskConical, Camera, Upload, X, Cpu } from 'lucide-react';
 import { createWorker } from 'tesseract.js';
 import { useAuth } from '@/contexts/AuthContext';
 import { apiService } from '@/services/api';
 import { MathExpression } from '@/components/UI/MathExpression';
 
-type Mode = 'calculator' | 'photomath';
+type Mode = 'calculator' | 'photomath' | 'engineering';
+type EngineeringBase = 'DEC' | 'HEX' | 'BIN' | 'OCT';
 
 const SCI_BUTTONS = [
   ['C', '⌫', '%', '/'],
@@ -39,11 +40,47 @@ function safeEval(expr: string): string | null {
   }
 }
 
+// Инженерный калькулятор: конвертация и побитовые операции (32-bit unsigned)
+function toBase(n: number, base: EngineeringBase): string {
+  const u = (n >>> 0); // unsigned 32-bit
+  if (base === 'DEC') return String(n);
+  if (base === 'HEX') return u.toString(16).toUpperCase();
+  if (base === 'BIN') return u.toString(2);
+  if (base === 'OCT') return u.toString(8);
+  return String(n);
+}
+
+function parseBase(s: string, base: EngineeringBase): number | null {
+  const t = s.trim().toUpperCase();
+  if (!t) return 0;
+  try {
+    if (base === 'DEC') return parseFloat(t) || parseInt(t, 10) || null;
+    if (base === 'HEX') return parseInt(t, 16);
+    if (base === 'BIN') return parseInt(t, 2);
+    if (base === 'OCT') return parseInt(t, 8);
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+const ENG_BUTTONS: Record<EngineeringBase, string[]> = {
+  DEC: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '-'],
+  HEX: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'],
+  BIN: ['0', '1'],
+  OCT: ['0', '1', '2', '3', '4', '5', '6', '7'],
+};
+
 export default function ScientificCalculatorPage() {
   const { token } = useAuth();
   const [display, setDisplay] = useState('0');
   const [history, setHistory] = useState<string[]>([]);
   const [mode, setMode] = useState<Mode>('calculator');
+  // Инженерный калькулятор
+  const [engBase, setEngBase] = useState<EngineeringBase>('DEC');
+  const [engValue, setEngValue] = useState<number>(0);
+  const [engDisplay, setEngDisplay] = useState('0');
+  const [engPending, setEngPending] = useState<{ value: number; op: string } | null>(null);
   const [photoExpression, setPhotoExpression] = useState('');
   const [photoResult, setPhotoResult] = useState<string | null>(null);
   const [photoLoading, setPhotoLoading] = useState(false);
@@ -149,6 +186,73 @@ export default function ScientificCalculatorPage() {
     setPhotoError('');
   };
 
+  const handleEngDigit = (key: string) => {
+    const valid = ENG_BUTTONS[engBase].includes(key.toUpperCase());
+    if (!valid) return;
+    setEngDisplay((d) => {
+      const next = (d === '0' && key !== '.' ? '' : d) + key;
+      const v = parseBase(next, engBase);
+      if (v !== null && !isNaN(v)) setEngValue(v);
+      return next;
+    });
+  };
+
+  const handleEngOp = (op: string) => {
+    if (op === 'NOT') {
+      const v = ~~engValue;
+      const res = (~v) >>> 0;
+      setEngValue(res);
+      setEngDisplay(toBase(res, engBase));
+      setEngPending(null);
+      setHistory((h) => [...h.slice(-19), `NOT ${toBase(v, engBase)} = ${toBase(res, engBase)}`]);
+      return;
+    }
+    if (op === '<<' || op === '>>') {
+      const v = ~~engValue;
+      const res = op === '<<' ? (v << 1) >>> 0 : v >> 1;
+      setEngValue(res);
+      setEngDisplay(toBase(res, engBase));
+      setEngPending(null);
+      setHistory((h) => [...h.slice(-19), `${toBase(v, engBase)} ${op} 1 = ${toBase(res, engBase)}`]);
+      return;
+    }
+    setEngPending({ value: ~~engValue, op });
+    setEngDisplay('0');
+    setEngValue(0);
+  };
+
+  const handleEngEquals = () => {
+    if (!engPending) return;
+    const a = engPending.value;
+    const b = ~~engValue;
+    let res = 0;
+    if (engPending.op === 'AND') res = (a & b) >>> 0;
+    else if (engPending.op === 'OR') res = (a | b) >>> 0;
+    else if (engPending.op === 'XOR') res = (a ^ b) >>> 0;
+    setEngValue(res);
+    setEngDisplay(toBase(res, engBase));
+    setHistory((h) => [...h.slice(-19), `${toBase(a, engBase)} ${engPending.op} ${toBase(b, engBase)} = ${toBase(res, engBase)}`]);
+    setEngPending(null);
+    if (token) {
+      apiService.saveToHistory(token, {
+        type: 'engineering',
+        input: { a, b, op: engPending.op, base: engBase },
+        result: { value: res, hex: toBase(res, 'HEX'), bin: toBase(res, 'BIN') },
+      }).catch(() => {});
+    }
+  };
+
+  const handleEngClear = () => {
+    setEngDisplay('0');
+    setEngValue(0);
+    setEngPending(null);
+  };
+
+  const handleEngBaseChange = (b: EngineeringBase) => {
+    setEngBase(b);
+    setEngDisplay(toBase(engValue, b));
+  };
+
   return (
     <div className="min-h-screen py-12" style={{ background: 'var(--background)' }}>
       <div className="container mx-auto px-4 max-w-4xl">
@@ -161,7 +265,7 @@ export default function ScientificCalculatorPage() {
             Научный калькулятор
           </h1>
           <p style={{ color: 'var(--foreground-secondary)' }}>
-            Калькулятор с тригонометрией, логарифмами и Photo Math — решение по фото
+            Научный, инженерный калькулятор, Photo Math — решение по фото
           </p>
         </motion.div>
 
@@ -188,6 +292,17 @@ export default function ScientificCalculatorPage() {
           >
             <Camera className="w-5 h-5" />
             Photo Math
+          </button>
+          <button
+            onClick={() => setMode('engineering')}
+            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${
+              mode === 'engineering'
+                ? 'gradient-primary text-[#1c1917]'
+                : 'border border-[#D4AF37]/40 text-[#D4AF37] hover:bg-[#D4AF37]/10'
+            }`}
+          >
+            <Cpu className="w-5 h-5" />
+            Инженерный
           </button>
         </div>
 
@@ -332,6 +447,66 @@ export default function ScientificCalculatorPage() {
                 </p>
               </div>
             )}
+          </motion.div>
+        )}
+
+        {mode === 'engineering' && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="grid md:grid-cols-2 gap-8"
+          >
+            <div className="rounded-2xl p-6 card-midnight">
+              <div className="flex gap-2 mb-4">
+                {(['DEC', 'HEX', 'BIN', 'OCT'] as EngineeringBase[]).map((b) => (
+                  <button
+                    key={b}
+                    onClick={() => handleEngBaseChange(b)}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                      engBase === b ? 'gradient-primary text-[#1c1917]' : 'border border-[#D4AF37]/40 text-[#D4AF37] hover:bg-[#D4AF37]/10'
+                    }`}
+                  >
+                    {b}
+                  </button>
+                ))}
+              </div>
+              <div className="mb-4 p-4 rounded-xl min-h-[60px] text-right font-mono text-2xl break-all" style={{ background: 'var(--background)', color: 'var(--foreground)' }}>
+                {engPending && <span className="text-sm opacity-70">{toBase(engPending.value, engBase)} {engPending.op} </span>}
+                {engDisplay}
+              </div>
+              <div className="grid grid-cols-4 gap-2 mb-4">
+                {ENG_BUTTONS[engBase].map((key) => (
+                  <button
+                    key={key}
+                    onClick={() => handleEngDigit(key)}
+                    className="py-3 rounded-xl border border-[#D4AF37]/40 text-[#D4AF37] hover:bg-[#D4AF37]/10 font-medium text-sm"
+                  >
+                    {key}
+                  </button>
+                ))}
+              </div>
+              <div className="grid grid-cols-3 gap-2">
+                <button onClick={handleEngClear} className="py-3 rounded-xl border border-red-400/50 text-red-400 hover:bg-red-400/10 font-medium text-sm">C</button>
+                <button onClick={() => handleEngOp('AND')} className="py-3 rounded-xl border border-[#D4AF37]/40 text-[#D4AF37] hover:bg-[#D4AF37]/10 font-medium text-sm">AND</button>
+                <button onClick={() => handleEngOp('OR')} className="py-3 rounded-xl border border-[#D4AF37]/40 text-[#D4AF37] hover:bg-[#D4AF37]/10 font-medium text-sm">OR</button>
+                <button onClick={() => handleEngOp('XOR')} className="py-3 rounded-xl border border-[#D4AF37]/40 text-[#D4AF37] hover:bg-[#D4AF37]/10 font-medium text-sm">XOR</button>
+                <button onClick={() => handleEngOp('NOT')} className="py-3 rounded-xl border border-[#D4AF37]/40 text-[#D4AF37] hover:bg-[#D4AF37]/10 font-medium text-sm">NOT</button>
+                <button onClick={() => handleEngOp('<<')} className="py-3 rounded-xl border border-[#D4AF37]/40 text-[#D4AF37] hover:bg-[#D4AF37]/10 font-medium text-sm">&lt;&lt;</button>
+                <button onClick={() => handleEngOp('>>')} className="py-3 rounded-xl border border-[#D4AF37]/40 text-[#D4AF37] hover:bg-[#D4AF37]/10 font-medium text-sm">&gt;&gt;</button>
+                <button onClick={handleEngEquals} className="py-3 col-span-2 rounded-xl gradient-primary text-[#1c1917] font-medium">=</button>
+              </div>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--foreground)' }}>
+                Представление числа
+              </h3>
+              <div className="space-y-2 p-4 rounded-xl" style={{ background: 'var(--background)' }}>
+                <p><span className="text-sm" style={{ color: 'var(--foreground-secondary)' }}>DEC:</span> <span className="font-mono">{engValue}</span></p>
+                <p><span className="text-sm" style={{ color: 'var(--foreground-secondary)' }}>HEX:</span> <span className="font-mono">{toBase(engValue, 'HEX')}</span></p>
+                <p><span className="text-sm" style={{ color: 'var(--foreground-secondary)' }}>BIN:</span> <span className="font-mono break-all">{toBase(engValue, 'BIN')}</span></p>
+                <p><span className="text-sm" style={{ color: 'var(--foreground-secondary)' }}>OCT:</span> <span className="font-mono">{toBase(engValue, 'OCT')}</span></p>
+              </div>
+            </div>
           </motion.div>
         )}
       </div>
