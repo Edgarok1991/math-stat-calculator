@@ -12,7 +12,6 @@ import { observer } from 'mobx-react-lite';
 import { StepGuide } from '@/components/UI/StepGuide';
 import { FractionDisplay } from '@/components/UI';
 import { MathExpression } from '@/components/UI/MathExpression';
-import { apiService } from '@/services/api';
 import { calculateAnovaClient } from '@/lib/anovaClient';
 import { decimalToFraction } from '@/lib/decimalToFraction';
 import dynamic from 'next/dynamic';
@@ -118,23 +117,12 @@ function AnovaPage() {
     setDecimalsPreference(data.decimals);
 
     try {
-      const apiResult = await apiService.calculateAnova({
-        groups,
-        alpha: data.alpha,
-        type: 'one-factor',
-      });
-      setResult(apiResult);
-      calculatorStore.addCalculation({ type: 'anova', input: { groups, alpha: data.alpha }, result: apiResult });
-    } catch (apiError) {
-      console.warn('ANOVA API недоступен, используем расчёт в браузере:', apiError);
-      try {
-        const localResult = calculateAnovaClient(groups, data.alpha);
-        setResult(localResult);
-        calculatorStore.addCalculation({ type: 'anova', input: { groups, alpha: data.alpha }, result: localResult });
-      } catch (err) {
-        console.error('Ошибка ANOVA:', err);
-        alert(err instanceof Error ? err.message : 'Ошибка при расчёте ANOVA');
-      }
+      const result = calculateAnovaClient(groups, data.alpha);
+      setResult(result);
+      calculatorStore.addCalculation({ type: 'anova', input: { groups, alpha: data.alpha }, result });
+    } catch (err) {
+      console.error('Ошибка ANOVA:', err);
+      alert(err instanceof Error ? err.message : 'Ошибка при расчёте ANOVA');
     } finally {
       setIsLoading(false);
     }
