@@ -31,8 +31,8 @@ export default function Header() {
         boxShadow: 'var(--shadow)'
       }}
     >
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
+      <div className="container mx-auto px-4 sm:px-6">
+        <div className="flex items-center justify-between h-14 sm:h-16">
           <Link href="/" className="flex items-center space-x-3 group">
               <div className="w-10 h-10 gradient-primary rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
               <Calculator className="w-6 h-6 text-[#1c1917]" />
@@ -125,7 +125,7 @@ export default function Header() {
           <div className="md:hidden">
             <button 
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="p-2 rounded-lg hover:bg-[#D4AF37]/10 transition-colors"
+              className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg hover:bg-[#D4AF37]/10 transition-colors -mr-2"
             >
               {isMobileMenuOpen ? (
                 <X className="w-6 h-6" style={{ color: 'var(--foreground)' }} />
@@ -142,12 +142,11 @@ export default function Header() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden py-4 border-t"
+            className="md:hidden py-4 border-t max-h-[calc(100vh-4rem)] overflow-y-auto"
             style={{ borderColor: 'var(--border)' }}
           >
-            <nav className="space-y-2">
+            <nav className="space-y-2 px-2">
               {navigation.map((item) => {
-                // Проверяем активность раздела "Анализ данных" для подстраниц
                 const isDataAnalysisSection = item.href === '/data-analysis' && 
                   (pathname === '/clustering' || pathname === '/anova' || pathname === '/data-analysis');
                 const isActive = pathname === item.href || isDataAnalysisSection;
@@ -157,21 +156,50 @@ export default function Header() {
                     key={item.name}
                     href={item.href}
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className={`flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 ${
+                    className={`flex items-center space-x-3 px-4 py-3.5 min-h-[48px] rounded-xl text-base font-medium transition-all duration-300 active:scale-[0.98] ${
                       isActive
                         ? 'gradient-primary text-[#1c1917] font-bold shadow-lg'
-                        : 'border border-[#D4AF37]/40 text-[#D4AF37] hover:bg-[#D4AF37]/10'
+                        : 'border border-[#D4AF37]/40 text-[#D4AF37] hover:bg-[#D4AF37]/10 active:bg-[#D4AF37]/15'
                     }`}
                   >
-                    <item.icon className="w-5 h-5" />
+                    <item.icon className="w-5 h-5 shrink-0" />
                     <span>{item.name}</span>
                   </Link>
                 );
               })}
               
-              <div className="flex items-center justify-between px-4 py-3">
+              {isAuthenticated ? (
+                <>
+                  <Link
+                    href="/history"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="flex items-center space-x-3 px-4 py-3.5 min-h-[48px] rounded-xl text-base font-medium border border-[#D4AF37]/40 text-[#D4AF37] hover:bg-[#D4AF37]/10 active:bg-[#D4AF37]/15"
+                  >
+                    <History className="w-5 h-5 shrink-0" />
+                    <span>История</span>
+                  </Link>
+                  <button
+                    onClick={() => { logout(); setIsMobileMenuOpen(false); }}
+                    className="w-full flex items-center space-x-3 px-4 py-3.5 min-h-[48px] rounded-xl text-base font-medium border border-red-400/50 text-red-400 hover:bg-red-400/10 text-left"
+                  >
+                    <LogOut className="w-5 h-5 shrink-0" />
+                    <span>Выйти</span>
+                  </button>
+                </>
+              ) : (
+                <Link
+                  href="/auth"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center justify-center space-x-2 px-4 py-3.5 min-h-[48px] rounded-xl gradient-primary text-[#1c1917] font-bold"
+                >
+                  <User className="w-5 h-5" />
+                  <span>Войти</span>
+                </Link>
+              )}
+              
+              <div className="flex items-center justify-between px-4 py-3 mt-2 pt-4" style={{ borderTop: '1px solid var(--border)' }}>
                 <span className="text-sm font-medium" style={{ color: 'var(--foreground-secondary)' }}>
-                  Тема:
+                  Тема
                 </span>
                 <ThemeToggle />
               </div>

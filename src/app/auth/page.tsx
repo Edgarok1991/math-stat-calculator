@@ -16,7 +16,7 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4" style={{ background: 'var(--background)' }}>
+    <div className="min-h-screen flex items-center justify-center p-4 sm:p-6" style={{ background: 'var(--background)' }}>
       <div className="absolute inset-0 opacity-20">
         <div className="absolute inset-0" style={{
           backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23D4AF37' fill-opacity='0.15'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
@@ -34,7 +34,7 @@ export default function AuthPage() {
             <div className="w-16 h-16 gradient-primary rounded-2xl flex items-center justify-center shadow-lg">
               <Calculator className="w-8 h-8 text-[#1c1917]" />
             </div>
-            <h1 className="text-4xl font-bold" style={{ color: 'var(--foreground)' }}>MathCalc</h1>
+            <h1 className="text-3xl sm:text-4xl font-bold" style={{ color: 'var(--foreground)' }}>MathCalc</h1>
             <p className="text-sm" style={{ color: 'var(--foreground-secondary)' }}>Luxury Gold Edition</p>
           </div>
           <p style={{ color: 'var(--foreground-secondary)' }}>Математический калькулятор с авторизацией</p>

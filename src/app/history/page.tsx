@@ -168,12 +168,12 @@ export default function HistoryPage() {
 
           {/* History List */}
           {isLoading ? (
-            <div className="text-center py-12">
+            <div className="text-center py-8 sm:py-12">
               <div className="animate-spin w-8 h-8 border-4 border-t-transparent rounded-full mx-auto" style={{ borderColor: 'var(--gold)' }}></div>
               <p className="mt-4" style={{ color: 'var(--foreground-secondary)' }}>Загрузка...</p>
             </div>
           ) : calculations.length === 0 ? (
-            <div className="text-center py-12">
+            <div className="text-center py-8 sm:py-12">
               <History className="w-16 h-16 mx-auto mb-4" style={{ color: 'var(--foreground-muted)' }} />
               <p style={{ color: 'var(--foreground-secondary)' }}>История пуста</p>
               <p className="text-sm mt-2" style={{ color: 'var(--foreground-muted)' }}>

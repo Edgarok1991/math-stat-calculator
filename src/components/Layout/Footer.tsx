@@ -19,8 +19,8 @@ export default function Footer() {
         }}></div>
       </div>
       
-      <div className="relative container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div className="relative container mx-auto px-4 sm:px-6 py-8 sm:py-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 sm:gap-8">
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center space-x-3 mb-6">
               <div className="w-10 h-10 gradient-primary rounded-xl flex items-center justify-center shadow-lg">
@@ -69,114 +69,50 @@ export default function Footer() {
           </div>
           
           <div>
-            <h3 className="text-xl font-bold mb-6" style={{ color: 'var(--foreground)' }}>
+            <h3 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6" style={{ color: 'var(--foreground)' }}>
               Калькуляторы
             </h3>
-            <ul className="space-y-3">
+            <ul className="space-y-2 sm:space-y-3">
               <li>
                 <Link 
                   href="/regression" 
-                  className="text-lg transition-colors duration-300 hover:text-[#E8C547]"
+                  className="text-base sm:text-lg py-1 block transition-colors duration-300 hover:text-[#E8C547] active:text-[#E8C547]"
                   style={{ color: 'var(--foreground-secondary)' }}
                 >
                   Регрессия
                 </Link>
               </li>
               <li>
-                <Link 
-                  href="/clustering" 
-                  className="text-lg transition-colors duration-300 hover:text-[#E8C547]"
-                  style={{ color: 'var(--foreground-secondary)' }}
-                >
-                  Кластеризация
-                </Link>
+                <Link href="/clustering" className="text-base sm:text-lg py-1 block transition-colors duration-300 hover:text-[#E8C547] active:text-[#E8C547]" style={{ color: 'var(--foreground-secondary)' }}>Кластеризация</Link>
               </li>
-              <li>
-                <Link 
-                  href="/anova" 
-                  className="text-lg transition-colors duration-300 hover:text-[#E8C547]"
-                  style={{ color: 'var(--foreground-secondary)' }}
-                >
-                  ANOVA
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  href="/matrices" 
-                  className="text-lg transition-colors duration-300 hover:text-[#E8C547]"
-                  style={{ color: 'var(--foreground-secondary)' }}
-                >
-                  Матрицы
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  href="/calculus" 
-                  className="text-lg transition-colors duration-300 hover:text-[#E8C547]"
-                  style={{ color: 'var(--foreground-secondary)' }}
-                >
-                  Математика
-                </Link>
-              </li>
+              <li><Link href="/anova" className="text-base sm:text-lg py-1 block transition-colors duration-300 hover:text-[#E8C547] active:text-[#E8C547]" style={{ color: 'var(--foreground-secondary)' }}>ANOVA</Link></li>
+              <li><Link href="/matrices" className="text-base sm:text-lg py-1 block transition-colors duration-300 hover:text-[#E8C547] active:text-[#E8C547]" style={{ color: 'var(--foreground-secondary)' }}>Матрицы</Link></li>
+              <li><Link href="/calculus" className="text-base sm:text-lg py-1 block transition-colors duration-300 hover:text-[#E8C547] active:text-[#E8C547]" style={{ color: 'var(--foreground-secondary)' }}>Математика</Link></li>
             </ul>
           </div>
           
           <div>
-            <h3 className="text-xl font-bold mb-6" style={{ color: 'var(--foreground)' }}>
-              Поддержка
-            </h3>
-            <ul className="space-y-3">
-              <li>
-                <a 
-                  href="#" 
-                  className="text-lg transition-colors duration-300 hover:text-[#E8C547]"
-                  style={{ color: 'var(--foreground-secondary)' }}
-                >
-                  Документация
-                </a>
-              </li>
-              <li>
-                <a 
-                  href="#" 
-                  className="text-lg transition-colors duration-300 hover:text-[#E8C547]"
-                  style={{ color: 'var(--foreground-secondary)' }}
-                >
-                  FAQ
-                </a>
-              </li>
-              <li>
-                <a 
-                  href="#" 
-                  className="text-lg transition-colors duration-300 hover:text-[#E8C547]"
-                  style={{ color: 'var(--foreground-secondary)' }}
-                >
-                  Контакты
-                </a>
-              </li>
-              <li>
-                <a 
-                  href="#" 
-                  className="text-lg transition-colors duration-300 hover:text-[#E8C547]"
-                  style={{ color: 'var(--foreground-secondary)' }}
-                >
-                  Обратная связь
-                </a>
-              </li>
+            <h3 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6" style={{ color: 'var(--foreground)' }}>Поддержка</h3>
+            <ul className="space-y-2 sm:space-y-3">
+              <li><a href="#" className="text-base sm:text-lg py-1 block transition-colors duration-300 hover:text-[#E8C547] active:text-[#E8C547]" style={{ color: 'var(--foreground-secondary)' }}>Документация</a></li>
+              <li><a href="#" className="text-base sm:text-lg py-1 block transition-colors duration-300 hover:text-[#E8C547] active:text-[#E8C547]" style={{ color: 'var(--foreground-secondary)' }}>FAQ</a></li>
+              <li><a href="#" className="text-base sm:text-lg py-1 block transition-colors duration-300 hover:text-[#E8C547] active:text-[#E8C547]" style={{ color: 'var(--foreground-secondary)' }}>Контакты</a></li>
+              <li><a href="#" className="text-base sm:text-lg py-1 block transition-colors duration-300 hover:text-[#E8C547] active:text-[#E8C547]" style={{ color: 'var(--foreground-secondary)' }}>Обратная связь</a></li>
             </ul>
           </div>
         </div>
         
         <div 
-          className="flex flex-col md:flex-row justify-between items-center mt-12 pt-8"
+          className="flex flex-col md:flex-row justify-between items-center mt-8 sm:mt-12 pt-6 sm:pt-8 gap-4"
           style={{ borderTop: '1px solid var(--border)' }}
         >
-          <p className="text-lg mb-4 md:mb-0" style={{ color: 'var(--foreground-secondary)' }}>
+          <p className="text-sm sm:text-lg text-center md:text-left mb-0" style={{ color: 'var(--foreground-secondary)' }}>
             &copy; 2025 MathCalc. Сделано с <Heart className="inline w-4 h-4 text-[#D4AF37]" /> для факультета журналистики.
           </p>
           
           <button 
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-300 hover:scale-105"
+            className="flex items-center gap-2 px-4 py-3 min-h-[44px] rounded-full transition-all duration-300 hover:scale-105 active:scale-[0.98]"
             style={{ 
               background: 'var(--background-tertiary)',
               color: 'var(--foreground-secondary)'

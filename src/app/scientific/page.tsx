@@ -328,14 +328,14 @@ export default function ScientificCalculatorPage() {
   };
 
   return (
-    <div className="min-h-screen py-12" style={{ background: 'var(--background)' }}>
-      <div className="container mx-auto px-4 max-w-4xl">
+    <div className="min-h-screen py-6 sm:py-12" style={{ background: 'var(--background)' }}>
+      <div className="container mx-auto px-4 sm:px-6 max-w-4xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h1 className="text-4xl font-bold mb-2" style={{ color: 'var(--foreground)' }}>
+          <h1 className="text-2xl sm:text-4xl font-bold mb-2" style={{ color: 'var(--foreground)' }}>
             Калькулятор
           </h1>
           <p style={{ color: 'var(--foreground-secondary)' }}>
@@ -344,10 +344,10 @@ export default function ScientificCalculatorPage() {
         </motion.div>
 
         {/* Tabs */}
-        <div className="flex gap-2 mb-6">
+        <div className="flex flex-wrap gap-2 mb-4 sm:mb-6">
           <button
             onClick={() => setMode('calculator')}
-            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${
+            className={`flex items-center gap-2 px-4 sm:px-6 py-3 min-h-[48px] rounded-xl font-medium transition-all active:scale-[0.98] ${
               mode === 'calculator'
                 ? 'gradient-primary text-[#1c1917]'
                 : 'border border-[#D4AF37]/40 text-[#D4AF37] hover:bg-[#D4AF37]/10'
@@ -358,7 +358,7 @@ export default function ScientificCalculatorPage() {
           </button>
           <button
             onClick={() => setMode('photomath')}
-            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${
+            className={`flex items-center gap-2 px-4 sm:px-6 py-3 min-h-[48px] rounded-xl font-medium transition-all active:scale-[0.98] ${
               mode === 'photomath'
                 ? 'gradient-primary text-[#1c1917]'
                 : 'border border-[#D4AF37]/40 text-[#D4AF37] hover:bg-[#D4AF37]/10'
@@ -369,7 +369,7 @@ export default function ScientificCalculatorPage() {
           </button>
           <button
             onClick={() => setMode('engineering')}
-            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${
+            className={`flex items-center gap-2 px-4 sm:px-6 py-3 min-h-[48px] rounded-xl font-medium transition-all active:scale-[0.98] ${
               mode === 'engineering'
                 ? 'gradient-primary text-[#1c1917]'
                 : 'border border-[#D4AF37]/40 text-[#D4AF37] hover:bg-[#D4AF37]/10'
@@ -390,12 +390,12 @@ export default function ScientificCalculatorPage() {
               <div className="mb-4 p-4 rounded-xl min-h-[60px] text-right font-mono text-2xl break-all" style={{ background: 'var(--background)', color: 'var(--foreground)' }}>
                 {display}
               </div>
-              <div className="grid grid-cols-4 gap-2">
+              <div className="grid grid-cols-4 gap-1.5 sm:gap-2">
                 {SCI_BUTTONS.flat().map((key) => (
                   <button
                     key={key}
                     onClick={() => handleButton(key)}
-                    className={`py-4 rounded-xl font-medium transition-all text-sm ${
+                    className={`py-3 sm:py-4 rounded-xl font-medium transition-all text-sm min-h-[48px] active:scale-[0.96] ${
                       key === '=' ? 'col-span-2 gradient-primary text-[#1c1917]' : 'border border-[#D4AF37]/40 text-[#D4AF37] hover:bg-[#D4AF37]/10'
                     }`}
                   >
@@ -432,16 +432,16 @@ export default function ScientificCalculatorPage() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="rounded-2xl p-6 card-midnight space-y-6"
+            className="rounded-2xl p-4 sm:p-6 card-midnight space-y-4 sm:space-y-6"
           >
             <input ref={fileInputRef} type="file" accept="image/*" capture="environment" onChange={handlePhotoUpload} className="hidden" />
-            <div className="flex flex-wrap items-center gap-3">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
               {!cameraMode ? (
                 <>
                   <button
                     onClick={startCamera}
                     disabled={photoLoading}
-                    className="flex items-center gap-2 px-6 py-3 rounded-xl gradient-primary text-[#1c1917] font-medium disabled:opacity-60"
+                    className="flex items-center gap-2 px-4 sm:px-6 py-3 min-h-[48px] rounded-xl gradient-primary text-[#1c1917] font-medium disabled:opacity-60 active:scale-[0.98]"
                   >
                     <Camera className="w-5 h-5" />
                     Сфотографировать
@@ -449,7 +449,7 @@ export default function ScientificCalculatorPage() {
                   <button
                     onClick={() => fileInputRef.current?.click()}
                     disabled={photoLoading}
-                    className="flex items-center gap-2 px-6 py-3 rounded-xl border border-[#D4AF37]/40 text-[#D4AF37] hover:bg-[#D4AF37]/10 font-medium disabled:opacity-60"
+                    className="flex items-center gap-2 px-4 sm:px-6 py-3 min-h-[48px] rounded-xl border border-[#D4AF37]/40 text-[#D4AF37] hover:bg-[#D4AF37]/10 font-medium disabled:opacity-60 active:scale-[0.98]"
                   >
                     <Upload className="w-5 h-5" />
                     Загрузить фото
@@ -552,13 +552,13 @@ export default function ScientificCalculatorPage() {
           </motion.div>
         )}
 
-        {mode === 'engineering' && (
+            {mode === 'engineering' && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="grid md:grid-cols-2 gap-8"
+            className="grid md:grid-cols-2 gap-4 sm:gap-8"
           >
-            <div className="rounded-2xl p-6 card-midnight">
+            <div className="rounded-2xl p-4 sm:p-6 card-midnight">
               <div className="flex gap-2 mb-4">
                 {(['DEC', 'HEX', 'BIN', 'OCT'] as EngineeringBase[]).map((b) => (
                   <button
@@ -576,12 +576,12 @@ export default function ScientificCalculatorPage() {
                 {engPending && <span className="text-sm opacity-70">{toBase(engPending.value, engBase)} {engPending.op} </span>}
                 {engDisplay}
               </div>
-              <div className="grid grid-cols-4 gap-2 mb-4">
+              <div className="grid grid-cols-4 gap-1.5 sm:gap-2 mb-4">
                 {ENG_BUTTONS[engBase].map((key) => (
                   <button
                     key={key}
                     onClick={() => handleEngDigit(key)}
-                    className="py-3 rounded-xl border border-[#D4AF37]/40 text-[#D4AF37] hover:bg-[#D4AF37]/10 font-medium text-sm"
+                    className="py-3 min-h-[44px] rounded-xl border border-[#D4AF37]/40 text-[#D4AF37] hover:bg-[#D4AF37]/10 font-medium text-sm active:scale-[0.96]"
                   >
                     {key}
                   </button>

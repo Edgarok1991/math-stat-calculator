@@ -2328,8 +2328,8 @@ function GraphsPage() {
   };
 
   return (
-    <div className="min-h-screen py-12" style={{ background: 'var(--background)' }}>
-      <div className="container mx-auto px-4 max-w-7xl">
+    <div className="min-h-screen py-6 sm:py-12" style={{ background: 'var(--background)' }}>
+      <div className="container mx-auto px-4 sm:px-6 max-w-7xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

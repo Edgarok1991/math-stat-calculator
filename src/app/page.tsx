@@ -98,7 +98,7 @@ export default function HomePage() {
           }}></div>
         </div>
         
-        <div className="relative container mx-auto px-4 py-20">
+        <div className="relative container mx-auto px-4 sm:px-6 py-10 sm:py-20">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -112,7 +112,7 @@ export default function HomePage() {
               </span>
             </div>
             
-            <h1 className="text-6xl md:text-7xl font-bold mb-6">
+            <h1 className="text-3xl sm:text-5xl md:text-7xl font-bold mb-4 sm:mb-6 px-2">
               <span className="block" style={{ color: 'var(--foreground)' }}>
                 Математический и статистический калькулятор
               </span>
@@ -121,13 +121,13 @@ export default function HomePage() {
 
             </h1>
             
-            <p className="text-xl md:text-2xl mb-10 max-w-4xl mx-auto" style={{ color: 'var(--foreground-secondary)' }}>
+            <p className="text-base sm:text-xl md:text-2xl mb-6 sm:mb-10 max-w-4xl mx-auto px-2" style={{ color: 'var(--foreground-secondary)' }}>
               Решайте сложные математические и статистические задачи с помощью 
               <span className="font-semibold text-[#E8C547]"> интуитивного интерфейса</span> и 
               <span className="font-semibold text-[#D4AF37]"> подробных объяснений</span>
             </p>
             
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-10 sm:mb-16">
               <Button asChild size="lg" className="gradient-primary text-[#1c1917] font-bold hover:opacity-90 transition-all duration-300 shadow-lg hover:shadow-xl">
                 <Link href="/regression" className="flex items-center gap-2">
                   <Calculator className="w-5 h-5" />
@@ -146,22 +146,22 @@ export default function HomePage() {
       </div>
 
       {/* Features Grid */}
-      <div className="container mx-auto px-4 py-20">
+      <div className="container mx-auto px-4 sm:px-6 py-10 sm:py-20">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl md:text-5xl font-bold mb-4" style={{ color: 'var(--foreground)' }}>
+          <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold mb-3 sm:mb-4" style={{ color: 'var(--foreground)' }}>
             Возможности платформы
           </h2>
-          <p className="text-xl" style={{ color: 'var(--foreground-secondary)' }}>
+          <p className="text-base sm:text-xl" style={{ color: 'var(--foreground-secondary)' }}>
             Все необходимые инструменты для математического и статистического анализа
           </p>
         </motion.div>
 
-        <div id="features" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div id="features" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
           {features.map((feature, index) => (
             <motion.div
               key={feature.title}
@@ -171,17 +171,17 @@ export default function HomePage() {
               className="group"
             >
               <div 
-                className="h-full p-8 rounded-2xl card-hover card-midnight"
+                className="h-full p-5 sm:p-6 md:p-8 rounded-2xl card-hover card-midnight"
               >
                 <div className={`w-16 h-16 rounded-2xl ${feature.gradient} flex items-center justify-center mb-6 group-hover:scale-110 transition-all duration-300 shadow-lg`}>
                   <feature.icon className="w-8 h-8 text-white" />
                 </div>
                 
-                <h3 className="text-2xl font-bold mb-4" style={{ color: 'var(--foreground)' }}>
+                <h3 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4" style={{ color: 'var(--foreground)' }}>
                   {feature.title}
                 </h3>
                 
-                <p className="text-lg mb-6" style={{ color: 'var(--foreground-secondary)' }}>
+                <p className="text-base sm:text-lg mb-4 sm:mb-6" style={{ color: 'var(--foreground-secondary)' }}>
                   {feature.description}
                 </p>
                 

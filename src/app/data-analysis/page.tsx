@@ -69,7 +69,7 @@ export default function DataAnalysisPage() {
           }}></div>
         </div>
         
-        <div className="relative container mx-auto px-4 py-20">
+        <div className="relative container mx-auto px-4 sm:px-6 py-10 sm:py-20">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -104,7 +104,7 @@ export default function DataAnalysisPage() {
       </div>
 
       {/* Analysis Tools */}
-      <div id="tools" className="container mx-auto px-4 py-20">
+      <div id="tools" className="container mx-auto px-4 sm:px-6 py-10 sm:py-20">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -171,8 +171,8 @@ export default function DataAnalysisPage() {
       </div>
 
       {/* Benefits Section */}
-      <div className="py-20" style={{ background: 'var(--background-secondary)' }}>
-        <div className="container mx-auto px-4">
+      <div className="py-10 sm:py-20" style={{ background: 'var(--background-secondary)' }}>
+        <div className="container mx-auto px-4 sm:px-6">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -212,8 +212,8 @@ export default function DataAnalysisPage() {
       </div>
 
       {/* CTA Section */}
-      <div className="py-20" style={{ background: 'linear-gradient(135deg, #1c1917 0%, #292524 100%)', borderTop: '1px solid rgba(212,175,55,0.3)' }}>
-        <div className="container mx-auto px-4 text-center">
+      <div className="py-10 sm:py-20" style={{ background: 'linear-gradient(135deg, #1c1917 0%, #292524 100%)', borderTop: '1px solid rgba(212,175,55,0.3)' }}>
+        <div className="container mx-auto px-4 sm:px-6 text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}

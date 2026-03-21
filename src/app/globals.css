@@ -109,11 +109,13 @@
 
 * {
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
 html {
   font-family: var(--font-app);
   font-weight: 300;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
@@ -125,7 +127,9 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
+  min-height: 100dvh;
 }
+
 
 /* Заголовки — Raleway Light 300 */
 h1,
@@ -145,6 +149,13 @@ input,
 textarea,
 select {
   font-family: inherit;
+}
+
+/* iOS: предотвращение зума при фокусе на input (font-size < 16px вызывает зум) */
+@media (max-width: 768px) {
+  input, textarea, select {
+    font-size: 16px !important;
+  }
 }
 
 /* Тонкая золотая сетка + тёплый виньет */

@@ -744,7 +744,7 @@ const MatricesPage = () => {
 
   return (
     <div className="min-h-screen" style={{ background: 'var(--background)' }}>
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-8">
         <div className="text-center mb-12">
           <div className="flex items-center justify-center gap-4 mb-4">
             <h1 className="text-5xl font-bold" style={{ color: 'var(--foreground)' }}>
