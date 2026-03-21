@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import { DendrogramNode } from '@/types/calculator';
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface DendrogramViewProps {
   data: DendrogramNode;
@@ -15,6 +16,7 @@ export const DendrogramView: React.FC<DendrogramViewProps> = ({
   height = 400 
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const { theme } = useTheme();
 
   useEffect(() => {
     if (!canvasRef.current || !data) return;
@@ -22,6 +24,13 @@ export const DendrogramView: React.FC<DendrogramViewProps> = ({
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
+
+    // Цвета из темы (адаптивные под светлую/тёмную)
+    const styles = getComputedStyle(document.documentElement);
+    const lineColor = styles.getPropertyValue('--gold').trim() || '#d4af37';
+    const textColor = styles.getPropertyValue('--foreground').trim() || '#f5ebe0';
+    const accentColor = styles.getPropertyValue('--clustering-min-text').trim() || styles.getPropertyValue('--luxury-error').trim() || '#e8b4b4';
+    const axisColor = styles.getPropertyValue('--foreground-muted').trim() || '#9a8b75';
 
     // Очистка canvas
     ctx.clearRect(0, 0, width, height);
@@ -69,7 +78,7 @@ export const DendrogramView: React.FC<DendrogramViewProps> = ({
           ctx.beginPath();
           ctx.moveTo(leafX, nodeY);
           ctx.lineTo(leafX, parentY);
-          ctx.strokeStyle = '#3b82f6';
+          ctx.strokeStyle = lineColor;
           ctx.lineWidth = 2;
           ctx.stroke();
         }
@@ -78,7 +87,7 @@ export const DendrogramView: React.FC<DendrogramViewProps> = ({
         ctx.save();
         ctx.translate(leafX, height - margin.bottom + 5);
         ctx.rotate(-Math.PI / 4);
-        ctx.fillStyle = '#1f2937';
+        ctx.fillStyle = textColor;
         ctx.font = '12px sans-serif';
         ctx.fillText(node.name, 0, 0);
         ctx.restore();
@@ -102,7 +111,7 @@ export const DendrogramView: React.FC<DendrogramViewProps> = ({
         ctx.beginPath();
         ctx.moveTo(childPositions[0], nodeY);
         ctx.lineTo(childPositions[childPositions.length - 1], nodeY);
-        ctx.strokeStyle = '#3b82f6';
+        ctx.strokeStyle = lineColor;
         ctx.lineWidth = 2;
         ctx.stroke();
       }
@@ -112,14 +121,14 @@ export const DendrogramView: React.FC<DendrogramViewProps> = ({
         ctx.beginPath();
         ctx.moveTo(nodeX, nodeY);
         ctx.lineTo(nodeX, parentY);
-        ctx.strokeStyle = '#3b82f6';
+        ctx.strokeStyle = lineColor;
         ctx.lineWidth = 2;
         ctx.stroke();
       }
 
       // Метка расстояния
       if (node.distance !== undefined) {
-        ctx.fillStyle = '#dc2626';
+        ctx.fillStyle = accentColor;
         ctx.font = 'bold 11px sans-serif';
         ctx.fillText(Number(node.distance).toFixed(2), nodeX + 5, nodeY - 5);
       }
@@ -132,12 +141,12 @@ export const DendrogramView: React.FC<DendrogramViewProps> = ({
     ctx.moveTo(margin.left, margin.top);
     ctx.lineTo(margin.left, height - margin.bottom);
     ctx.lineTo(width - margin.right, height - margin.bottom);
-    ctx.strokeStyle = '#6b7280';
+    ctx.strokeStyle = axisColor;
     ctx.lineWidth = 2;
     ctx.stroke();
 
     // Подписи осей
-    ctx.fillStyle = '#374151';
+    ctx.fillStyle = axisColor;
     ctx.font = '14px sans-serif';
     ctx.fillText('Расстояние', 10, margin.top + plotHeight / 2);
     ctx.fillText('Объекты', width / 2 - 30, height - 10);
@@ -151,11 +160,11 @@ export const DendrogramView: React.FC<DendrogramViewProps> = ({
       ctx.beginPath();
       ctx.moveTo(margin.left - 5, tickY);
       ctx.lineTo(margin.left, tickY);
-      ctx.strokeStyle = '#6b7280';
+      ctx.strokeStyle = axisColor;
       ctx.lineWidth = 1;
       ctx.stroke();
 
-      ctx.fillStyle = '#6b7280';
+      ctx.fillStyle = axisColor;
       ctx.font = '11px sans-serif';
       ctx.textAlign = 'right';
       ctx.fillText(Number(tickValue).toFixed(2), margin.left - 10, tickY + 4);
@@ -166,7 +175,7 @@ export const DendrogramView: React.FC<DendrogramViewProps> = ({
     currentLeafX = 0;
     drawNode(data, width / 2, margin.top, null);
 
-  }, [data, width, height]);
+  }, [data, width, height, theme]);
 
   return (
     <div className="p-6 rounded-lg border-2 shadow-md card-midnight" style={{ borderColor: 'var(--border)' }}>
