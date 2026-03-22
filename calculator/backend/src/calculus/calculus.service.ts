@@ -1348,18 +1348,42 @@ export class CalculusService {
       return steps;
     } else if (method === 'substitution' && this.integralResult.substitution) {
       const sub = this.integralResult.substitution;
+      const v = variable;
       steps.push({
-        actionLabel: 'Применяем подстановку:',
-        rule: {
-          name: 'Замена переменной',
-          formula: sub.dxExpr || undefined,
-          substitutions: [
-            { symbol: 'u', value: sub.u },
-            { symbol: 'du', value: sub.du },
-          ],
-        },
-        expression: result,
+        actionLabel: 'Исходный интеграл',
+        expression: `∫ (${expression}) d${v}`,
       });
+      if (sub.integrandU && sub.antiderivU) {
+        steps.push({
+          actionLabel: 'Подстановка',
+          rule: {
+            name: 'Замена переменной',
+            formula: sub.dxExpr || undefined,
+            substitutions: [
+              { symbol: 'u', value: sub.u },
+              { symbol: 'du', value: sub.du },
+            ],
+          },
+          expressionAfter: `∫ ${sub.integrandU} du = ${sub.antiderivU}`,
+        });
+        steps.push({
+          actionLabel: 'Ответ',
+          expression: result,
+        });
+      } else {
+        steps.push({
+          actionLabel: 'Применяем подстановку',
+          rule: {
+            name: 'Замена переменной',
+            formula: sub.dxExpr || undefined,
+            substitutions: [
+              { symbol: 'u', value: sub.u },
+              { symbol: 'du', value: sub.du },
+            ],
+          },
+          expression: result,
+        });
+      }
     } else if (method === 'table' && this.integralResult.tableRule) {
       steps.push({
         actionLabel: 'Применяем табличную формулу:',
@@ -2121,9 +2145,20 @@ export class CalculusService {
         return this.integralResult.result;
       }
 
-      // ∫sin(x)*cos(x)dx
+      // ∫sin(x)*cos(x)dx — подстановка u = sin(x), du = cos(x)dx (понятные шаги вместо «таблицы в общем виде»)
       if (cleanExpr === `sin(${variable})*cos(${variable})` || cleanExpr === `cos(${variable})*sin(${variable})`) {
-        this.integralResult = { result: `sin(${variable})^2/2 + C`, method: 'table' };
+        const v = variable;
+        this.integralResult = {
+          result: `sin(${v})^2/2 + C`,
+          method: 'substitution',
+          substitution: {
+            u: `sin(${v})`,
+            du: `cos(${v}) d${v}`,
+            dxExpr: `Если u = sin(${v}), то du = cos(${v}) d${v}, значит sin(${v})·cos(${v}) d${v} = u du`,
+            integrandU: 'u',
+            antiderivU: 'u^2/2 + C',
+          },
+        };
         return this.integralResult.result;
       }
 
@@ -2484,12 +2519,11 @@ export class CalculusService {
       if (this.integralResult.tableRule) {
         steps.push(`Шаг 2. ${this.integralResult.tableRule}`);
       } else {
-        steps.push(`Шаг 2. Применяем таблицу основных интегралов:`);
+        steps.push(
+          `Шаг 2. Подбираем первообразную по таблице стандартных интегралов для данного вида выражения (без лишних формул из других задач).`
+        );
       }
-      steps.push(`   • ∫x^n dx = x^(n+1)/(n+1) + C`);
-      steps.push(`   • ∫sin(x)dx = -cos(x) + C, ∫cos(x)dx = sin(x) + C`);
-      steps.push(`   • ∫e^x dx = e^x + C, ∫(1/x)dx = ln|x| + C`);
-      steps.push(`Шаг 3. Получаем:`);
+      steps.push(`Шаг 3. Ответ:`);
       steps.push(`   ${result}`);
     }
 

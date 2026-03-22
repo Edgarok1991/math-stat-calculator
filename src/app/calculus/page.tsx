@@ -1320,14 +1320,6 @@ function CalculusPage() {
                         )}
                       </div>
                     )}
-
-                    {/* LaTeX формула */}
-                    {integralResult.latex && (
-                      <div className="p-4 rounded-lg border" style={{ background: 'var(--background-tertiary)', borderColor: 'var(--border)' }}>
-                        <p className="text-xs mb-2" style={{ color: 'var(--foreground-secondary)' }}>LaTeX формула:</p>
-                        <code className="text-sm font-mono" style={{ color: 'var(--foreground)' }}>{integralResult.latex}</code>
-                      </div>
-                    )}
                   </div>
                 </motion.div>
               )}
