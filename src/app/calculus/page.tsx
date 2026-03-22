@@ -1297,7 +1297,9 @@ function CalculusPage() {
                             Пошаговое решение
                           </h3>
                           <p className="text-sm mt-1" style={{ color: 'var(--foreground-secondary)' }}>
-                            В духе <a href="https://mathdf.com/int/ru/" target="_blank" rel="noopener noreferrer" className="underline decoration-[var(--gold)]/60 hover:decoration-[var(--gold)]">MathDF</a>: шаг → формула → подстановки
+                            В духе <a href="https://mathdf.com/int/ru/" target="_blank" rel="noopener noreferrer" className="underline decoration-[var(--gold)]/60 hover:decoration-[var(--gold)]">MathDF</a>: шаг → формула → подстановки.
+                            {' '}Движок: явные правила, деление многочленов (рациональные дроби), символьный CAS (Nerdamer) с проверкой{' '}
+                            <span className="whitespace-nowrap">d/dx(F) ≡ f</span>.
                           </p>
                         </div>
                         {integralResult.stepsStructured && integralResult.stepsStructured.length > 0 ? (

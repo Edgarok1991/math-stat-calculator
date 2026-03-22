@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CalculusDto } from './dto/calculus.dto';
 import { DerivativeDto, DerivativeAtPointDto } from './dto/derivative.dto';
 import { CalculusResult, IntegralStepStructured } from './interfaces/calculus-result.interface';
+import { IntegralCalculatorEngine } from './integral-calculator.engine';
 import { DerivativeResult, DerivativeGraphResult, DerivativeAtPointResult, DerivativeStep } from './interfaces/derivative-result.interface';
 import * as math from 'mathjs';
 
@@ -9,6 +10,8 @@ import * as math from 'mathjs';
 const nerdamer = require('nerdamer');
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 require('nerdamer/Calculus.js');
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+require('nerdamer/Algebra.js');
 
 @Injectable()
 export class CalculusService {
@@ -616,7 +619,18 @@ export class CalculusService {
           stepsStructured = nerdamerResult.stepsStructured;
         }
       }
-      
+
+      // ∫(многочлен ≤2)/(линейный): точное деление в mathjs; nerdamer для таких дробей даёт неверный ответ
+      if (!bounds) {
+        const cleanQL = normalizedExpr.replace(/\s/g, '').replace(/ln\(/g, 'log(');
+        const manualQuadLin = this.tryIntegralPolynomialOverLinear(cleanQL, variable);
+        if (manualQuadLin) {
+          integral = manualQuadLin;
+          steps = this.getIntegralSteps(normalizedExpr, variable);
+          stepsStructured = this.getIntegralStepsStructured(normalizedExpr, variable, integral);
+        }
+      }
+
       const latex = this.toLatex(integral);
 
       return {
@@ -670,7 +684,29 @@ export class CalculusService {
         const { lower, upper } = bounds;
         result = nerdamer(`defint(${nerdamerExpr}, ${lower}, ${upper}, ${variable})`);
       } else {
-        result = nerdamer(`integrate(${nerdamerExpr}, ${variable})`);
+        const strategies = [
+          `integrate(${nerdamerExpr}, ${variable})`,
+          `integrate(expand(${nerdamerExpr}), ${variable})`,
+          `integrate(factor(${nerdamerExpr}), ${variable})`,
+        ];
+        result = null;
+        for (const cmd of strategies) {
+          try {
+            const r = nerdamer(cmd);
+            const hasIntegral =
+              r.hasIntegral && typeof r.hasIntegral === 'function' && r.hasIntegral();
+            if (hasIntegral) continue;
+            const rs = r.toString();
+            if (!rs || rs.includes('integrate(')) continue;
+            if (IntegralCalculatorEngine.verifyIndefiniteAntiderivative(nerdamerExpr, variable, rs)) {
+              result = r;
+              break;
+            }
+          } catch {
+            continue;
+          }
+        }
+        if (!result) return null;
       }
 
       const hasIntegral = result.hasIntegral && typeof result.hasIntegral === 'function' && result.hasIntegral();
@@ -678,6 +714,13 @@ export class CalculusService {
 
       let resultStr = result.toString();
       if (!resultStr || resultStr.includes('integrate(')) return null;
+
+      if (bounds) {
+        // определённый интеграл — без проверки производной
+      } else {
+        const ok = IntegralCalculatorEngine.verifyIndefiniteAntiderivative(nerdamerExpr, variable, resultStr);
+        if (!ok) return null;
+      }
 
       const integral = bounds
         ? this.fromNerdamerResult(resultStr)
@@ -915,6 +958,93 @@ export class CalculusService {
           expression: result,
         });
       }
+    } else if (method === 'substitution' && this.integralResult.rationalQuadraticOverLinear) {
+      const rq = this.integralResult.rationalQuadraticOverLinear;
+      const x = variable;
+      const remPart =
+        rq.remainderStr !== undefined && rq.remainderStr !== '0'
+          ? `${rq.remainderStr}/(${rq.denomInnerStr})`
+          : Math.abs(rq.remainder) > 1e-10
+            ? `${this.formatShortCoeff(rq.remainder)}/(${rq.denomInnerStr})`
+            : '';
+      const hasRem = Boolean(remPart);
+      const decomp = hasRem
+        ? `(${rq.numerStr})/(${rq.denomStr}) = ${rq.quotientStr} + ${remPart}`
+        : `(${rq.numerStr})/(${rq.denomStr}) = ${rq.quotientStr}`;
+      steps.push({
+        actionLabel: 'Вычисляем',
+        expression: `∫ (${rq.numerStr})/(${rq.denomStr}) d${x}`,
+        rule: {
+          name: 'Рациональная дробь: деление многочлена на линейный множитель',
+          formula: `(${rq.numerStr}) = (${rq.quotientStr})·(${rq.denomStr}) + R`,
+          substitutions: [
+            { symbol: 'Частное', value: rq.quotientStr },
+            { symbol: 'Остаток R', value: rq.remainderStr ?? String(rq.remainder) },
+          ],
+        },
+        expressionAfter: decomp,
+      });
+      steps.push({
+        actionLabel: 'Разложим интеграл',
+        expression: hasRem
+          ? `∫ (${rq.quotientStr} + ${remPart}) d${x} = ∫ (${rq.quotientStr}) d${x} + ∫ (${remPart}) d${x}`
+          : `∫ (${rq.quotientStr}) d${x}`,
+      });
+      const subSteps: IntegralStepStructured[] = [];
+      if (rq.integratedQuotient) {
+        subSteps.push({
+          actionLabel: 'Частное Q(x)',
+          rule: {
+            name: 'Интегрирование многочлена',
+            formula: '∫ Q(x) dx — по таблице степеней',
+          },
+          expression: `∫ (${rq.quotientStr}) d${x} = ${rq.integratedQuotient}`,
+        });
+      } else {
+        if (Math.abs(rq.coeffA) > 1e-10) {
+          subSteps.push({
+            actionLabel: 'Степень 1',
+            rule: {
+              name: 'Табличный интеграл',
+              formula: '∫ a·x dx = a·x²/2',
+            },
+            expression: `∫ ${this.formatShortCoeff(rq.coeffA)}*${x} d${x} = ${this.formatShortCoeff(rq.coeffA / 2)}*${x}^2`,
+          });
+        }
+        if (Math.abs(rq.coeffB) > 1e-10) {
+          subSteps.push({
+            actionLabel: 'Константа',
+            rule: { name: 'Табличный интеграл', formula: '∫ k dx = k·x' },
+            expression: `∫ ${this.formatShortCoeff(rq.coeffB)} d${x} = ${this.formatShortCoeff(rq.coeffB)}*${x}`,
+          });
+        }
+      }
+      if (hasRem) {
+        subSteps.push({
+          actionLabel: 'Дробь с линейным знаменателем',
+          rule: {
+            name: 'Интеграл вида ∫ k/(p·x+q) dx',
+            formula: `∫ k/(${rq.denomInnerStr}) d${x} = (k/p)·ln|${rq.denomInnerStr}|`,
+            substitutions: [
+              { symbol: 'k', value: rq.remainderStr ?? String(rq.remainder) },
+              { symbol: 'p', value: String(rq.p) },
+            ],
+          },
+          expression: `∫ ${rq.remainderStr ?? this.formatShortCoeff(rq.remainder)}/(${rq.denomInnerStr}) d${x} = ${this.formatShortCoeff(rq.remainder / rq.p)}·ln(abs(${rq.denomInnerStr}))`,
+        });
+      }
+      if (subSteps.length > 0) {
+        steps.push({
+          actionLabel: 'Почленное интегрирование',
+          expression: hasRem ? `∫ (${rq.quotientStr} + ${remPart}) d${x}` : `∫ (${rq.quotientStr}) d${x}`,
+          subSteps,
+        });
+      }
+      steps.push({
+        actionLabel: 'Интеграл окончен',
+        expression: result,
+      });
+      return steps;
     } else if (method === 'substitution' && this.integralResult.substitution) {
       const sub = this.integralResult.substitution;
       steps.push({
@@ -1009,6 +1139,21 @@ export class CalculusService {
     substitution?: { u: string; du: string; dxExpr?: string; integrandU?: string; antiderivU?: string };
     byParts?: { u: string; dv: string; du: string; v: string; uv?: string; remainingIntegral?: string };
     tableRule?: string; // конкретная формула из таблицы
+    /** ∫(многочлен)/(линейный) — деление и ln (любая степень числителя) */
+    rationalQuadraticOverLinear?: {
+      numerStr: string;
+      denomStr: string;
+      quotientStr: string;
+      remainder: number;
+      remainderStr?: string;
+      coeffA: number;
+      coeffB: number;
+      p: number;
+      q: number;
+      denomInnerStr: string;
+      /** Антипроизводная частного ∫Q(x)dx (без +C), из Nerdamer */
+      integratedQuotient?: string;
+    };
   } = { result: '', method: 'table' };
 
   /** ∫ x²·e^x dx — распознавание для пошагового решения (MathDF) */
@@ -1021,6 +1166,153 @@ export class CalculusService {
       bp.dv?.includes(`e^${variable}`) ||
       /\bexp\s*\(/.test(bp.dv || '');
     return bp.u === `${variable}^2` && !!dvLooksExp;
+  }
+
+  /** Проверка: узел mathjs — ноль (после simplify) */
+  private mathNodeIsZero(node: math.MathNode): boolean {
+    try {
+      const s = math.simplify(node).toString();
+      return s === '0' || s === '-0';
+    } catch {
+      return false;
+    }
+  }
+
+  /** Коэффициент для строки результата: 1/2, -3, 10 */
+  private formatShortCoeff(r: number): string {
+    if (Number.isInteger(r)) return String(r);
+    try {
+      const frac = math.fraction(r);
+      const n = frac.n;
+      const d = frac.d;
+      if (d === 1) return String(n);
+      if (n < 0) return `-(${Math.abs(n)}/${d})`;
+      return `(${n}/${d})`;
+    } catch {
+      return String(r);
+    }
+  }
+
+  /** Линейный знаменатель p·x+q в виде строки для log(abs(...)) */
+  private buildLinearDenomInner(p: number, q: number, variable: string): string {
+    try {
+      const node = math.simplify(math.parse(`${p}*${variable}+(${q})`));
+      return node.toString().replace(/\s/g, '');
+    } catch {
+      return `${p}*${variable}+${q}`;
+    }
+  }
+
+  /** Разбор результата nerdamer div: "[Q, R]" */
+  private parseNerdamerDivTuple(s: string): [string, string] | null {
+    const t = s.trim();
+    if (!t.startsWith('[') || !t.endsWith(']')) return null;
+    const inner = t.slice(1, -1);
+    const idx = inner.lastIndexOf(',');
+    if (idx === -1) return null;
+    const q = inner.slice(0, idx).trim();
+    const r = inner.slice(idx + 1).trim();
+    if (!q || r === undefined) return null;
+    return [q, r];
+  }
+
+  /** Проверка: узел — многочлен по variable (производная степени+1 ≡ 0) */
+  private isPolynomialInVariable(node: math.MathNode, variable: string, maxDeg = 40): boolean {
+    let d: math.MathNode = node;
+    for (let i = 0; i <= maxDeg + 1; i++) {
+      if (this.mathNodeIsZero(d)) return true;
+      d = math.derivative(d, variable);
+    }
+    return false;
+  }
+
+  /**
+   * ∫(многочлен)/(линейный знаменатель) — деление Nerdamer (div), затем ∫ частного + ∫ остатка/знаменатель.
+   * Покрывает любую степень числителя (не только квадратичный).
+   */
+  private tryIntegralPolynomialOverLinear(cleanExpr: string, variable: string): string | null {
+    const m = cleanExpr.match(/^\(([^)]+)\)\/\(([^)]+)\)$/);
+    if (!m) return null;
+    const numStr = m[1];
+    const denStr = m[2];
+    try {
+      const nNode = math.parse(numStr);
+      const dNode = math.parse(denStr);
+      const dLin = math.derivative(math.derivative(dNode, variable), variable);
+      if (!this.mathNodeIsZero(dLin)) return null;
+      const p = math.derivative(dNode, variable).evaluate({ [variable]: 0 }) as number;
+      if (Math.abs(p) < 1e-12) return null;
+      if (!this.isPolynomialInVariable(nNode, variable)) return null;
+
+      const q = dNode.evaluate({ [variable]: 0 }) as number;
+      const inner = this.buildLinearDenomInner(p, q, variable);
+
+      const numN = this.toNerdamerExpr(numStr);
+      const denN = this.toNerdamerExpr(denStr);
+      const divStr = nerdamer(`div(${numN},${denN})`).toString();
+      const parsed = this.parseNerdamerDivTuple(divStr);
+      if (!parsed) return null;
+      const [quotN, remN] = parsed;
+
+      const intQ = nerdamer(`integrate((${quotN}), ${variable})`).toString();
+      let intR = '0';
+      if (remN !== '0') {
+        intR = nerdamer(`integrate((${remN})/(${denN}), ${variable})`).toString();
+      }
+      const sum = nerdamer(`(${intQ})+(${intR})`).simplify().toString();
+      const result = this.fromNerdamerResult(sum) + ' + C';
+
+      const ok = IntegralCalculatorEngine.verifyIndefiniteAntiderivative(numN, variable, sum);
+      if (!ok) return null;
+
+      const quotientStr = quotN.replace(/\s/g, '');
+      let remNum = 0;
+      try {
+        remNum = nerdamer(remN).evaluate() as number;
+      } catch {
+        remNum = parseFloat(remN) || 0;
+      }
+
+      let coeffA = 0;
+      let coeffB = 0;
+      const d3n = math.derivative(
+        math.derivative(math.derivative(nNode, variable), variable),
+        variable
+      );
+      if (this.mathNodeIsZero(d3n)) {
+        const a =
+          (math.derivative(math.derivative(nNode, variable), variable).evaluate({ [variable]: 0 }) as number) /
+          2;
+        const b = math.derivative(nNode, variable).evaluate({ [variable]: 0 }) as number;
+        coeffA = a / p;
+        coeffB = (b - coeffA * q) / p;
+      }
+
+      this.integralResult = {
+        result,
+        method: 'substitution',
+        substitution: {
+          u: `деление многочлена на линейный множитель (${denStr})`,
+          du: `d${variable}`,
+        },
+        rationalQuadraticOverLinear: {
+          numerStr: numStr,
+          denomStr: denStr,
+          quotientStr,
+          remainder: remNum,
+          remainderStr: remN,
+          coeffA,
+          coeffB,
+          p,
+          q,
+          denomInnerStr: inner,
+          integratedQuotient: this.fromNerdamerResult(intQ),
+        },
+      };
+      return result;
+    } catch {
+      return null;
+    }
   }
 
   private simplifyIntegral(expression: string, variable: string): string {
@@ -1117,6 +1409,10 @@ export class CalculusService {
           }
         } catch {}
       }
+
+      // ∫(многочлен)/(линейный) — div в Nerdamer + точное интегрирование (покрывает высокие степени)
+      const quadLin = this.tryIntegralPolynomialOverLinear(cleanExpr, variable);
+      if (quadLin) return quadLin;
 
       // === МЕТОД ПОДСТАНОВКИ (замена переменной) ===
       
@@ -1537,6 +1833,28 @@ export class CalculusService {
     const steps: string[] = [];
 
     steps.push(`Шаг 1. Записываем интеграл: ∫(${expression}) d${variable}`);
+
+    if (this.integralResult.rationalQuadraticOverLinear) {
+      const rq = this.integralResult.rationalQuadraticOverLinear;
+      const remPart =
+        rq.remainderStr !== undefined && rq.remainderStr !== '0'
+          ? `${rq.remainderStr}/(${rq.denomInnerStr})`
+          : Math.abs(rq.remainder) > 1e-10
+            ? `${this.formatShortCoeff(rq.remainder)}/(${rq.denomInnerStr})`
+            : '';
+      const hasRem = Boolean(remPart);
+      const remForIdentity = rq.remainderStr !== undefined ? rq.remainderStr : String(rq.remainder);
+      steps.push(`Шаг 2. Делим многочлен в числителе на линейный знаменатель (${rq.denomStr}):`);
+      steps.push(`   (${rq.numerStr}) = (${rq.quotientStr})·(${rq.denomStr}) + ${remForIdentity}`);
+      steps.push(
+        hasRem
+          ? `   (${rq.numerStr})/(${rq.denomStr}) = ${rq.quotientStr} + ${remPart}`
+          : `   (${rq.numerStr})/(${rq.denomStr}) = ${rq.quotientStr}`
+      );
+      steps.push(`Шаг 3. Интегрируем почленно и упрощаем:`);
+      steps.push(`   ${result}`);
+      return steps;
+    }
 
     if (this.integralResult.method === 'substitution' && this.integralResult.substitution) {
       const sub = this.integralResult.substitution;
