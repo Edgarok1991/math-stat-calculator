@@ -89,18 +89,10 @@ export const IntegralPreview: React.FC<IntegralPreviewProps> = ({
         )}
       </span>
 
-      {/* Дифференциал d[переменная] — переменная в подсвеченном боксе */}
-      <span className="flex items-center gap-1 flex-shrink-0">
-        <span style={{ color: 'var(--foreground)' }}>d</span>
-        <span
-          className="inline-flex items-center justify-center min-w-[1.5rem] px-1.5 py-0.5 rounded text-sm font-medium"
-          style={{
-            background: 'rgba(212,175,55,0.15)',
-            border: '1px solid rgba(212,175,55,0.4)',
-            color: 'var(--foreground)',
-          }}
-        >
-          {variable || 'x'}
+      {/* Дифференциал dx — без рамки (раньше бокс выглядел как «лишний квадрат») */}
+      <span className="flex items-baseline gap-0 flex-shrink-0">
+        <span className="text-lg" style={{ color: 'var(--foreground)' }}>
+          d{variable || 'x'}
         </span>
       </span>
     </div>

@@ -62,6 +62,10 @@ MATHPIX_APP_KEY=your_app_key
 ```
 Ключи: [mathpix.com](https://mathpix.com) → Sign up → API. Без ключей используется встроенный Tesseract.
 
+## Репозиторий для разработки и деплоя
+
+**Открывай проект в Cursor из папки:** `~/Desktop/Project/math-stat-calculator` — здесь ветка `main` и отсюда уходят push в GitHub / деплой на Vercel. Другие копии (worktree) могут рассинхронизироваться.
+
 ## Автодеплой в Git
 
 **Post-commit хук** (устанавливается при `npm install`): после каждого `git commit` автоматически выполняется `git push origin main`.

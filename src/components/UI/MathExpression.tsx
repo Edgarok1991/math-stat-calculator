@@ -41,7 +41,7 @@ export const MathExpression: React.FC<MathExpressionProps> = ({ expression, clas
   formatted = formatted.replace(/abs\(([^)]+)\)/g, '|$1|');
   formatted = formatted.replace(/log\(/g, 'ln(');
 
-  // exp(expr) → e^x (одна переменная без скобок — без маркеров \uFFFF и «квадратиков»)
+  // exp(expr) → e^x (одна переменная без скобок)
   formatted = formatted.replace(/exp\(([^)]+)\)/g, (_, inner) => {
     const t = inner.replace(/\s/g, '');
     if (/^[a-z]$/i.test(t)) return `e^${t.toLowerCase()}`;
@@ -56,7 +56,7 @@ export const MathExpression: React.FC<MathExpressionProps> = ({ expression, clas
   // ^(inner) — <sup> для целой степени (4x²+2), чтобы всё было в одном блоке
   const formatInner = (s: string) =>
     s.replace(/\^(\d+)/g, (_, p) => toSup(p)).replace(/\^([a-z])/g, (_, v) => SUPERSCRIPT[v] ?? v);
-  const supMarker = '\uFFFF';
+  const supMarker = '\u2063'; // как в TextWithFractions — не U+FFFF (невалидный символ → tofu)
   formatted = formatted.replace(/\^\(([^)]+)\)/g, (_, inner) => `${supMarker}${formatInner(inner)}${supMarker}`);
 
   // Нижние индексы _n, _12, x_i

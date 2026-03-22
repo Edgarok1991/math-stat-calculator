@@ -3,7 +3,8 @@
 import React from 'react';
 import { Fraction } from './Fraction';
 
-const SUP_MARKER = '\uFFFF';
+/** Маркер границ степени: невидимый разделитель (не U+FFFF — он даёт «квадратики» в шрифтах) */
+const SUP_MARKER = '\u2063';
 
 interface TextWithFractionsProps {
   text: string;
