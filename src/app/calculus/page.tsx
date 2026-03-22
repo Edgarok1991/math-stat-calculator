@@ -1289,19 +1289,15 @@ function CalculusPage() {
                       </div>
                     </div>
 
-                    {/* Пошаговое решение (стиль MathDF) */}
+                    {/* Пошаговое решение */}
                     {((integralResult.stepsStructured?.length ?? 0) > 0 || (integralResult.steps?.length ?? 0) > 0) && (
                       <div className="mb-6">
-                        <div className="mb-6 pb-3 border-b" style={{ borderColor: 'rgba(212, 175, 55, 0.25)' }}>
-                          <h3 className="text-xl font-bold tracking-tight" style={{ color: 'var(--foreground)' }}>
-                            Пошаговое решение
-                          </h3>
-                          <p className="text-sm mt-1" style={{ color: 'var(--foreground-secondary)' }}>
-                            В духе <a href="https://mathdf.com/int/ru/" target="_blank" rel="noopener noreferrer" className="underline decoration-[var(--gold)]/60 hover:decoration-[var(--gold)]">MathDF</a>: шаг → формула → подстановки.
-                            {' '}Движок: явные правила, деление многочленов (рациональные дроби), символьный CAS (Nerdamer) с проверкой{' '}
-                            <span className="whitespace-nowrap">d/dx(F) ≡ f</span>.
-                          </p>
-                        </div>
+                        <h3
+                          className="text-xl font-bold tracking-tight mb-6 pb-3 border-b"
+                          style={{ color: 'var(--foreground)', borderColor: 'rgba(212, 175, 55, 0.25)' }}
+                        >
+                          Пошаговое решение
+                        </h3>
                         {integralResult.stepsStructured && integralResult.stepsStructured.length > 0 ? (
                           <IntegralMathDFSteps steps={integralResult.stepsStructured} />
                         ) : (
