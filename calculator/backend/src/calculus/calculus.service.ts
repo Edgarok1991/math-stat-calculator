@@ -1625,7 +1625,16 @@ export class CalculusService {
       const FNode = math.parse(F);
       const dF = math.simplify(math.derivative(FNode, variable));
       const diff = new math.OperatorNode('-', 'subtract', [dF, fNode]);
-      return this.mathNodeIsZero(math.simplify(diff));
+      if (this.mathNodeIsZero(math.simplify(diff))) return true;
+    } catch {
+      /* mathjs не смог разобрать или упростить — пробуем CAS */
+    }
+    try {
+      let F = antiderivativeWithOptionalC.replace(/\s*\+\s*C\s*$/i, '').trim();
+      if (F === antiderivativeWithOptionalC) F = F.replace(/\+C/gi, '').trim();
+      const nerdF = this.toNerdamerExpr(F);
+      const nerdIntegrand = this.toNerdamerExpr(normalizedExpr);
+      return IntegralCalculatorEngine.verifyIndefiniteAntiderivative(nerdIntegrand, variable, nerdF);
     } catch {
       return false;
     }
@@ -1715,7 +1724,8 @@ export class CalculusService {
       const sum = nerdamer(`(${intQ})+(${intR})`).simplify().toString();
       const result = this.fromNerdamerResult(sum) + ' + C';
 
-      const ok = IntegralCalculatorEngine.verifyIndefiniteAntiderivative(numN, variable, sum);
+      const nerdamerIntegrand = `(${numN})/(${denN})`;
+      const ok = IntegralCalculatorEngine.verifyIndefiniteAntiderivative(nerdamerIntegrand, variable, sum);
       if (!ok) return null;
 
       const quotientStr = quotN.replace(/\s/g, '');
