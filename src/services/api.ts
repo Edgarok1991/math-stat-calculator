@@ -5,13 +5,19 @@ const API_BASE_URL = API_URL;
 /** Ответ бэкенда для пошагового интеграла (рекурсивные subSteps) */
 export type IntegralStepStructuredApi = {
   actionLabel?: string;
+  stepKind?: string;
+  referenceTag?: string;
+  expression?: string;
+  expressionLatex?: string;
   rule?: {
     name: string;
     formula?: string;
+    formulaLatex?: string;
+    caseNote?: string;
     substitutions?: { symbol: string; value: string }[];
   };
-  expression?: string;
   expressionAfter?: string;
+  expressionAfterLatex?: string;
   subSteps?: IntegralStepStructuredApi[];
 };
 

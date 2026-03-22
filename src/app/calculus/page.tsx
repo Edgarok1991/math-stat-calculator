@@ -15,7 +15,7 @@ import { MathFormula, Frac, Pow, Sqrt, Sub } from '@/components/UI/MathFormula';
 import { IntegralSymbol } from '@/components/UI/IntegralSymbol';
 import { IntegralPreview } from '@/components/UI/IntegralPreview';
 import { MathTex } from '@/components/UI/MathTex';
-import { IntegralMathDFSteps } from '@/components/UI/IntegralMathDFSteps';
+import { IntegralMathDFSteps, type IntegralStepStructured } from '@/components/UI/IntegralMathDFSteps';
 import { TextWithFractions } from '@/components/UI/TextWithFractions';
 import { FractionDisplay } from '@/components/UI';
 import { decimalToFraction } from '@/lib/decimalToFraction';
@@ -57,13 +57,7 @@ interface IntegralResult {
   result: string;
   steps: string[];
   latex: string;
-  stepsStructured?: Array<{
-    actionLabel?: string;
-    rule?: { name: string; formula?: string; substitutions?: { symbol: string; value: string }[] };
-    expression?: string;
-    expressionAfter?: string;
-    subSteps?: Array<{ rule?: { name: string; formula?: string }; expression?: string }>;
-  }>;
+  stepsStructured?: IntegralStepStructured[];
 }
 
 interface DerivativeResult {
@@ -161,7 +155,10 @@ function CalculusPage() {
         upperBound: data.upperBound,
       });
       
-      setIntegralResult(response);
+      setIntegralResult({
+        ...response,
+        stepsStructured: response.stepsStructured as IntegralStepStructured[] | undefined,
+      });
       if (token) {
         apiService.saveToHistory(token, { type: 'integral', input: data, result: response }).catch(() => {});
       }

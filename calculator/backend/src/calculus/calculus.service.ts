@@ -1061,10 +1061,78 @@ export class CalculusService {
     return steps;
   }
 
+  /**
+   * ∫ sin(x)·cos(x) dx — пошаговое решение как на https://mathdf.com/int/ru/ (подстановка u=sin x, d(sin x), [1], степень n=1).
+   */
+  private getSinTimesCosMathdfSteps(
+    expression: string,
+    variable: string,
+    result: string
+  ): IntegralStepStructured[] {
+    const v = variable;
+    return [
+      {
+        actionLabel: 'Вычисляем',
+        stepKind: 'compute',
+        expression: `∫ cos(${v})·sin(${v}) d${v}`,
+        expressionLatex: `\\int \\cos(${v})\\sin(${v})\\,d${v}`,
+      },
+      {
+        actionLabel: 'Подстановка',
+        stepKind: 'substitution',
+        referenceTag: '[1]',
+        expression: `∫ sin(${v})·d(sin(${v}))`,
+        expressionLatex: `\\int \\sin(${v})\\,d\\bigl(\\sin(${v})\\bigr)`,
+        rule: {
+          name: 'Замена переменной',
+          substitutions: [
+            { symbol: 'u', value: `sin(${v})` },
+            { symbol: 'du', value: `cos(${v}) d${v}` },
+          ],
+        },
+      },
+      {
+        stepKind: 'line',
+        expression: `∫ u du`,
+        expressionLatex: `\\int u\\,du`,
+      },
+      {
+        actionLabel: 'Интеграл от степенной функции',
+        stepKind: 'rule',
+        rule: {
+          name: 'Интеграл от степенной функции',
+          formulaLatex: '\\int u^n\\,du = \\frac{u^{n+1}}{n+1},\\quad n \\neq -1',
+          caseNote: 'при n = 1',
+        },
+      },
+      {
+        stepKind: 'line',
+        expression: `u^2/2`,
+        expressionLatex: '\\frac{u^2}{2}',
+      },
+      {
+        actionLabel: 'Обратная замена',
+        stepKind: 'backsubstitution',
+        referenceTag: '[1]',
+        expression: `u = sin(${v})`,
+        expressionAfter: result,
+        expressionAfterLatex: `\\frac{\\sin^2(${v})}{2} + C`,
+      },
+    ];
+  }
+
   /** Генерирует пошаговое решение в стиле MathDF (с блоками правил, формулами, подстановками) */
   private getIntegralStepsStructured(expression: string, variable: string, result: string): IntegralStepStructured[] {
     const method = this.integralResult.method;
     const steps: IntegralStepStructured[] = [];
+
+    if (
+      method === 'substitution' &&
+      this.integralResult.substitution?.integrandU === 'u' &&
+      this.integralResult.substitution.u === `sin(${variable})`
+    ) {
+      return this.getSinTimesCosMathdfSteps(expression, variable, result);
+    }
 
     if (method === 'by_parts' && this.integralResult.byParts) {
       const bp = this.integralResult.byParts;
