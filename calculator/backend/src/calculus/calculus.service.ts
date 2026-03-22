@@ -704,6 +704,22 @@ export class CalculusService {
         this.integralResult = { result: msg, method: 'unintegrated' };
       }
 
+      // Контроль mathjs: не показываем первообразную, если d/dx(F) не совпадает с f (в т.ч. ложные Ci/Ei и баги CAS)
+      if (
+        !bounds &&
+        !integral.includes('Не удалось') &&
+        !integral.startsWith('∫(') &&
+        !this.verifyAntiderivativeMathjs(normalizedExpr, variable, integral)
+      ) {
+        const msg =
+          'Не удалось выразить первообразную через элементарные функции (полиномы, exp, ln, sin/cos, …). ' +
+          'Интегралы с произведением x^k·e^x·ln(x) часто не сводятся к «школьным» функциям — нужны специальные функции (например Ei(x)) или численное интегрирование. Это ограничение символьного CAS, а не ошибка счёта.';
+        integral = msg;
+        steps = this.getUnintegratedIntegralSteps(normalizedExpr, variable);
+        stepsStructured = this.getUnintegratedIntegralStepsStructured(normalizedExpr, variable);
+        this.integralResult = { result: msg, method: 'unintegrated' };
+      }
+
       const latex =
         !bounds && this.integralResult.method === 'unintegrated'
           ? `\\int \\left(${this.toLatex(normalizedExpr)}\\right) \\, d${variable} \\quad \\text{(не элементарно)}`
@@ -1493,6 +1509,31 @@ export class CalculusService {
     try {
       const s = math.simplify(node).toString();
       return s === '0' || s === '-0';
+    } catch {
+      return false;
+    }
+  }
+
+  /**
+   * Независимая проверка первообразной в mathjs: d/dx(F) − f → 0 после simplify.
+   * Отсекает ошибки Nerdamer и ответы со спецфункциями (Ci, Ei, …), которые mathjs не дифференцирует как ожидается.
+   */
+  private verifyAntiderivativeMathjs(
+    normalizedExpr: string,
+    variable: string,
+    antiderivativeWithOptionalC: string
+  ): boolean {
+    if (!antiderivativeWithOptionalC?.trim()) return false;
+    try {
+      let F = antiderivativeWithOptionalC.replace(/\s*\+\s*C\s*$/i, '').trim();
+      if (F === antiderivativeWithOptionalC) F = F.replace(/\+C/gi, '').trim();
+      const prep = normalizedExpr.replace(/\s/g, '').replace(/ln\(/g, 'log(');
+      F = F.replace(/\s/g, '').replace(/ln\(/g, 'log(');
+      const fNode = math.parse(prep);
+      const FNode = math.parse(F);
+      const dF = math.simplify(math.derivative(FNode, variable));
+      const diff = new math.OperatorNode('-', 'subtract', [dF, fNode]);
+      return this.mathNodeIsZero(math.simplify(diff));
     } catch {
       return false;
     }
