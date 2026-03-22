@@ -10,10 +10,11 @@ describe('CalculusService integral', () => {
       type: 'integral',
     });
     expect(r.result).toContain('log');
+    expect(r.result).toMatch(/x\^2\/2/);
     expect(r.result).not.toContain('Не удалось');
     expect(r.latex).not.toContain('не элементарно');
     expect(r.stepsStructured?.length).toBeGreaterThan(1);
-    expect(r.stepsStructured?.some((s) => s.rule?.name?.includes('Рациональная дробь'))).toBe(true);
+    expect(r.stepsStructured?.some((s) => s.rule?.name?.includes('Представление дроби'))).toBe(true);
   });
 
   it('handles double parentheses around numerator/denominator', () => {

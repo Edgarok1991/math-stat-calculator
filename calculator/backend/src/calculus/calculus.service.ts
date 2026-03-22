@@ -670,7 +670,7 @@ export class CalculusService {
         }
       } else {
         integral = this.simplifyIntegral(normalizedExpr, variable);
-        steps = this.getIntegralSteps(normalizedExpr, variable);
+        steps = this.getIntegralSteps(normalizedExpr, variable, integral);
         stepsStructured = this.getIntegralStepsStructured(normalizedExpr, variable, integral);
       }
 
@@ -694,7 +694,7 @@ export class CalculusService {
         const manualQuadLin = this.tryIntegralPolynomialOverLinear(cleanQL, variable);
         if (manualQuadLin) {
           integral = manualQuadLin;
-          steps = this.getIntegralSteps(normalizedExpr, variable);
+          steps = this.getIntegralSteps(normalizedExpr, variable, integral);
           stepsStructured = this.getIntegralStepsStructured(normalizedExpr, variable, integral);
         }
       }
@@ -766,6 +766,22 @@ export class CalculusService {
       .replace(/\bacos\(/g, 'arccos(')
       .replace(/\bacot\(/g, 'arcctg(');
     return r;
+  }
+
+  /**
+   * Складывает ∫Q и ∫(R/D) без выражения Nerdamer вида (1/2)((−6+x)x+…), которое расходится с пошаговым разложением.
+   */
+  private canonicalAntiderivativeFromParts(intQ: string, intR: string, hasRem: boolean): string {
+    const partQ = this.fromNerdamerResult(intQ);
+    const partR = hasRem ? this.fromNerdamerResult(intR) : '';
+    const combined = hasRem ? `${partQ}+${partR}` : partQ;
+    const prep = combined.replace(/\s/g, '').replace(/ln\(/g, 'log(');
+    try {
+      const simp = math.simplify(math.parse(prep));
+      return simp.toString().replace(/\s/g, '');
+    } catch {
+      return combined.replace(/\s/g, '');
+    }
   }
 
   /** true, если строка — заглушка вида ∫(expr)dvar + C без реального интегрирования */
@@ -1343,81 +1359,101 @@ export class CalculusService {
             ? `${this.formatShortCoeff(rq.remainder)}/(${rq.denomInnerStr})`
             : '';
       const hasRem = Boolean(remPart);
-      const decomp = hasRem
-        ? `(${rq.numerStr})/(${rq.denomStr}) = ${rq.quotientStr} + ${remPart}`
-        : `(${rq.numerStr})/(${rq.denomStr}) = ${rq.quotientStr}`;
+      const remForIdentity = rq.remainderStr !== undefined ? rq.remainderStr : String(rq.remainder);
+      const integralLatex = this.latexIndefiniteIntegralFraction(rq.numerStr, rq.denomStr, x);
+      const decompLatex = hasRem
+        ? `${this.toLatex(`(${rq.numerStr})/(${rq.denomStr})`)} = ${this.toLatex(rq.quotientStr)} + ${this.toLatex(remPart)}`
+        : `${this.toLatex(`(${rq.numerStr})/(${rq.denomStr})`)} = ${this.toLatex(rq.quotientStr)}`;
+      const divisionFormulaLatex = `${this.toLatex(`(${rq.numerStr})`)} = ${this.toLatex(rq.quotientStr)} \\cdot ${this.toLatex(`(${rq.denomStr})`)} + ${remForIdentity}`;
+
       steps.push({
-        actionLabel: 'Вычисляем',
-        expression: `∫ (${rq.numerStr})/(${rq.denomStr}) d${x}`,
+        stepKind: 'compute',
+        actionLabel: 'Вычислить',
+        expressionLatex: integralLatex,
+      });
+      steps.push({
+        actionLabel: 'Деление многочлена на линейный множитель',
         rule: {
-          name: 'Рациональная дробь: деление многочлена на линейный множитель',
-          formula: `(${rq.numerStr}) = (${rq.quotientStr})·(${rq.denomStr}) + R`,
-          substitutions: [
-            { symbol: 'Частное', value: rq.quotientStr },
-            { symbol: 'Остаток R', value: rq.remainderStr ?? String(rq.remainder) },
-          ],
+          name: 'Представление дроби (деление с остатком)',
+          formulaLatex: divisionFormulaLatex,
         },
-        expressionAfter: decomp,
+        expressionAfterLatex: decompLatex,
       });
-      steps.push({
-        actionLabel: 'Разложим интеграл',
-        expression: hasRem
-          ? `∫ (${rq.quotientStr} + ${remPart}) d${x} = ∫ (${rq.quotientStr}) d${x} + ∫ (${remPart}) d${x}`
-          : `∫ (${rq.quotientStr}) d${x}`,
-      });
+      if (hasRem) {
+        const linearityLatex = `\\int\\bigl(${this.toLatex(rq.quotientStr)} + ${this.toLatex(remPart)}\\bigr)\\,d${x} = \\int ${this.toLatex(
+          rq.quotientStr,
+        )} \\, d${x} + \\int ${this.toLatex(remPart)} \\, d${x}`;
+        steps.push({
+          actionLabel: 'Линейность интеграла',
+          rule: {
+            name: 'Интеграл суммы',
+            formulaLatex: '\\int\\bigl(f(x)+g(x)\\bigr)\\,dx = \\int f(x)\\,dx + \\int g(x)\\,dx',
+          },
+          expressionAfterLatex: linearityLatex,
+        });
+      }
+
       const subSteps: IntegralStepStructured[] = [];
       if (rq.integratedQuotient) {
+        const iq = rq.integratedQuotient.replace(/\s/g, '');
         subSteps.push({
-          actionLabel: 'Частное Q(x)',
+          referenceTag: String.fromCodePoint(0x2460 + subSteps.length),
+          actionLabel: 'Интеграл',
           rule: {
             name: 'Интегрирование многочлена',
-            formula: '∫ Q(x) dx — по таблице степеней',
+            formulaLatex: '\\int x^n\\,dx = \\dfrac{x^{n+1}}{n+1},\\quad n \\neq -1',
           },
-          expression: `∫ (${rq.quotientStr}) d${x} = ${rq.integratedQuotient}`,
+          expressionLatex: `\\int ${this.toLatex(rq.quotientStr)} \\, d${x} = ${this.toLatex(iq)}`,
         });
       } else {
         if (Math.abs(rq.coeffA) > 1e-10) {
           subSteps.push({
-            actionLabel: 'Степень 1',
+            referenceTag: String.fromCodePoint(0x2460 + subSteps.length),
+            actionLabel: 'Интеграл',
             rule: {
               name: 'Табличный интеграл',
-              formula: '∫ a·x dx = a·x²/2',
+              formulaLatex: '\\int a x\\,dx = a\\,\\dfrac{x^2}{2}',
             },
             expression: `∫ ${this.formatShortCoeff(rq.coeffA)}*${x} d${x} = ${this.formatShortCoeff(rq.coeffA / 2)}*${x}^2`,
           });
         }
         if (Math.abs(rq.coeffB) > 1e-10) {
           subSteps.push({
-            actionLabel: 'Константа',
-            rule: { name: 'Табличный интеграл', formula: '∫ k dx = k·x' },
+            referenceTag: String.fromCodePoint(0x2460 + subSteps.length),
+            actionLabel: 'Интеграл',
+            rule: { name: 'Табличный интеграл', formulaLatex: '\\int k\\,dx = kx' },
             expression: `∫ ${this.formatShortCoeff(rq.coeffB)} d${x} = ${this.formatShortCoeff(rq.coeffB)}*${x}`,
           });
         }
       }
       if (hasRem) {
+        const remAns =
+          rq.integratedRemainder ??
+          `${this.formatShortCoeff(rq.remainder / rq.p)}*log(abs(${rq.denomInnerStr}))`;
         subSteps.push({
-          actionLabel: 'Дробь с линейным знаменателем',
+          referenceTag: String.fromCodePoint(0x2460 + subSteps.length),
+          actionLabel: 'Интеграл',
           rule: {
-            name: 'Интеграл вида ∫ k/(p·x+q) dx',
-            formula: `∫ k/(${rq.denomInnerStr}) d${x} = (k/p)·ln|${rq.denomInnerStr}|`,
+            name: 'Табличный интеграл',
+            formulaLatex: `\\int \\dfrac{k}{p\\,${x}+q}\\,d${x} = \\dfrac{k}{p}\\,\\ln\\bigl|p\\,${x}+q\\bigr|`,
             substitutions: [
               { symbol: 'k', value: rq.remainderStr ?? String(rq.remainder) },
               { symbol: 'p', value: String(rq.p) },
             ],
           },
-          expression: `∫ ${rq.remainderStr ?? this.formatShortCoeff(rq.remainder)}/(${rq.denomInnerStr}) d${x} = ${this.formatShortCoeff(rq.remainder / rq.p)}·ln(abs(${rq.denomInnerStr}))`,
+          expressionLatex: `\\int ${this.toLatex(remPart)} \\, d${x} = ${this.toLatex(remAns.replace(/\s/g, ''))}`,
         });
       }
       if (subSteps.length > 0) {
         steps.push({
           actionLabel: 'Почленное интегрирование',
-          expression: hasRem ? `∫ (${rq.quotientStr} + ${remPart}) d${x}` : `∫ (${rq.quotientStr}) d${x}`,
           subSteps,
         });
       }
       steps.push({
+        stepKind: 'result',
         actionLabel: 'Интеграл окончен',
-        expression: result,
+        expressionLatex: this.latexAntiderivativeWithC(result),
       });
       return steps;
     } else if (method === 'substitution' && this.integralResult.substitution) {
@@ -1587,6 +1623,8 @@ export class CalculusService {
       denomInnerStr: string;
       /** Антипроизводная частного ∫Q(x)dx (без +C), из Nerdamer */
       integratedQuotient?: string;
+      /** Антипроизводная ∫ R/(ax+b) dx (без +C), из Nerdamer */
+      integratedRemainder?: string;
     };
   } = { result: '', method: 'table' };
 
@@ -1747,11 +1785,16 @@ export class CalculusService {
       if (remN !== '0') {
         intR = nerdamer(`integrate((${remN})/(${denN}), ${variable})`).toString();
       }
-      const sum = nerdamer(`(${intQ})+(${intR})`).simplify().toString();
-      const result = this.fromNerdamerResult(sum) + ' + C';
+      /** Nerdamer при (intQ)+(intR) переписывает многочлен в виде (1/2)(−6+x)x — расходится с шагами; упрощаем в mathjs. */
+      const canonicalCore = this.canonicalAntiderivativeFromParts(intQ, intR, remN !== '0');
+      const result = `${canonicalCore} + C`;
 
       const nerdamerIntegrand = `(${numN})/(${denN})`;
-      const ok = IntegralCalculatorEngine.verifyIndefiniteAntiderivative(nerdamerIntegrand, variable, sum);
+      const ok = IntegralCalculatorEngine.verifyIndefiniteAntiderivative(
+        nerdamerIntegrand,
+        variable,
+        this.toNerdamerExpr(canonicalCore),
+      );
       if (!ok) return null;
 
       const quotientStr = quotN.replace(/\s/g, '');
@@ -1796,6 +1839,7 @@ export class CalculusService {
           q,
           denomInnerStr: inner,
           integratedQuotient: this.fromNerdamerResult(intQ),
+          integratedRemainder: remN !== '0' ? this.fromNerdamerResult(intR) : undefined,
         },
       };
       return result;
@@ -2546,8 +2590,7 @@ export class CalculusService {
     ];
   }
 
-  private getIntegralSteps(expression: string, variable: string): string[] {
-    const result = this.simplifyIntegral(expression, variable);
+  private getIntegralSteps(expression: string, variable: string, result: string): string[] {
     const steps: string[] = [];
 
     steps.push(`Шаг 1. Записываем интеграл: ∫(${expression}) d${variable}`);
@@ -2635,6 +2678,19 @@ export class CalculusService {
     }
 
     return steps;
+  }
+
+  /** \\int \\frac{N}{D} \\, dv — заголовок шага «Вычислить» (как на MathDF) */
+  private latexIndefiniteIntegralFraction(numerStr: string, denomStr: string, variable: string): string {
+    const frac = this.toLatex(`(${numerStr})/(${denomStr})`);
+    return `\\int ${frac} \\, d${variable}`;
+  }
+
+  /** Первообразная с «+ C» в LaTeX (согласовано с полем result) */
+  private latexAntiderivativeWithC(antiderivativeWithC: string): string {
+    let core = antiderivativeWithC.replace(/\s*\+\s*C\s*$/i, '').trim();
+    if (core === antiderivativeWithC) core = core.replace(/\+C/gi, '').trim();
+    return `${this.toLatex(core)} + C`;
   }
 
   /**

@@ -108,6 +108,7 @@ function MathDFStepBlock({
   const isRule = kind === 'rule';
   const isLine = kind === 'line';
   const isCompute = kind === 'compute';
+  const isResult = kind === 'result';
 
   if (isLine) {
     return (
@@ -160,20 +161,20 @@ function MathDFStepBlock({
 
       {(step.expression || step.expressionLatex) && (
         <div
-          className={`w-full text-center px-3 py-3 rounded-lg text-base md:text-lg leading-relaxed ${
-            isGoldAccent ? 'border-2' : isCompute ? 'border' : 'border'
-          }`}
+          className={`w-full text-center px-3 py-3 rounded-lg leading-relaxed ${
+            isCompute || isResult ? 'text-lg md:text-xl' : 'text-base md:text-lg'
+          } ${isGoldAccent ? 'border-2' : isCompute || isResult ? 'border' : 'border'}`}
           style={{
             color: 'var(--foreground)',
             background: isGoldAccent
               ? 'rgba(212, 175, 55, 0.1)'
-              : isCompute
-                ? 'rgba(212, 175, 55, 0.06)'
+              : isCompute || isResult
+                ? 'rgba(212, 175, 55, 0.08)'
                 : 'rgba(212, 175, 55, 0.04)',
             borderColor: isGoldAccent
               ? 'rgba(212, 175, 55, 0.45)'
-              : isCompute
-                ? 'rgba(212, 175, 55, 0.25)'
+              : isCompute || isResult
+                ? 'rgba(212, 175, 55, 0.3)'
                 : 'var(--border)',
           }}
         >
