@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CalculusDto } from './dto/calculus.dto';
 import { DerivativeDto, DerivativeAtPointDto } from './dto/derivative.dto';
 import { CalculusResult, IntegralStepStructured } from './interfaces/calculus-result.interface';
-import { IntegralCalculatorEngine } from './integral-calculator.engine';
+import { CasIntegralStrategy, IntegralCalculatorEngine } from './integral-calculator.engine';
 import { DerivativeResult, DerivativeGraphResult, DerivativeAtPointResult, DerivativeStep } from './interfaces/derivative-result.interface';
 import * as math from 'mathjs';
 
@@ -783,6 +783,71 @@ export class CalculusService {
     ];
   }
 
+  /** Численное значение выражения mathjs (для согласования defint и Ньютона—Лейбница). */
+  private safeMathEvaluateNumber(expr: string): number | null {
+    try {
+      const prep = expr.replace(/\s/g, '');
+      const v = math.evaluate(prep) as number;
+      return typeof v === 'number' && Number.isFinite(v) ? v : null;
+    } catch {
+      return null;
+    }
+  }
+
+  private tryNerdamerIntegrateExpr(
+    nerdamerExpr: string,
+    variable: string
+  ): { raw: string; strategy: CasIntegralStrategy } | null {
+    const strategies: Array<{ cmd: string; strategy: CasIntegralStrategy }> = [
+      { cmd: `integrate(${nerdamerExpr}, ${variable})`, strategy: 'direct' },
+      { cmd: `integrate(expand(${nerdamerExpr}), ${variable})`, strategy: 'expand' },
+      { cmd: `integrate(factor(${nerdamerExpr}), ${variable})`, strategy: 'factor' },
+    ];
+    for (const { cmd, strategy } of strategies) {
+      try {
+        const r = nerdamer(cmd);
+        const hasIntegral =
+          r.hasIntegral && typeof r.hasIntegral === 'function' && r.hasIntegral();
+        if (hasIntegral) continue;
+        const rs = r.toString();
+        if (!rs || rs.includes('integrate(')) continue;
+        if (IntegralCalculatorEngine.verifyIndefiniteAntiderivative(nerdamerExpr, variable, rs)) {
+          return { raw: rs, strategy };
+        }
+      } catch {
+        continue;
+      }
+    }
+    return null;
+  }
+
+  private tryNerdamerDefintExpr(
+    nerdamerExpr: string,
+    variable: string,
+    bounds: { lower: number; upper: number }
+  ): { raw: string; strategy: CasIntegralStrategy } | null {
+    const { lower, upper } = bounds;
+    const strategies: Array<{ cmd: string; strategy: CasIntegralStrategy }> = [
+      { cmd: `defint(${nerdamerExpr}, ${lower}, ${upper}, ${variable})`, strategy: 'direct' },
+      { cmd: `defint(expand(${nerdamerExpr}), ${lower}, ${upper}, ${variable})`, strategy: 'expand' },
+      { cmd: `defint(factor(${nerdamerExpr}), ${lower}, ${upper}, ${variable})`, strategy: 'factor' },
+    ];
+    for (const { cmd, strategy } of strategies) {
+      try {
+        const r = nerdamer(cmd);
+        const hasIntegral =
+          r.hasIntegral && typeof r.hasIntegral === 'function' && r.hasIntegral();
+        if (hasIntegral) continue;
+        const rs = r.toString();
+        if (!rs || rs.includes('integrate(') || rs.includes('defint(')) continue;
+        return { raw: rs, strategy };
+      } catch {
+        continue;
+      }
+    }
+    return null;
+  }
+
   /** Пробует вычислить интеграл через nerdamer (как MathDF). Возвращает null при неудаче. */
   private tryNerdamerIntegral(
     expression: string,
@@ -791,111 +856,192 @@ export class CalculusService {
   ): { integral: string; steps: string[]; stepsStructured: IntegralStepStructured[] } | null {
     try {
       const nerdamerExpr = this.toNerdamerExpr(expression);
-      let result: any;
 
       if (bounds !== undefined) {
-        const { lower, upper } = bounds;
-        const defStrategies = [
-          `defint(${nerdamerExpr}, ${lower}, ${upper}, ${variable})`,
-          `defint(expand(${nerdamerExpr}), ${lower}, ${upper}, ${variable})`,
-          `defint(factor(${nerdamerExpr}), ${lower}, ${upper}, ${variable})`,
-        ];
-        result = null;
-        for (const cmd of defStrategies) {
-          try {
-            const r = nerdamer(cmd);
-            const hasIntegral =
-              r.hasIntegral && typeof r.hasIntegral === 'function' && r.hasIntegral();
-            if (hasIntegral) continue;
-            const rs = r.toString();
-            if (!rs || rs.includes('integrate(') || rs.includes('defint(')) continue;
-            result = r;
-            break;
-          } catch {
-            continue;
-          }
-        }
-        if (!result) return null;
-      } else {
-        const strategies = [
-          `integrate(${nerdamerExpr}, ${variable})`,
-          `integrate(expand(${nerdamerExpr}), ${variable})`,
-          `integrate(factor(${nerdamerExpr}), ${variable})`,
-        ];
-        result = null;
-        for (const cmd of strategies) {
-          try {
-            const r = nerdamer(cmd);
-            const hasIntegral =
-              r.hasIntegral && typeof r.hasIntegral === 'function' && r.hasIntegral();
-            if (hasIntegral) continue;
-            const rs = r.toString();
-            if (!rs || rs.includes('integrate(')) continue;
-            if (IntegralCalculatorEngine.verifyIndefiniteAntiderivative(nerdamerExpr, variable, rs)) {
-              result = r;
-              break;
+        const def = this.tryNerdamerDefintExpr(nerdamerExpr, variable, bounds);
+        if (!def) return null;
+        const resultStr = def.raw;
+        const indefinite = this.tryNerdamerIntegrateExpr(nerdamerExpr, variable);
+
+        const integral = this.fromNerdamerResult(resultStr);
+
+        let definiteNl:
+          | { indefiniteWithC: string; Fu: number; Fl: number; defNumeric: number }
+          | undefined;
+
+        const defNumeric = this.safeMathEvaluateNumber(resultStr);
+        if (indefinite && defNumeric !== null) {
+          const Fbare = this.fromNerdamerResult(indefinite.raw).trim();
+          const Fu = this.evaluateExpression(Fbare, variable, bounds.upper);
+          const Fl = this.evaluateExpression(Fbare, variable, bounds.lower);
+          if (Number.isFinite(Fu) && Number.isFinite(Fl)) {
+            const nlVal = Fu - Fl;
+            const tol = 1e-5 * Math.max(1, Math.abs(defNumeric), Math.abs(nlVal));
+            if (Math.abs(nlVal - defNumeric) <= tol) {
+              definiteNl = {
+                indefiniteWithC: this.fromNerdamerResult(indefinite.raw) + ' + C',
+                Fu,
+                Fl,
+                defNumeric,
+              };
             }
-          } catch {
-            continue;
           }
         }
-        if (!result) return null;
+
+        const steps = this.getNerdamerIntegralSteps(
+          expression,
+          variable,
+          integral,
+          true,
+          bounds,
+          {
+            nerdamerExpr,
+            casStrategy: def.strategy,
+            nerdamerAntiderivativeRaw: indefinite?.raw ?? null,
+            definiteNl,
+          }
+        );
+        const stepsStructured = this.getNerdamerIntegralStepsStructured(
+          expression,
+          variable,
+          integral,
+          true,
+          bounds,
+          {
+            nerdamerExpr,
+            casStrategy: def.strategy,
+            nerdamerAntiderivativeRaw: indefinite?.raw ?? null,
+            definiteNl,
+          }
+        );
+        return { integral, steps, stepsStructured };
       }
 
-      const hasIntegral = result.hasIntegral && typeof result.hasIntegral === 'function' && result.hasIntegral();
-      if (hasIntegral) return null; // не полностью проинтегрировано
+      const indefinite = this.tryNerdamerIntegrateExpr(nerdamerExpr, variable);
+      if (!indefinite) return null;
 
-      let resultStr = result.toString();
-      if (!resultStr || resultStr.includes('integrate(')) return null;
+      const resultStr = indefinite.raw;
+      const integral = this.fromNerdamerResult(resultStr) + ' + C';
 
-      if (bounds) {
-        // определённый интеграл — без проверки производной
-      } else {
-        const ok = IntegralCalculatorEngine.verifyIndefiniteAntiderivative(nerdamerExpr, variable, resultStr);
-        if (!ok) return null;
-      }
-
-      const integral = bounds
-        ? this.fromNerdamerResult(resultStr)
-        : this.fromNerdamerResult(resultStr) + ' + C';
-
-      const steps = this.getNerdamerIntegralSteps(expression, variable, integral, !!bounds, bounds);
-      const stepsStructured = this.getNerdamerIntegralStepsStructured(expression, variable, integral, !!bounds, bounds);
+      const steps = this.getNerdamerIntegralSteps(expression, variable, integral, false, undefined, {
+        nerdamerExpr,
+        casStrategy: indefinite.strategy,
+        nerdamerAntiderivativeRaw: resultStr,
+      });
+      const stepsStructured = this.getNerdamerIntegralStepsStructured(
+        expression,
+        variable,
+        integral,
+        false,
+        undefined,
+        {
+          nerdamerExpr,
+          casStrategy: indefinite.strategy,
+          nerdamerAntiderivativeRaw: resultStr,
+        }
+      );
       return { integral, steps, stepsStructured };
     } catch {
       return null;
     }
   }
 
-  /** Пошаговое решение для nerdamer в макете MathDF */
+  /** Пошаговое решение для nerdamer в макете MathDF (стратегия CAS, при возможности Ньютон—Лейбниц, проверка d/dx). */
   private getNerdamerIntegralStepsStructured(
     expression: string,
     variable: string,
     result: string,
     isDefinite: boolean,
-    bounds?: { lower: number; upper: number }
+    bounds: { lower: number; upper: number } | undefined,
+    meta: {
+      nerdamerExpr: string;
+      casStrategy: CasIntegralStrategy;
+      nerdamerAntiderivativeRaw?: string | null;
+      definiteNl?: {
+        indefiniteWithC: string;
+        Fu: number;
+        Fl: number;
+        defNumeric: number;
+      };
+    }
   ): IntegralStepStructured[] {
     const steps: IntegralStepStructured[] = [];
+    const stratTitle = IntegralCalculatorEngine.casStrategyTitle(meta.casStrategy);
+    const stratDesc = IntegralCalculatorEngine.describeCasStrategy(meta.casStrategy);
+
     steps.push({
-      actionLabel: 'Вычислим',
+      actionLabel: 'Постановка',
       expression: isDefinite && bounds
         ? `∫[${bounds.lower}→${bounds.upper}] (${expression}) d${variable}`
         : `∫ (${expression}) d${variable}`,
     });
+
     steps.push({
-      actionLabel: isDefinite && bounds ? 'Символьный defint' : 'Применяем символьное интегрирование',
+      actionLabel: stratTitle,
       rule: {
-        name:
-          isDefinite && bounds
-            ? 'Определённый интеграл (Nerdamer defint)'
-            : 'Методы: замена переменной, по частям, рациональные дроби, табличные интегралы',
-        formula:
-          isDefinite && bounds
-            ? '\\int_a^b f(x)\\,dx'
-            : 'Автоматический поиск первообразной (аналог MathDF)',
+        name: 'Символьный движок Nerdamer (аналог линии «CAS» в Wolfram / MathDF)',
+        formula: stratDesc,
       },
-      expressionAfter: isDefinite && bounds ? `= ${result}` : result,
     });
+
+    if (isDefinite && bounds && meta.definiteNl) {
+      const nl = meta.definiteNl;
+      steps.push({
+        actionLabel: 'Первообразная',
+        rule: {
+          name: 'Формула Ньютона—Лейбница',
+          formula: `\\int_a^b f(${variable})\\,d${variable} = F(b)-F(a)`,
+        },
+        expressionAfter: `F(${variable}) = ${nl.indefiniteWithC}`,
+      });
+      steps.push({
+        actionLabel: 'Подстановка пределов',
+        expression: `F(${bounds.upper})=${nl.Fu},\\quad F(${bounds.lower})=${nl.Fl}`,
+        expressionAfter: `F(b)-F(a)=${this.formatDefiniteNumericResult(nl.defNumeric)}`,
+      });
+      steps.push({
+        actionLabel: 'Согласование с defint',
+        rule: {
+          name: 'Тот же результат, что и у defint в CAS',
+          formula: '\\text{defint}(f,a,b)=F(b)-F(a)',
+        },
+        expressionAfter: result,
+      });
+    } else if (isDefinite && bounds) {
+      steps.push({
+        actionLabel: 'Символьный defint',
+        rule: {
+          name: 'Определённый интеграл в CAS',
+          formula: '\\int_a^b f(x)\\,dx',
+        },
+        expressionAfter: `= ${result}`,
+      });
+    } else {
+      steps.push({
+        actionLabel: 'Первообразная',
+        expression: result,
+      });
+    }
+
+    if (meta.nerdamerAntiderivativeRaw) {
+      const res = IntegralCalculatorEngine.verificationResidualRaw(
+        meta.nerdamerExpr,
+        variable,
+        meta.nerdamerAntiderivativeRaw
+      );
+      const ok = res === '0' || res === '-0';
+      steps.push({
+        actionLabel: 'Проверка',
+        rule: {
+          name: 'Производная первообразной и подынтегральная функция',
+          formula: `\\frac{d}{d${variable}}(F(${variable})) - f(${variable}) \\equiv 0`,
+        },
+        expressionAfter: ok
+          ? `В CAS: simplify(d/d${variable}(F) - f) = 0`
+          : `Остаток после simplify в CAS: ${res}`,
+      });
+    }
+
     return steps;
   }
 
@@ -1214,25 +1360,55 @@ export class CalculusService {
     variable: string,
     result: string,
     isDefinite: boolean,
-    bounds?: { lower: number; upper: number }
+    bounds: { lower: number; upper: number } | undefined,
+    meta: {
+      nerdamerExpr: string;
+      casStrategy: CasIntegralStrategy;
+      nerdamerAntiderivativeRaw?: string | null;
+      definiteNl?: {
+        indefiniteWithC: string;
+        Fu: number;
+        Fl: number;
+        defNumeric: number;
+      };
+    }
   ): string[] {
     const steps: string[] = [];
+    const strat = IntegralCalculatorEngine.casStrategyTitle(meta.casStrategy);
+
     if (isDefinite && bounds) {
       steps.push(
-        `Шаг 1. Записываем определённый интеграл: ∫[${bounds.lower}→${bounds.upper}] (${expression}) d${variable}`
+        `Шаг 1. Определённый интеграл: ∫[${bounds.lower}→${bounds.upper}] (${expression}) d${variable}`
       );
-      steps.push(
-        `Шаг 2. Символьное вычисление через Nerdamer (defint; при необходимости expand/factor подынтегрального выражения):`
-      );
-      steps.push(`Шаг 3. Значение интеграла: ${result}`);
+      steps.push(`Шаг 2. ${strat} — символьный defint в Nerdamer (expand/factor при необходимости).`);
+      if (meta.definiteNl) {
+        const nl = meta.definiteNl;
+        steps.push(`Шаг 3. Первообразная F(${variable}) = ${nl.indefiniteWithC}`);
+        steps.push(
+          `Шаг 4. Ньютон—Лейбниц: F(${bounds.upper})=${nl.Fu}, F(${bounds.lower})=${nl.Fl} \\Rightarrow ${this.formatDefiniteNumericResult(nl.defNumeric)} (совпадает с defint).`
+        );
+      }
+      steps.push(`Итог: ${result}`);
     } else {
-      steps.push(`Шаг 1. Записываем интеграл: ∫(${expression}) d${variable}`);
-      steps.push(
-        `Шаг 2. Применяем символьное интегрирование (методы: замена переменной, по частям, рациональные дроби, табличные интегралы):`
-      );
-      steps.push(`Шаг 3. Получаем:`);
-      steps.push(`   ${result}`);
+      steps.push(`Шаг 1. ∫(${expression}) d${variable}`);
+      steps.push(`Шаг 2. ${strat} — символьное интегрирование в Nerdamer.`);
+      steps.push(`Шаг 3. Первообразная: ${result}`);
     }
+
+    if (meta.nerdamerAntiderivativeRaw) {
+      const res = IntegralCalculatorEngine.verificationResidualRaw(
+        meta.nerdamerExpr,
+        variable,
+        meta.nerdamerAntiderivativeRaw
+      );
+      const ok = res === '0' || res === '-0';
+      steps.push(
+        ok
+          ? `Проверка: simplify(d/d${variable}(F) - f) = 0 в CAS.`
+          : `Проверка (остаток в CAS): ${res}`
+      );
+    }
+
     return steps;
   }
 
