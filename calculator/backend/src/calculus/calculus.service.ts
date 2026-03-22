@@ -1183,8 +1183,8 @@ export class CalculusService {
     if (Number.isInteger(r)) return String(r);
     try {
       const frac = math.fraction(r);
-      const n = frac.n;
-      const d = frac.d;
+      const n = Number(frac.n);
+      const d = Number(frac.d);
       if (d === 1) return String(n);
       if (n < 0) return `-(${Math.abs(n)}/${d})`;
       return `(${n}/${d})`;
