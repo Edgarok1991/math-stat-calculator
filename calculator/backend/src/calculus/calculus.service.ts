@@ -601,8 +601,70 @@ export class CalculusService {
 
       // Сначала пробуем правило-движок (для подробных пошаговых решений в стиле MathDF)
       if (bounds) {
-        integral = this.simplifyDefiniteIntegral(normalizedExpr, variable, bounds);
-        steps = this.getDefiniteIntegralSteps(normalizedExpr, variable, bounds);
+        // Определённый интеграл: Ньютон—Лейбниц → Nerdamer defint (несколько стратегий) → численно Симпсон
+        const nl = this.tryNewtonLeibnizDefinite(normalizedExpr, variable, bounds);
+        if (nl !== null) {
+          integral = this.formatDefiniteNumericResult(nl.value);
+          steps = this.getDefiniteIntegralStepsNewtonLeibniz(
+            normalizedExpr,
+            variable,
+            bounds,
+            nl.indefinite,
+            nl.value
+          );
+          stepsStructured = this.getDefiniteIntegralStructuredNewtonLeibniz(
+            normalizedExpr,
+            variable,
+            bounds,
+            nl.indefinite,
+            nl.value
+          );
+        } else {
+          // ∫(многочлен)/(линейный) — сначала точная первообразная, затем F(b)−F(a)
+          const cleanQL = normalizedExpr.replace(/\s/g, '').replace(/ln\(/g, 'log(');
+          const manualQuadLin = this.tryIntegralPolynomialOverLinear(cleanQL, variable);
+          const polyNl =
+            manualQuadLin !== null
+              ? this.tryNewtonLeibnizFromIndefinite(manualQuadLin, variable, bounds)
+              : null;
+
+          if (polyNl !== null) {
+            integral = this.formatDefiniteNumericResult(polyNl.value);
+            steps = this.getDefiniteIntegralStepsNewtonLeibniz(
+              normalizedExpr,
+              variable,
+              bounds,
+              polyNl.indefinite,
+              polyNl.value
+            );
+            stepsStructured = this.getDefiniteIntegralStructuredNewtonLeibniz(
+              normalizedExpr,
+              variable,
+              bounds,
+              polyNl.indefinite,
+              polyNl.value
+            );
+          } else {
+          const nerdamerResult = this.tryNerdamerIntegral(normalizedExpr, variable, bounds);
+          if (nerdamerResult) {
+            integral = nerdamerResult.integral;
+            steps = nerdamerResult.steps;
+            stepsStructured = nerdamerResult.stepsStructured;
+          } else {
+            const num = this.numericalDefiniteIntegralSimpson(normalizedExpr, variable, bounds);
+            if (num !== null && Number.isFinite(num)) {
+              integral = this.formatDefiniteNumericResult(num);
+              steps = this.getDefiniteIntegralStepsNumerical(normalizedExpr, variable, bounds, num);
+              stepsStructured = this.getDefiniteIntegralStructuredNumerical(normalizedExpr, variable, bounds, num);
+            } else {
+              integral =
+                'Не удалось вычислить определённый интеграл: символьные методы недоступны, численная оценка не сошлась (особенности функции на отрезке).';
+              steps = this.getDefiniteIntegralFailureSteps(normalizedExpr, variable, bounds);
+              stepsStructured = this.getDefiniteIntegralStructuredFailure(normalizedExpr, variable, bounds);
+            }
+          }
+          }
+        }
       } else {
         integral = this.simplifyIntegral(normalizedExpr, variable);
         steps = this.getIntegralSteps(normalizedExpr, variable);
@@ -631,7 +693,21 @@ export class CalculusService {
         }
       }
 
-      const latex = this.toLatex(integral);
+      // После CAS: если ответ по-прежнему «тот же интеграл» — не элементарно в нашем движке (не путать с ошибкой)
+      if (!bounds && this.isUnevaluatedIntegralPlaceholder(integral, normalizedExpr, variable)) {
+        const msg =
+          'Не удалось выразить первообразную через элементарные функции (полиномы, exp, ln, sin/cos, …). ' +
+          'Интегралы с произведением x^k·e^x·ln(x) часто не сводятся к «школьным» функциям — нужны специальные функции (например Ei(x)) или численное интегрирование. Это ограничение символьного CAS, а не ошибка счёта.';
+        integral = msg;
+        steps = this.getUnintegratedIntegralSteps(normalizedExpr, variable);
+        stepsStructured = this.getUnintegratedIntegralStepsStructured(normalizedExpr, variable);
+        this.integralResult = { result: msg, method: 'unintegrated' };
+      }
+
+      const latex =
+        !bounds && this.integralResult.method === 'unintegrated'
+          ? `\\int \\left(${this.toLatex(normalizedExpr)}\\right) \\, d${variable} \\quad \\text{(не элементарно)}`
+          : this.toLatex(integral);
 
       return {
         result: integral,
@@ -670,6 +746,43 @@ export class CalculusService {
     return r;
   }
 
+  /** true, если строка — заглушка вида ∫(expr)dvar + C без реального интегрирования */
+  private isUnevaluatedIntegralPlaceholder(integral: string, expr: string, variable: string): boolean {
+    const i = integral.replace(/\s/g, '');
+    const e = expr.replace(/\s/g, '');
+    const v = variable.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const re = new RegExp(`^∫\\((.+)\\)d${v}\\+C$`);
+    const m = i.match(re);
+    if (!m) return false;
+    return m[1] === e;
+  }
+
+  private getUnintegratedIntegralSteps(expression: string, variable: string): string[] {
+    return [
+      `Шаг 1. Записываем интеграл: ∫(${expression}) d${variable}`,
+      `Шаг 2. Символьный движок (mathjs + Nerdamer) не нашёл первообразную в виде элементарных функций (или ответ не прошёл проверку d/dx).`,
+      `Шаг 3. Для выражений вроде x^2·e^x·ln(x) замкнутая форма часто включает специальные функции (например Ei(x)) либо используется численное интегрирование.`,
+      `Вывод: это ограничение класса функций калькулятора, а не ошибка «неправильного счёта».`,
+    ];
+  }
+
+  private getUnintegratedIntegralStepsStructured(expression: string, variable: string): IntegralStepStructured[] {
+    return [
+      {
+        actionLabel: 'Записываем',
+        expression: `∫ (${expression}) d${variable}`,
+      },
+      {
+        actionLabel: 'Пояснение',
+        rule: {
+          name: 'Почему нет ответа в «школьных» функциях',
+          formula:
+            'Не всякий ∫f(x)dx выражается через полиномы, exp, ln и sin/cos; произведение степени x, e^x и ln x обычно ведёт к спецфункциям или численным методам.',
+        },
+      },
+    ];
+  }
+
   /** Пробует вычислить интеграл через nerdamer (как MathDF). Возвращает null при неудаче. */
   private tryNerdamerIntegral(
     expression: string,
@@ -682,7 +795,27 @@ export class CalculusService {
 
       if (bounds !== undefined) {
         const { lower, upper } = bounds;
-        result = nerdamer(`defint(${nerdamerExpr}, ${lower}, ${upper}, ${variable})`);
+        const defStrategies = [
+          `defint(${nerdamerExpr}, ${lower}, ${upper}, ${variable})`,
+          `defint(expand(${nerdamerExpr}), ${lower}, ${upper}, ${variable})`,
+          `defint(factor(${nerdamerExpr}), ${lower}, ${upper}, ${variable})`,
+        ];
+        result = null;
+        for (const cmd of defStrategies) {
+          try {
+            const r = nerdamer(cmd);
+            const hasIntegral =
+              r.hasIntegral && typeof r.hasIntegral === 'function' && r.hasIntegral();
+            if (hasIntegral) continue;
+            const rs = r.toString();
+            if (!rs || rs.includes('integrate(') || rs.includes('defint(')) continue;
+            result = r;
+            break;
+          } catch {
+            continue;
+          }
+        }
+        if (!result) return null;
       } else {
         const strategies = [
           `integrate(${nerdamerExpr}, ${variable})`,
@@ -750,10 +883,16 @@ export class CalculusService {
         : `∫ (${expression}) d${variable}`,
     });
     steps.push({
-      actionLabel: 'Применяем символьное интегрирование',
+      actionLabel: isDefinite && bounds ? 'Символьный defint' : 'Применяем символьное интегрирование',
       rule: {
-        name: 'Методы: замена переменной, по частям, рациональные дроби, табличные интегралы',
-        formula: 'Автоматический поиск первообразной (аналог MathDF)',
+        name:
+          isDefinite && bounds
+            ? 'Определённый интеграл (Nerdamer defint)'
+            : 'Методы: замена переменной, по частям, рациональные дроби, табличные интегралы',
+        formula:
+          isDefinite && bounds
+            ? '\\int_a^b f(x)\\,dx'
+            : 'Автоматический поиск первообразной (аналог MathDF)',
       },
       expressionAfter: isDefinite && bounds ? `= ${result}` : result,
     });
@@ -1078,14 +1217,19 @@ export class CalculusService {
     bounds?: { lower: number; upper: number }
   ): string[] {
     const steps: string[] = [];
-    steps.push(`Шаг 1. Записываем интеграл: ∫(${expression}) d${variable}`);
-    steps.push(
-      `Шаг 2. Применяем символьное интегрирование (методы: замена переменной, по частям, рациональные дроби, табличные интегралы):`
-    );
     if (isDefinite && bounds) {
-      steps.push(`Шаг 3. Применяем формулу Ньютона—Лейбница: ∫[a→b] f(x)dx = F(b) − F(a)`);
-      steps.push(`   Результат: ${result}`);
+      steps.push(
+        `Шаг 1. Записываем определённый интеграл: ∫[${bounds.lower}→${bounds.upper}] (${expression}) d${variable}`
+      );
+      steps.push(
+        `Шаг 2. Символьное вычисление через Nerdamer (defint; при необходимости expand/factor подынтегрального выражения):`
+      );
+      steps.push(`Шаг 3. Значение интеграла: ${result}`);
     } else {
+      steps.push(`Шаг 1. Записываем интеграл: ∫(${expression}) d${variable}`);
+      steps.push(
+        `Шаг 2. Применяем символьное интегрирование (методы: замена переменной, по частям, рациональные дроби, табличные интегралы):`
+      );
       steps.push(`Шаг 3. Получаем:`);
       steps.push(`   ${result}`);
     }
@@ -1135,7 +1279,7 @@ export class CalculusService {
   /** Результат интегрирования с метаданными для пошагового решения */
   private integralResult: {
     result: string;
-    method: 'table' | 'substitution' | 'by_parts';
+    method: 'table' | 'substitution' | 'by_parts' | 'unintegrated';
     substitution?: { u: string; du: string; dxExpr?: string; integrandU?: string; antiderivU?: string };
     byParts?: { u: string; dv: string; du: string; v: string; uv?: string; remainingIntegral?: string };
     tableRule?: string; // конкретная формула из таблицы
@@ -1800,20 +1944,235 @@ export class CalculusService {
     }
   }
 
-  private simplifyDefiniteIntegral(expression: string, variable: string, bounds: { lower: number; upper: number }): string {
+  /** Ньютон—Лейбниц, если simplifyIntegral дал осмысленную первообразную */
+  private tryNewtonLeibnizDefinite(
+    expression: string,
+    variable: string,
+    bounds: { lower: number; upper: number }
+  ): { value: number; indefinite: string } | null {
     const indefinite = this.simplifyIntegral(expression, variable);
-    const upper = this.evaluateExpression(indefinite.replace(' + C', ''), variable, bounds.upper);
-    const lower = this.evaluateExpression(indefinite.replace(' + C', ''), variable, bounds.lower);
-    return (upper - lower).toString();
+    if (this.isIndefiniteUnusableForDefinite(indefinite, expression, variable)) {
+      return null;
+    }
+    let F = indefinite.replace(/\s*\+\s*C\s*$/i, '').trim();
+    if (F === indefinite) {
+      F = F.replace(/\+C/gi, '').trim();
+    }
+    const upper = this.evaluateExpression(F, variable, bounds.upper);
+    const lower = this.evaluateExpression(F, variable, bounds.lower);
+    if (!Number.isFinite(upper) || !Number.isFinite(lower)) {
+      return null;
+    }
+    const value = upper - lower;
+    return Number.isFinite(value) ? { value, indefinite } : null;
   }
 
-  private evaluateExpression(expression: string, variable: string, value: number): number {
-    // Упрощенная оценка выражения
-    const expr = expression.replace(new RegExp(variable, 'g'), value.toString());
+  /** F(b)−F(a) по уже найденной строке первообразной (+ C) — для рациональной дроби (многочлен)/(линейный) */
+  private tryNewtonLeibnizFromIndefinite(
+    indefiniteWithC: string,
+    variable: string,
+    bounds: { lower: number; upper: number }
+  ): { value: number; indefinite: string } | null {
+    let F = indefiniteWithC.replace(/\s*\+\s*C\s*$/i, '').trim();
+    if (F === indefiniteWithC) {
+      F = F.replace(/\+C/gi, '').trim();
+    }
+    const upper = this.evaluateExpression(F, variable, bounds.upper);
+    const lower = this.evaluateExpression(F, variable, bounds.lower);
+    if (!Number.isFinite(upper) || !Number.isFinite(lower)) {
+      return null;
+    }
+    const value = upper - lower;
+    return Number.isFinite(value) ? { value, indefinite: indefiniteWithC } : null;
+  }
+
+  private isIndefiniteUnusableForDefinite(indefinite: string, expr: string, variable: string): boolean {
+    const s = indefinite.trim();
+    if (s.includes('Не удалось')) return true;
+    if (s === 'C') return true;
+    return this.isUnevaluatedIntegralPlaceholder(indefinite, expr, variable);
+  }
+
+  /** Округление численного ответа для определённого интеграла */
+  private formatDefiniteNumericResult(value: number): string {
+    if (!Number.isFinite(value)) return String(value);
+    if (Math.abs(value) < 1e-14) return '0';
+    const abs = Math.abs(value);
+    if (abs >= 1e9 || (abs > 0 && abs < 1e-8)) return value.toExponential(10);
+    return String(Math.round(value * 1e12) / 1e12);
+  }
+
+  /**
+   * Составной метод Симпсона (n=512): запасной путь, когда нет символьной первообразной.
+   */
+  private numericalDefiniteIntegralSimpson(
+    expression: string,
+    variable: string,
+    bounds: { lower: number; upper: number }
+  ): number | null {
+    const a = bounds.lower;
+    const b = bounds.upper;
+    if (!Number.isFinite(a) || !Number.isFinite(b)) return null;
+    if (a === b) return 0;
+    let prep = this.normalizeExpression(expression).replace(/\s/g, '').replace(/ln\(/g, 'log(');
     try {
-      return math.evaluate(expr);
+      const node = math.parse(prep);
+      const compiled = node.compile();
+      const f = (t: number): number => {
+        try {
+          const y = compiled.evaluate({ [variable]: t }) as number;
+          return typeof y === 'number' && Number.isFinite(y) ? y : NaN;
+        } catch {
+          return NaN;
+        }
+      };
+      let n = 512;
+      const h = (b - a) / n;
+      let sum = f(a) + f(b);
+      if (!Number.isFinite(sum)) return null;
+      for (let i = 1; i < n; i++) {
+        const x = a + i * h;
+        const yi = f(x);
+        if (!Number.isFinite(yi)) return null;
+        const coef = i % 2 === 0 ? 2 : 4;
+        sum += coef * yi;
+      }
+      const res = (sum * h) / 3;
+      return Number.isFinite(res) ? res : null;
     } catch {
-      return 0;
+      return null;
+    }
+  }
+
+  private getDefiniteIntegralStepsNewtonLeibniz(
+    expression: string,
+    variable: string,
+    bounds: { lower: number; upper: number },
+    indefinite: string,
+    value: number
+  ): string[] {
+    let F = indefinite.replace(/\s*\+\s*C\s*$/i, '').trim();
+    if (F === indefinite) F = F.replace(/\+C/gi, '').trim();
+    const Fu = this.evaluateExpression(F, variable, bounds.upper);
+    const Fl = this.evaluateExpression(F, variable, bounds.lower);
+    return [
+      `Шаг 1. Записываем определённый интеграл: ∫[${bounds.lower}→${bounds.upper}] (${expression}) d${variable}`,
+      `Шаг 2. Находим первообразную F(${variable}) (неопределённый интеграл):`,
+      `   F(${variable}) = ${indefinite}`,
+      `Шаг 3. Формула Ньютона—Лейбница: ∫[a→b] f(${variable}) d${variable} = F(b) − F(a)`,
+      `   F(${bounds.upper}) = ${Fu}`,
+      `   F(${bounds.lower}) = ${Fl}`,
+      `   F(${bounds.upper}) − F(${bounds.lower}) = ${value}`,
+      `Результат: ${this.formatDefiniteNumericResult(value)}`,
+    ];
+  }
+
+  private getDefiniteIntegralStructuredNewtonLeibniz(
+    expression: string,
+    variable: string,
+    bounds: { lower: number; upper: number },
+    indefinite: string,
+    value: number
+  ): IntegralStepStructured[] {
+    let F = indefinite.replace(/\s*\+\s*C\s*$/i, '').trim();
+    if (F === indefinite) F = F.replace(/\+C/gi, '').trim();
+    const Fu = this.evaluateExpression(F, variable, bounds.upper);
+    const Fl = this.evaluateExpression(F, variable, bounds.lower);
+    return [
+      {
+        actionLabel: 'Определённый интеграл',
+        expression: `∫[${bounds.lower}→${bounds.upper}] (${expression}) d${variable}`,
+      },
+      {
+        actionLabel: 'Первообразная',
+        rule: {
+          name: 'Ньютон—Лейбниц',
+          formula: `\\int_a^b f(${variable})\\,d${variable} = F(b)-F(a)`,
+        },
+        expressionAfter: `F(${variable}) = ${indefinite}`,
+      },
+      {
+        actionLabel: 'Подстановка пределов',
+        expression: `F(${bounds.upper})=${Fu}, F(${bounds.lower})=${Fl} \\Rightarrow ${this.formatDefiniteNumericResult(value)}`,
+      },
+    ];
+  }
+
+  private getDefiniteIntegralStepsNumerical(
+    expression: string,
+    variable: string,
+    bounds: { lower: number; upper: number },
+    approximation: number
+  ): string[] {
+    return [
+      `Шаг 1. Записываем: ∫[${bounds.lower}→${bounds.upper}] (${expression}) d${variable}`,
+      `Шаг 2. Табличные правила и символьный defint (Nerdamer) не дали ответа — переходим к численному интегрированию.`,
+      `Шаг 3. Составной метод Симпсона (512 частей отрезка [${bounds.lower}; ${bounds.upper}]):`,
+      `Результат (приближённо): ≈ ${this.formatDefiniteNumericResult(approximation)}`,
+    ];
+  }
+
+  private getDefiniteIntegralStructuredNumerical(
+    expression: string,
+    variable: string,
+    bounds: { lower: number; upper: number },
+    approximation: number
+  ): IntegralStepStructured[] {
+    return [
+      {
+        actionLabel: 'Определённый интеграл',
+        expression: `∫[${bounds.lower}→${bounds.upper}] (${expression}) d${variable}`,
+      },
+      {
+        actionLabel: 'Численно',
+        rule: {
+          name: 'Метод Симпсона',
+          formula: '\\int_a^b f(x)dx \\approx \\frac{h}{3}\\bigl(f(a)+f(b)+4\\sum f(x_{2k-1})+2\\sum f(x_{2k})\\bigr)',
+        },
+        expressionAfter: `\\approx ${this.formatDefiniteNumericResult(approximation)}`,
+      },
+    ];
+  }
+
+  private getDefiniteIntegralFailureSteps(
+    expression: string,
+    variable: string,
+    bounds: { lower: number; upper: number }
+  ): string[] {
+    return [
+      `∫[${bounds.lower}→${bounds.upper}] (${expression}) d${variable}`,
+      'Символьное интегрирование недоступно, численная оценка на отрезке не сошлась (разрывы, особенности, выход за область определения log/sqrt и т.д.).',
+      'Попробуйте изменить пределы или упростить подынтегральное выражение.',
+    ];
+  }
+
+  private getDefiniteIntegralStructuredFailure(
+    expression: string,
+    variable: string,
+    bounds: { lower: number; upper: number }
+  ): IntegralStepStructured[] {
+    return [
+      {
+        actionLabel: 'Определённый интеграл',
+        expression: `∫[${bounds.lower}→${bounds.upper}] (${expression}) d${variable}`,
+      },
+      {
+        actionLabel: 'Не вычислено',
+        rule: {
+          name: 'Проверьте область определения и особенности на [a; b]',
+        },
+      },
+    ];
+  }
+
+  /** Подстановка числа в выражение первообразной (через mathjs scope, без глобальной замены подстрок) */
+  private evaluateExpression(expression: string, variable: string, value: number): number {
+    const prep = expression.replace(/\s/g, '').replace(/ln\(/g, 'log(');
+    try {
+      const y = math.evaluate(prep, { [variable]: value }) as number;
+      return typeof y === 'number' && Number.isFinite(y) ? y : NaN;
+    } catch {
+      return NaN;
     }
   }
 
@@ -1905,8 +2264,11 @@ export class CalculusService {
       steps.push(`Шаг 6. Упрощаем:`);
       steps.push(`   ${result}`);
     } else {
-      const rule = this.integralResult.tableRule || 'таблица основных интегралов';
-      steps.push(`Шаг 2. Применяем ${rule}:`);
+      if (this.integralResult.tableRule) {
+        steps.push(`Шаг 2. ${this.integralResult.tableRule}`);
+      } else {
+        steps.push(`Шаг 2. Применяем таблицу основных интегралов:`);
+      }
       steps.push(`   • ∫x^n dx = x^(n+1)/(n+1) + C`);
       steps.push(`   • ∫sin(x)dx = -cos(x) + C, ∫cos(x)dx = sin(x) + C`);
       steps.push(`   • ∫e^x dx = e^x + C, ∫(1/x)dx = ln|x| + C`);
@@ -1914,27 +2276,6 @@ export class CalculusService {
       steps.push(`   ${result}`);
     }
 
-    return steps;
-  }
-
-  private getDefiniteIntegralSteps(expression: string, variable: string, bounds: { lower: number; upper: number }): string[] {
-    const indefinite = this.simplifyIntegral(expression, variable);
-    const steps: string[] = [
-      `Шаг 1. Записываем определённый интеграл: ∫[${bounds.lower}→${bounds.upper}] (${expression}) d${variable}`,
-      `Шаг 2. Находим первообразную F(${variable}) (неопределённый интеграл):`,
-      `   F(${variable}) = ${indefinite}`,
-    ];
-    if (this.integralResult.method === 'substitution' && this.integralResult.substitution) {
-      steps.push(`   (применён метод подстановки: u = ${this.integralResult.substitution.u})`);
-    } else if (this.integralResult.method === 'by_parts' && this.integralResult.byParts) {
-      steps.push(`   (применено интегрирование по частям: u = ${this.integralResult.byParts.u})`);
-    }
-    steps.push(
-      `Шаг 3. Применяем формулу Ньютона—Лейбница: ∫[a→b] f(x)dx = F(b) − F(a)`,
-      `   F(${bounds.upper}) = ${this.evaluateExpression(indefinite.replace(' + C', ''), variable, bounds.upper)}`,
-      `   F(${bounds.lower}) = ${this.evaluateExpression(indefinite.replace(' + C', ''), variable, bounds.lower)}`,
-      `Результат: ${this.simplifyDefiniteIntegral(expression, variable, bounds)}`
-    );
     return steps;
   }
 
