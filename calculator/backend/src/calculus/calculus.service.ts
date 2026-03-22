@@ -621,7 +621,10 @@ export class CalculusService {
           );
         } else {
           // ∫(многочлен)/(линейный) — сначала точная первообразная, затем F(b)−F(a)
-          const cleanQL = normalizedExpr.replace(/\s/g, '').replace(/ln\(/g, 'log(');
+          const cleanQL = normalizedExpr
+            .replace(/\s/g, '')
+            .replace(/[\u2215\u2044]/g, '/')
+            .replace(/ln\(/g, 'log(');
           const manualQuadLin = this.tryIntegralPolynomialOverLinear(cleanQL, variable);
           const polyNl =
             manualQuadLin !== null
@@ -684,7 +687,10 @@ export class CalculusService {
 
       // ∫(многочлен ≤2)/(линейный): точное деление в mathjs; nerdamer для таких дробей даёт неверный ответ
       if (!bounds) {
-        const cleanQL = normalizedExpr.replace(/\s/g, '').replace(/ln\(/g, 'log(');
+        const cleanQL = normalizedExpr
+          .replace(/\s/g, '')
+          .replace(/[\u2215\u2044]/g, '/')
+          .replace(/ln\(/g, 'log(');
         const manualQuadLin = this.tryIntegralPolynomialOverLinear(cleanQL, variable);
         if (manualQuadLin) {
           integral = manualQuadLin;
@@ -1689,14 +1695,34 @@ export class CalculusService {
   }
 
   /**
+   * Числитель и знаменатель дроби (a)/(b): сначала шаблон без вложенных скобок, иначе разбор через mathjs
+   * (например ((x^2+1))/((x+3)) не ловится регэкспом `[^)]+`).
+   */
+  private parsePolynomialOverLinearFraction(cleanExpr: string): { numStr: string; denStr: string } | null {
+    const m = cleanExpr.match(/^\(([^)]+)\)\/\(([^)]+)\)$/);
+    if (m) return { numStr: m[1], denStr: m[2] };
+    try {
+      const node = math.parse(cleanExpr);
+      if (node.type !== 'OperatorNode') return null;
+      const op = node as math.OperatorNode;
+      if (op.op !== '/' || !op.args || op.args.length !== 2) return null;
+      const numStr = op.args[0].toString().replace(/\s/g, '');
+      const denStr = op.args[1].toString().replace(/\s/g, '');
+      if (!numStr || !denStr) return null;
+      return { numStr, denStr };
+    } catch {
+      return null;
+    }
+  }
+
+  /**
    * ∫(многочлен)/(линейный знаменатель) — деление Nerdamer (div), затем ∫ частного + ∫ остатка/знаменатель.
    * Покрывает любую степень числителя (не только квадратичный).
    */
   private tryIntegralPolynomialOverLinear(cleanExpr: string, variable: string): string | null {
-    const m = cleanExpr.match(/^\(([^)]+)\)\/\(([^)]+)\)$/);
-    if (!m) return null;
-    const numStr = m[1];
-    const denStr = m[2];
+    const parts = this.parsePolynomialOverLinearFraction(cleanExpr);
+    if (!parts) return null;
+    const { numStr, denStr } = parts;
     try {
       const nNode = math.parse(numStr);
       const dNode = math.parse(denStr);
@@ -1780,7 +1806,10 @@ export class CalculusService {
 
   private simplifyIntegral(expression: string, variable: string): string {
     const normalizedExpr = this.normalizeExpression(expression);
-    let cleanExpr = normalizedExpr.replace(/\s/g, '').replace(/ln\(/g, 'log(');
+    let cleanExpr = normalizedExpr
+      .replace(/\s/g, '')
+      .replace(/[\u2215\u2044]/g, '/')
+      .replace(/ln\(/g, 'log(');
     // exp((expr)) → exp(expr) при лишних скобках
     cleanExpr = cleanExpr.replace(/exp\(\(([^()]+)\)\)/g, (_, inner) => `exp(${inner})`);
     this.integralResult = { result: '', method: 'table' };
